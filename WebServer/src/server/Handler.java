@@ -47,7 +47,7 @@ public class Handler implements HttpHandler {
 	            }
 	            bufferedReader.close();
 	            
-	            byte[] data = stringBuilder.toString().getBytes(ENCODING);
+	            byte[] data = update(stringBuilder.toString()).getBytes(ENCODING);
 	            
 	            httpExchange.sendResponseHeaders(200, data.length);
 	            outputStream.write(data);
@@ -67,6 +67,10 @@ public class Handler implements HttpHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String update(String input) {
+		return input;
 	}
 	
 }
