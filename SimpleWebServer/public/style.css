@@ -1,0 +1,62 @@
+:root{
+	--text-color: #1f1f1f;
+	--background-color: #dfdfdf;
+	--max-width: 1024px;
+}
+
+@font-face{
+	font-family: font;
+	src: url("font.ttf");
+}
+
+html{
+	background-color: var(--background-color);
+	color: var(--text-color);
+	font-family: font, sans-serif;
+	font-size: 16px;
+}
+
+body{
+	margin: 0px;
+}
+
+h1{
+	font-size: 48px;
+}
+
+h2{
+	font-size: 32px;
+}
+
+#main{
+	width: 100%;
+	max-width: var(--max-width);
+	padding: 32px;
+	margin: auto;
+	box-sizing: border-box;
+}
+
+.collapsible{
+	cursor: pointer;
+	border-bottom: 2px solid var(--text-color);
+}
+
+.collapsible::after{
+	content: " ▼";
+}
+
+.collapsible.active::after{
+	content: " ▲";
+}
+
+.content{
+	display: none;
+}
+
+.button{
+	padding: 8px;
+	background-color: var(--text-color);
+	color: var(--background-color);
+	text-decoration: none;
+	display: inline-block;
+}
