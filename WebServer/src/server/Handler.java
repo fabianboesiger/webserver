@@ -13,6 +13,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import server.parser.Parser;
+
 public class Handler implements HttpHandler {
 	
 	private static final String ENCODING = "UTF-8";
@@ -47,7 +49,7 @@ public class Handler implements HttpHandler {
 	            }
 	            bufferedReader.close();
 	            
-	            byte[] data = update(stringBuilder.toString()).getBytes(ENCODING);
+	            byte[] data = Parser.parse(stringBuilder).getBytes(ENCODING);
 	            
 	            httpExchange.sendResponseHeaders(200, data.length);
 	            outputStream.write(data);
@@ -67,10 +69,6 @@ public class Handler implements HttpHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private String update(String input) {
-		return input;
 	}
 	
 }
