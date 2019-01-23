@@ -1,9 +1,12 @@
-package server;
+package server.finders;
 
 import java.io.File;
 import java.io.IOException;
 
 import com.sun.net.httpserver.HttpServer;
+
+import server.handlers.FileHandler;
+import server.handlers.Handler;
 
 public class PublicFinder extends Finder {
 	
@@ -11,7 +14,7 @@ public class PublicFinder extends Finder {
 	
 	private HttpServer httpServer;
 	
-	public PublicFinder(HttpServer httpServer) {
+	public PublicFinder(HttpServer httpServer) throws IOException {
 		super(PUBLIC_FOLDER);
 		
 		this.httpServer = httpServer;

@@ -1,11 +1,11 @@
-package server.parser;
+package server.loaders.parser;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import server.parser.tags.IncludeTag;
-import server.parser.tags.Tag;
+import server.loaders.parser.tags.IncludeTag;
+import server.loaders.parser.tags.Tag;
 
 public abstract class Parser {
 	

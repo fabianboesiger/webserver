@@ -1,4 +1,4 @@
-package server.parser.tags;
+package server.loaders.parser.tags;
 
 import java.util.HashMap;
 

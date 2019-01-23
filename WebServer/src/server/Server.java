@@ -7,6 +7,9 @@ import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
 
+import server.finders.PublicFinder;
+import server.handlers.MultiHandler;
+
 public class Server {
 	
 	public static final int PORT = 8000;
@@ -21,8 +24,8 @@ public class Server {
 						
 		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
 		httpServer.setExecutor(Executors.newFixedThreadPool(HANDLER_THREADS));
+	    (new PublicFinder(httpServer)).find();
 		httpServer.createContext("/", new MultiHandler());
-	    new PublicFinder(httpServer);
 	    httpServer.start();
 	}
 

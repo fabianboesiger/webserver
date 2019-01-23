@@ -1,7 +1,6 @@
-package server;
+package server.handlers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.sun.net.httpserver.Headers;
@@ -9,20 +8,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public abstract class Handler implements HttpHandler {
-	
-	protected class Response {
-		
-		InputStream inputStream;
-		long size;
-		String contentType;
-		
-		public Response(InputStream inputStream, long size, String contentType) {
-			this.inputStream = inputStream;
-			this.size = size;
-			this.contentType = contentType;
-		}
-		
-	}
 	
 	public Handler() {
 	}
@@ -55,6 +40,6 @@ public abstract class Handler implements HttpHandler {
 		}
 	}
 
-	protected abstract Response getResponse(HttpExchange httpExchange);
+	protected abstract Response getResponse(HttpExchange httpExchange) throws IOException;
 	
 }
