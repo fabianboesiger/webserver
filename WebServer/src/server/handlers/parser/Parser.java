@@ -1,31 +1,69 @@
-package server.loaders.parser;
+package server.handlers.parser;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import server.loaders.parser.tags.IncludeTag;
-import server.loaders.parser.tags.Tag;
+import server.handlers.parser.tags.IncludeTag;
+import server.handlers.parser.tags.Tag;
 
-public abstract class Parser {
+public class Parser {
 	
 	private static final char TAG_START = '<';
 	private static final char TAG_END = '>';
 	private static final char EQUALS = '=';
 	private static final char STRING = '"';
+	private static final String ENCODING = "UTF-8";
 	
 	private static HashMap <String, Tag> tags;
+	
+	private File file;
 	
 	static {
 		tags = new HashMap <String, Tag> ();
 		tags.put("include", new IncludeTag());
 	}
 	
-	public static String parse(StringBuilder input) {
-		return parseTag(input);
-	};
+	public Parser(File file) {
+		this.file = file;
+	}
 	
-	private static String parseTag(StringBuilder input) {
+	public Parser(String path) {
+		this(new File(path));
+	}
+	
+	public String parse() throws IOException {
+		return parse(toStringBuilder(new FileInputStream(file)));
+	}
+	
+	private static StringBuilder toStringBuilder(InputStream inputStream) {
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
+	    	StringBuilder stringBuilder = new StringBuilder();
+	        String line;
+	        while((line = bufferedReader.readLine()) != null) {
+	        	stringBuilder.append(line);
+	        	stringBuilder.append("\n");
+	        }
+	        bufferedReader.close();
+	        return stringBuilder;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String parse(StringBuilder input) throws IOException {
+		return parseTag(input);
+	}
+	
+	private static String parseTag(StringBuilder input) throws IOException {
 		String output = "";
 				
 		while(input.length() > 0) {
@@ -45,7 +83,7 @@ public abstract class Parser {
 		return output;
 	}
 	
-	private static String parseAttributes(StringBuilder input) {
+	private static String parseAttributes(StringBuilder input) throws IOException {
 		String output = "";
 		
 		String name = "";

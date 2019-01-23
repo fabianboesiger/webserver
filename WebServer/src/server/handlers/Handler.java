@@ -18,6 +18,10 @@ public abstract class Handler implements HttpHandler {
 		try {
 			Response response = getResponse(httpExchange);
 			
+			if(response == null) {
+				// TODO: Send error
+			}
+			
 	    	if(response.contentType != null) {
 	    		Headers responseHeaders = httpExchange.getResponseHeaders();
 	    		responseHeaders.set("Content-Type", response.contentType);
