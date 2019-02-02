@@ -10,7 +10,7 @@ import server.handlers.Handler;
 
 public class PublicFinder extends Finder {
 	
-	public static final File PUBLIC_FOLDER = new File("public");
+	private static final File PUBLIC_FOLDER = new File("public");
 	
 	private HttpServer httpServer;
 	

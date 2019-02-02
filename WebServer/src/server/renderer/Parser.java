@@ -1,4 +1,4 @@
-package server.handlers.parser;
+package server.renderer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import server.handlers.parser.tags.IncludeTag;
-import server.handlers.parser.tags.Tag;
+import server.renderer.structure.Tag;
 
 public class Parser {
 	
@@ -19,16 +18,10 @@ public class Parser {
 	private static final char TAG_END = '>';
 	private static final char EQUALS = '=';
 	private static final char STRING = '"';
+	private static final char END_CHAR = '/';
 	private static final String ENCODING = "UTF-8";
-	
-	private static HashMap <String, Tag> tags;
-	
+
 	private File file;
-	
-	static {
-		tags = new HashMap <String, Tag> ();
-		tags.put("include", new IncludeTag());
-	}
 	
 	public Parser(File file) {
 		this.file = file;
@@ -38,8 +31,10 @@ public class Parser {
 		this(new File(path));
 	}
 	
-	public String parse() throws IOException {
-		return parse(toStringBuilder(new FileInputStream(file)));
+	
+	/*
+	public String render() throws IOException {
+		return parse(toStringBuilder(new FileInputStream(file))).render();
 	}
 	
 	private static StringBuilder toStringBuilder(InputStream inputStream) {
@@ -59,31 +54,36 @@ public class Parser {
 		return null;
 	}
 	
-	public static String parse(StringBuilder input) throws IOException {
-		return parseTag(input);
+	public static Tag parse(StringBuilder input) throws IOException {
+		parseTag(input);
+		return null;
 	}
 	
 	private static String parseTag(StringBuilder input) throws IOException {
 		String output = "";
+		
+		boolean insideTag = false;
 				
 		while(input.length() > 0) {
 			char current = input.charAt(0);
 			input.deleteCharAt(0);
 			
-			if(current == TAG_START) {
-				output += TAG_START;
-				output += parseAttributes(input);
-				output += TAG_END;
-				output += parseTag(input);
-			} else {
-				output += current;
+			if(!insideTag) {
+				if(current == TAG_START) {
+					output += TAG_START;
+					output += parseAttributes(input);
+					output += TAG_END;
+					output += parseTag(input);
+				} else {
+					output += current;
+				}
 			}
 		}
 				
 		return output;
 	}
 	
-	private static String parseAttributes(StringBuilder input) throws IOException {
+	private static HashMap <String, String> parseAttributes(StringBuilder input) throws IOException {
 		String output = "";
 		
 		String name = "";
@@ -149,24 +149,9 @@ public class Parser {
 				}
 			}
 		}
-				
-		output += name.toLowerCase();
-		if(tags.containsKey(name)) {
-			tags.get(name).parse(attributes);
-		} else {
-			Iterator <Entry <String, String>> iterator = attributes.entrySet().iterator();
-			while(iterator.hasNext()) {
-				Entry <String, String> entry = iterator.next();
-				output += (" " + entry.getKey());
-				value = entry.getValue();
-				if(value != null) {
-					output += ("" + EQUALS + STRING + value + STRING);
-				}
-			}
-		}
-				
+			
 		return output;
 	}
-	
+	*/
 	
 }
