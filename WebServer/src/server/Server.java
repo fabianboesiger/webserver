@@ -40,12 +40,6 @@ public class Server {
 	    
 	    Finder.find(PUBLIC_FOLDER, (File file) -> {
 	    	String path = file.getPath().replace(System.getProperty("file.separator"), "/");
-			if(path.matches(".*index.*")) {
-				int cut = path.lastIndexOf("/");
-				if(cut != -1) {
-					path = path.substring(0, cut+1);
-				}
-			}
 			path = path.substring(PUBLIC_FOLDER.getName().length());
 			on("GET", path, (Session session) -> {
 				return Response.file(file);

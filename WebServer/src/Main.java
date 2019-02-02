@@ -11,7 +11,11 @@ public class Main {
 		Server server = new Server(new Database());
 		
 		server.on("GET", "/", (Session session) -> {
-			return Response.text("Hello World");
+			return Response.render("index.html");
+		});
+		
+		server.on("GET", "/redirect", (Session session) -> {
+			return Response.redirect("/redirected");
 		});
 	}
 

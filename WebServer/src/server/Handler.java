@@ -5,8 +5,11 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -25,7 +28,8 @@ public class Handler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
-		System.out.print("Handling request");
+		
+		long start = System.currentTimeMillis();
 		
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -34,7 +38,7 @@ public class Handler implements HttpHandler {
     	URI uri = httpExchange.getRequestURI();
     	
     	Response response = null;
-    	
+	
     	LinkedList <Listener> listeners = server.listeners.get(method);
     	if(listeners != null) {
     		for(Listener listener : listeners) {
@@ -45,31 +49,45 @@ public class Handler implements HttpHandler {
     	}
     	
     	if(response == null) {
-			response = Response.text("error");
+			response = Response.error("Not Found", 404);
 		}
-    	
-    	try {		
+    	    	
+    	try {
 			
 	    	if(response.contentType != null) {
 	    		responseHeaders.set("Content-Type", response.contentType);
 	    	}
 	    	
+	    	if(response.responseHeaders != null) {
+	    		Iterator <Entry <String, String>> iterator = response.responseHeaders.entrySet().iterator();
+	        	while (iterator.hasNext()) {
+	            	Map.Entry <String, String> pair = (Map.Entry <String, String>) iterator.next();
+	            	responseHeaders.set(pair.getKey(), pair.getValue());
+	        	}
+	    	}
+	    	
 	        OutputStream outputStream = httpExchange.getResponseBody();
 	        
-        	httpExchange.sendResponseHeaders(200, response.size);
+        	httpExchange.sendResponseHeaders(response.statusCode, response.size);
         	
-        	byte[] buffer = new byte[BUFFER_SIZE];
-	        int read;
-		    while((read = response.inputStream.read(buffer)) != -1) {
-		    	outputStream.write(buffer, 0, read);
-		    }
-		    
-		    response.inputStream.close();
+        	if(response.inputStream != null) {
+	        	byte[] buffer = new byte[BUFFER_SIZE];
+		        int read;
+			    while((read = response.inputStream.read(buffer)) != -1) {
+			    	outputStream.write(buffer, 0, read);
+			    }
+			    response.inputStream.close();
+        	}
+
 		    outputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     	
+    	long time = System.currentTimeMillis() - start;
+    	
+		System.out.println(method + " " + uri.toString() + " " + response.statusCode + " " + time + "ms");
+		
 	}
 	
 	Session getSession(Headers requestHeaders, Headers responseHeaders) {
