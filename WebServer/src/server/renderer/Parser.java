@@ -19,7 +19,6 @@ public class Parser {
 	private static final char EQUALS = '=';
 	private static final char STRING = '"';
 	private static final char END_CHAR = '/';
-	private static final String ENCODING = "UTF-8";
 
 	private File file;
 	

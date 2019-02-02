@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import com.sun.net.httpserver.HttpHandler;
 public class Handler implements HttpHandler {
 	
 	private static final String SESSION_ID_COOKIE_NAME = "session-id";
+	private static final int BUFFER_SIZE = 4096;
 	
 	Server server;
 	
@@ -23,6 +25,7 @@ public class Handler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
+		System.out.print("Handling request");
 		
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -30,14 +33,43 @@ public class Handler implements HttpHandler {
     	String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
     	
-    	LinkedList <ActionObject> actionObjects = server.actions.get(method);
-    	if(actionObjects != null) {
-    		for(ActionObject actionObject : actionObjects) {
-    			if(actionObject.matches(uri)) {
-    				actionObject.action.act(session);
+    	Response response = null;
+    	
+    	LinkedList <Listener> listeners = server.listeners.get(method);
+    	if(listeners != null) {
+    		for(Listener listener : listeners) {
+    			if(listener.matches(uri)) {
+    				response = listener.listenerAction.act(session);
     			}
     		}
     	}
+    	
+    	if(response == null) {
+			response = Response.text("error");
+		}
+    	
+    	try {		
+			
+	    	if(response.contentType != null) {
+	    		responseHeaders.set("Content-Type", response.contentType);
+	    	}
+	    	
+	        OutputStream outputStream = httpExchange.getResponseBody();
+	        
+        	httpExchange.sendResponseHeaders(200, response.size);
+        	
+        	byte[] buffer = new byte[BUFFER_SIZE];
+	        int read;
+		    while((read = response.inputStream.read(buffer)) != -1) {
+		    	outputStream.write(buffer, 0, read);
+		    }
+		    
+		    response.inputStream.close();
+		    outputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
 	}
 	
 	Session getSession(Headers requestHeaders, Headers responseHeaders) {

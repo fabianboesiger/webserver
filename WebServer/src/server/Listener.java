@@ -2,14 +2,14 @@ package server;
 
 import java.net.URI;
 
-public class ActionObject {
+public class Listener {
 	
 	private String path;
-	protected Action action;
+	protected ListenerAction listenerAction;
 	
-	public ActionObject(String path, Action action) {
+	public Listener(String path, ListenerAction listenerAction) {
 		this.path = path;
-		this.action = action;
+		this.listenerAction = listenerAction;
 	}
 
 	public boolean matches(URI uri) {

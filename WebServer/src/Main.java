@@ -1,6 +1,7 @@
 import java.io.IOException;
 
 import database.Database;
+import server.Response;
 import server.Server;
 import server.Session;
 
@@ -10,7 +11,7 @@ public class Main {
 		Server server = new Server(new Database());
 		
 		server.on("GET", "/", (Session session) -> {
-			return null;
+			return Response.text("Hello World");
 		});
 	}
 

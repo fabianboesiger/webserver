@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -17,14 +18,19 @@ public class Server {
 	
 	private static final int PORT = 8000;
 	private static final int HANDLER_THREADS = 4;
+	private static final File PUBLIC_FOLDER = new File("public");
 	
 	private HttpServer httpServer;
 	private HashMap <String, Session> sessions;
-	protected HashMap <String, LinkedList <ActionObject>> actions;
+	protected HashMap <String, LinkedList <Listener>> listeners;
 	private Random random;
 	
 	public Server(Database database) throws IOException {
-		System.out.println("Server started on port "+PORT);
+		System.out.println("Starting server on port "+PORT);
+		
+	    random = new Random();
+	    listeners = new HashMap <String, LinkedList <Listener>> ();
+	    sessions = new HashMap <String, Session> ();
 		
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
@@ -32,8 +38,19 @@ public class Server {
 		httpServer.createContext("/", new Handler(this));
 	    httpServer.start();
 	    
-	    // Set up Random
-	    random = new Random();
+	    Finder.find(PUBLIC_FOLDER, (File file) -> {
+	    	String path = file.getPath().replace(System.getProperty("file.separator"), "/");
+			if(path.matches(".*index.*")) {
+				int cut = path.lastIndexOf("/");
+				if(cut != -1) {
+					path = path.substring(0, cut+1);
+				}
+			}
+			path = path.substring(PUBLIC_FOLDER.getName().length());
+			on("GET", path, (Session session) -> {
+				return Response.file(file);
+			});
+	    });
 	    
 	    // Remove expired sessions
 	    Timer timer = new Timer();
@@ -45,11 +62,11 @@ public class Server {
 		}, 0, 1000);
 	}
 	
-	public void on(String method, String path, Action action) {
-		if(!actions.containsKey(method)) {
-			actions.put(method, new LinkedList <ActionObject> ());
+	public void on(String method, String path, ListenerAction listenerAction) {
+		if(!listeners.containsKey(method)) {
+			listeners.put(method, new LinkedList <Listener> ());
 		}
-		actions.get(method).add(new ActionObject(path, action));
+		listeners.get(method).add(new Listener(path, listenerAction));
 	}
 	
 	protected Session getSession(String key) {
