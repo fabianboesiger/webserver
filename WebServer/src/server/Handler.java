@@ -1,6 +1,8 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,13 +39,28 @@ public class Handler implements HttpHandler {
     	String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
     	
+    	HashMap <String, String> parameters = new HashMap <String, String> ();
+    	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
+    	if(urlParameters != null) {
+    		parameters.putAll(urlParameters);
+    	}
+    	HashMap <String, String> bodyParameters = getParameters((new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), Response.ENCODING))).readLine());
+    	if(bodyParameters != null) {
+    		parameters.putAll(bodyParameters);
+    	}
+    	
     	Response response = null;
 	
     	LinkedList <Listener> listeners = server.listeners.get(method);
     	if(listeners != null) {
     		for(Listener listener : listeners) {
     			if(listener.matches(uri)) {
-    				response = listener.listenerAction.act(session);
+    				response = listener.listenerAction.act(session, listener.getGroups(uri), parameters);
+    				if(response.next) {
+    					response = null;
+    				} else {
+    					break;
+    				}
     			}
     		}
     	}

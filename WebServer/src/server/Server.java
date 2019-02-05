@@ -3,11 +3,13 @@ package server;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
@@ -21,7 +23,7 @@ public class Server {
 	private static final File PUBLIC_FOLDER = new File("public");
 	
 	private HttpServer httpServer;
-	private HashMap <String, Session> sessions;
+	private ConcurrentHashMap <String, Session> sessions;
 	protected HashMap <String, LinkedList <Listener>> listeners;
 	private Random random;
 	
@@ -30,7 +32,7 @@ public class Server {
 		
 	    random = new Random();
 	    listeners = new HashMap <String, LinkedList <Listener>> ();
-	    sessions = new HashMap <String, Session> ();
+	    sessions = new ConcurrentHashMap <String, Session> ();
 		
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
@@ -41,7 +43,7 @@ public class Server {
 	    Finder.find(PUBLIC_FOLDER, (File file) -> {
 	    	String path = file.getPath().replace(System.getProperty("file.separator"), "/");
 			path = path.substring(PUBLIC_FOLDER.getName().length());
-			on("GET", path, (Session session) -> {
+			on("GET", path, (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
 				return Response.file(file);
 			});
 	    });
