@@ -1,15 +1,12 @@
 package server.renderer;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class PrintCommand extends Command {
 
-	public PrintCommand() {
-		
-	}
-
 	@Override
-	protected String run(StringBuilder code) throws IOException, InterpreterException {
+	protected String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
 		return Renderer.next(code);
 	}
 	

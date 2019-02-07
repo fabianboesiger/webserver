@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import com.sun.net.httpserver.HttpHandler;
 public class Handler implements HttpHandler {
 	
 	private static final String SESSION_ID_COOKIE_NAME = "session-id";
+	private static final String VISITED_COOKIE_NAME = "visited";
 	private static final int BUFFER_SIZE = 4096;
 	
 	Server server;
@@ -32,12 +34,21 @@ public class Handler implements HttpHandler {
 	public void handle(HttpExchange httpExchange) throws IOException {
 		
 		long start = System.currentTimeMillis();
+		server.handles.add(start);
 		
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
     	Session session = getSession(requestHeaders, responseHeaders);
     	String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
+    	LinkedList <String> languages = new LinkedList <String> ();
+    	
+    	List <String> languageList = requestHeaders.get("Accept-Language");
+    	if(languageList != null) {
+ 		    for(String languageString : languageList) {
+ 		    	languages = getOrderedValue(languageString);
+ 		    }
+ 		}
     	
     	HashMap <String, String> parameters = new HashMap <String, String> ();
     	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
@@ -55,7 +66,7 @@ public class Handler implements HttpHandler {
     	if(listeners != null) {
     		for(Listener listener : listeners) {
     			if(listener.matches(uri)) {
-    				response = listener.listenerAction.act(session, listener.getGroups(uri), parameters);
+    				response = listener.listenerAction.act(new Request(session, listener.getGroups(uri), parameters, languages));
     				if(response.next) {
     					response = null;
     				} else {
@@ -66,40 +77,39 @@ public class Handler implements HttpHandler {
     	}
     	
     	if(response == null) {
-			response = Response.error("Not Found", 404);
+			response = server.responder.error("Not Found", 404);
 		}
-    	    	
+    	
+    	if(response.contentType != null) {
+    		responseHeaders.set("Content-Type", response.contentType);
+    	}
+    	
+    	if(response.responseHeaders != null) {
+    		Iterator <Entry <String, String>> iterator = response.responseHeaders.entrySet().iterator();
+        	while (iterator.hasNext()) {
+            	Map.Entry <String, String> pair = (Map.Entry <String, String>) iterator.next();
+            	responseHeaders.set(pair.getKey(), pair.getValue());
+        	}
+    	}
+    	
+        OutputStream outputStream = httpExchange.getResponseBody();
+    	httpExchange.sendResponseHeaders(response.statusCode, response.size);
+
     	try {
-			
-	    	if(response.contentType != null) {
-	    		responseHeaders.set("Content-Type", response.contentType);
-	    	}
-	    	
-	    	if(response.responseHeaders != null) {
-	    		Iterator <Entry <String, String>> iterator = response.responseHeaders.entrySet().iterator();
-	        	while (iterator.hasNext()) {
-	            	Map.Entry <String, String> pair = (Map.Entry <String, String>) iterator.next();
-	            	responseHeaders.set(pair.getKey(), pair.getValue());
-	        	}
-	    	}
-	    	
-	        OutputStream outputStream = httpExchange.getResponseBody();
-	        
-        	httpExchange.sendResponseHeaders(response.statusCode, response.size);
-        	
         	if(response.inputStream != null) {
 	        	byte[] buffer = new byte[BUFFER_SIZE];
 		        int read;
 			    while((read = response.inputStream.read(buffer)) != -1) {
 			    	outputStream.write(buffer, 0, read);
 			    }
-			    response.inputStream.close();
         	}
-
-		    outputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+		    outputStream.close();
 		}
+    	
+	    response.inputStream.close();
     	
     	long time = System.currentTimeMillis() - start;
     	
@@ -108,15 +118,20 @@ public class Handler implements HttpHandler {
 	}
 	
 	Session getSession(Headers requestHeaders, Headers responseHeaders) {
- 		List<String> requestCookies = requestHeaders.get("Cookie");
+ 		List <String> requestCookies = requestHeaders.get("Cookie");
  		ArrayList <String> responseCookies = new ArrayList <String> ();
  		String sessionId = null;
+ 		boolean visited = false;
  		
  		if(requestCookies != null) {
  		    for(String cookie : requestCookies) {
- 		    	String value = getValue(SESSION_ID_COOKIE_NAME, cookie);
- 		    	if(value != null) {
- 		    		sessionId = value;
+ 		    	String sessionIdValue = getValue(SESSION_ID_COOKIE_NAME, cookie);
+ 		    	if(sessionIdValue != null) {
+ 		    		sessionId = sessionIdValue;
+ 		    	}
+ 		    	String visitedValue = getValue(VISITED_COOKIE_NAME, cookie);
+ 		    	if(visitedValue != null) {
+ 		    		visited = true;
  		    	}
  		    }
  		}
@@ -131,14 +146,19 @@ public class Handler implements HttpHandler {
  			session = server.createSession();
  		}
  		
+ 		if(!visited) {
+ 			server.visitors.add(System.currentTimeMillis());
+ 		}
+ 		
  		responseHeaders.put("Set-Cookie", responseCookies);
  		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getId() + "; path=/; Max-Age=" + Session.MAX_AGE);
-    
+ 		responseCookies.add(VISITED_COOKIE_NAME + "=true; path=/;");
+ 		
  		return session;
     }
     
-    private static String getValue(String key, String cookie) {
-    	String[] pairs = cookie.split(";");
+    private static String getValue(String key, String content) {
+    	String[] pairs = content.split(";");
     	for(String pair : pairs) {
     		String[] splittedPair = pair.split("=");
     		if(key.equals(splittedPair[0].trim())) {
@@ -146,6 +166,41 @@ public class Handler implements HttpHandler {
     		}
     	}
     	return null;
+    }
+    
+    private static LinkedList <String> getOrderedValue(String content) {
+    	LinkedList <Map.Entry <Double, String>> temporary = new LinkedList <Map.Entry <Double, String>> ();
+    	String[] splitted = content.split(",");
+    	for(String element : splitted) {
+    		double weight = 1;
+    		String q = getValue("q", element);
+    		if(q != null) {
+    			try {
+    				weight = Double.parseDouble(q);
+    			} catch (NumberFormatException e) {
+    				weight = 0;
+    			}
+    		}
+    		int index = 0;
+    		for(Map.Entry <Double, String> entry : temporary) {
+    			if(entry.getKey() >= weight) {
+    				index++;
+    			} else {
+    				break;
+    			}
+    		}
+    		String value = element;
+    		int splittingIndex = element.indexOf(";");
+    		if(splittingIndex >= 0) {
+        		value = element.substring(0, splittingIndex);
+    		}
+    		temporary.add(index, new AbstractMap.SimpleEntry <Double, String> (weight, value));
+    	}
+    	LinkedList <String> output = new LinkedList <String> ();
+    	for(Map.Entry <Double, String> entry : temporary) {
+    		output.add(entry.getValue());
+    	}
+    	return output;
     }
     
     public HashMap <String, String> getParameters(String query){

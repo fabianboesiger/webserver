@@ -4,38 +4,41 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedList;
 
-import server.Response;
+import application.Application;
 
-public abstract class Renderer {
+public class Renderer {
 	
 	private static final String KEYWORD = "server";
 	private static final String BEGIN = "<" + KEYWORD + ">";
 	private static final String END = "</" + KEYWORD + ">";
 	private static final char STRING = '"';
 	private static final char ESCAPE = '\\';
+
+	private HashMap <String, Command> commands;
 	
-	private static HashMap <String, Command> commands;
-	
-	static {
+	public Renderer(Application application) {
 		commands = new HashMap <String, Command> ();
 		commands.put("print", new PrintCommand());
-		commands.put("set", new SetCommand());
-		commands.put("get", new GetCommand());
-		commands.put("include", new IncludeCommand());
+		commands.put("set", new SetCommand(application));
+		commands.put("get", new GetCommand(application));
+		commands.put("include", new IncludeCommand(this));
+		commands.put("translate", new TranslateCommand(this));
 	}
 	
-	public static String render(File file) throws IOException, InterpreterException {
-		InputStream inputStream = new FileInputStream(file);
+	public String render(File file, LinkedList <String> languages) throws IOException, InterpreterException {
+		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file))), languages);
+	}
+	
+	public String render(BufferedReader bufferedReader, LinkedList <String> languages) throws IOException, InterpreterException {
 		
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
     	StringBuilder output = new StringBuilder();
 		boolean insideTag = false;
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Response.ENCODING));
 
 		int next;
         while((next = bufferedReader.read()) != -1) {
@@ -58,7 +61,7 @@ public abstract class Renderer {
         		if(buffer.length() >= END.length()) {
         			insideTag = false;
         			buffer.setLength(0);
-        			output.append(interpret(code));
+        			output.append(interpret(code, languages));
         		}
         	}
         }
@@ -67,12 +70,12 @@ public abstract class Renderer {
         return output.toString();
 	}
 	
-	private static StringBuilder interpret(StringBuilder code) throws InterpreterException, IOException {
+	private StringBuilder interpret(StringBuilder code, LinkedList <String> languages) throws InterpreterException, IOException {
 		StringBuilder output = new StringBuilder();
 		while(code.length() > 0) {
 			String command = next(code);
 			if(command != null) {
-				String result = run(command.toLowerCase(), code);
+				String result = run(command.toLowerCase(), code, languages);
 				if(result != null) {
 					output.append(result);
 				}
@@ -129,9 +132,9 @@ public abstract class Renderer {
 		return null;
 	}
 	
-	private static String run(String command, StringBuilder code) throws InterpreterException, IOException {
+	private String run(String command, StringBuilder code, LinkedList <String> languages) throws InterpreterException, IOException {
 		if(commands.containsKey(command)) {
-			return commands.get(command).run(code);
+			return commands.get(command).run(code, languages);
 		}
 		throw new UnknownCommandException(command);
 	}

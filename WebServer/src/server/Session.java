@@ -2,7 +2,8 @@ package server;
 
 public class Session {
 	
-	protected static final int MAX_AGE = 60*60*24;
+	protected static final int MAX_AGE = 7 * 24 * 60 * 60;
+	private static final int ACTIVE = 60;
 	
 	private Server server;
 	private String id;
@@ -11,7 +12,7 @@ public class Session {
 	public Session(Server server, String id) {
 		this.server = server;
 		this.id = id;
-		lastConnect = System.currentTimeMillis();
+		update();
 	}
 	
 	public String getId() {
@@ -19,10 +20,21 @@ public class Session {
 	}
 	
 	public boolean expired() {
-		if(System.currentTimeMillis() > lastConnect + MAX_AGE * 1000) {
+		if(System.currentTimeMillis() >= lastConnect + MAX_AGE * 1000) {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean active() {
+		if(System.currentTimeMillis() < lastConnect + ACTIVE * 1000) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void update() {
+		lastConnect = System.currentTimeMillis();
 	}
 
 }

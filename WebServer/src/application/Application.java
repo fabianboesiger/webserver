@@ -1,46 +1,59 @@
 package application;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import database.Database;
-import server.Response;
+import database.structures.ObjectTemplateException;
+import server.Request;
+import server.Responder;
 import server.Server;
-import server.Session;
 
 public class Application {
 	
+	private Database database;
+	private Responder responder;
+	
 	public Application() throws IOException {
 		
-		setup();
+		database = new Database();
+		responder = new Responder(this);
+		setup(database);
 		
 	}
 	
-	public void setup() throws IOException {
+	public void setup(Database database) throws IOException {
 		
-		Server server = new Server(new Database());
+		Server server = new Server(database);
 		
-		server.on("POST", "/", (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
-			return Response.text("POST");
+		server.on("GET", "/", (Request request) -> {
+			return responder.render("index.html", request.languages);
 		});
 		
-		server.on("GET", "/", (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
-			return Response.render("index.html");
+		server.on("GET", "/server", (Request request) -> {
+			long uptimeMillis = server.uptime();
+			return responder.text(
+				"Uptime: \t" + String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60) + "\n" +
+				"Sessions: \t" + server.sessionsCount() + "\n" +
+				"Active: \t" + server.activeCount() + "\n" +
+				"Handles/Hour: \t" + server.handlesPerHour() + "\n" +
+				"Visitors/Hour: \t" + server.visitorsPerHour()
+			);
 		});
 		
-		server.on("GET", "/parameters", (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
-			return Response.text(parameters.toString());
+		server.on("GET", "/signup", (Request request) -> {
+			return responder.render("signup.html");
 		});
 		
-		server.on("GET", "/(.*)/(.*)", (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
-			return Response.text(groups.toString());
+		server.on("POST", "/signup", (Request request) -> {
+			User user = new User();
+			user.parse(request.parameters);
+			if(database.save(user)) {
+				return responder.text("success");
+			}
+			return responder.redirect("/signup");
 		});
-		
-		server.on("GET", "/redirect", (Session session, ArrayList <String> groups, HashMap <String, String> parameters) -> {
-			return Response.redirect("/redirected");
-		});
-		
+
 	}
 	
 }
