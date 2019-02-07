@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import application.Application;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
+import server.renderer.container.ObjectContainer;
 
 public class Responder {
 	
@@ -25,9 +26,9 @@ public class Responder {
 	private Application application;
 	Renderer renderer;
 	
-	public Responder(Application application) {
+	public Responder(Application application, ObjectContainer predefined) {
 		this.application = application;
-		renderer = new Renderer(application);
+		renderer = new Renderer(application, predefined);
 	}
 	
 	public Response error(String text, int statusCode) throws IOException { 

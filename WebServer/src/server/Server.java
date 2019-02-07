@@ -34,8 +34,10 @@ public class Server {
 	protected LinkedList <Long> visitors;
     Responder responder;
 	
-	public Server(Database database) throws IOException {
+	public Server(Database database, Responder responder) throws IOException {
 		System.out.println("Starting server on port " + PORT);
+		
+		this.responder = responder;
 		
 		startingMillis = System.currentTimeMillis();
 		
@@ -44,7 +46,6 @@ public class Server {
 	    sessions = new ConcurrentHashMap <String, Session> ();
 	    handles = new LinkedList <Long> ();
 	    visitors = new LinkedList <Long> ();
-	    responder = new Responder(null);
 	    
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);

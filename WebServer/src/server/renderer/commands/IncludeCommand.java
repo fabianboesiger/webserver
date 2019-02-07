@@ -1,10 +1,12 @@
-package server.renderer;
+package server.renderer.commands;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
 import server.Responder;
+import server.renderer.InterpreterException;
+import server.renderer.Renderer;
 
 public class IncludeCommand extends Command {
 	
@@ -15,7 +17,7 @@ public class IncludeCommand extends Command {
 	}
 
 	@Override
-	protected String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
+	public String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
 		return renderer.render(new File(Responder.VIEWS_FOLDER.getName() + "/" + Renderer.next(code).toString()), languages);
 	}
 	

@@ -1,35 +1,39 @@
 package application;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import database.Database;
-import database.structures.ObjectTemplateException;
 import server.Request;
 import server.Responder;
 import server.Server;
+import server.renderer.container.ObjectContainer;
+import server.renderer.container.StringContainer;
 
 public class Application {
 	
 	private Database database;
 	private Responder responder;
+	private Server server;
 	
 	public Application() throws IOException {
 		
+		ObjectContainer predefined = new ObjectContainer();
+		predefined.put("title", new StringContainer("Blog"));
+		
 		database = new Database();
-		responder = new Responder(this);
-		setup(database);
+		responder = new Responder(this, predefined);
+		server = new Server(database, responder);
+		setup();
 		
 	}
 	
-	public void setup(Database database) throws IOException {
-		
-		Server server = new Server(database);
+	public void setup() throws IOException {
 		
 		server.on("GET", "/", (Request request) -> {
 			return responder.render("index.html", request.languages);
 		});
 		
+		// Serve server statistics
 		server.on("GET", "/server", (Request request) -> {
 			long uptimeMillis = server.uptime();
 			return responder.text(

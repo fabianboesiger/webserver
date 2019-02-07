@@ -1,7 +1,7 @@
 package application;
 
-import database.structures.ObjectTemplate;
-import database.structures.StringTemplate;
+import database.templates.ObjectTemplate;
+import database.templates.StringTemplate;
 
 public class User extends ObjectTemplate {
 

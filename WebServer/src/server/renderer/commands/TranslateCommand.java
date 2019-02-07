@@ -1,4 +1,4 @@
-package server.renderer;
+package server.renderer.commands;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
+
+import server.renderer.InterpreterException;
+import server.renderer.Renderer;
 
 public class TranslateCommand extends Command {
 	
@@ -21,7 +23,7 @@ public class TranslateCommand extends Command {
 	}
 
 	@Override
-	protected String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
+	public String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
 
 		if(languages != null) {
 			

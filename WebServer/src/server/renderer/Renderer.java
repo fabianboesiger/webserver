@@ -9,6 +9,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import application.Application;
+import server.renderer.commands.Command;
+import server.renderer.commands.GetCommand;
+import server.renderer.commands.IncludeCommand;
+import server.renderer.commands.PrintCommand;
+import server.renderer.commands.SetCommand;
+import server.renderer.commands.TranslateCommand;
+import server.renderer.commands.UnknownCommandException;
+import server.renderer.container.ObjectContainer;
 
 public class Renderer {
 	
@@ -19,8 +27,12 @@ public class Renderer {
 	private static final char ESCAPE = '\\';
 
 	private HashMap <String, Command> commands;
+	private ObjectContainer variables;
 	
-	public Renderer(Application application) {
+	public Renderer(Application application, ObjectContainer predefined) {
+		variables = new ObjectContainer();
+		variables.putAll(predefined);
+		
 		commands = new HashMap <String, Command> ();
 		commands.put("print", new PrintCommand());
 		commands.put("set", new SetCommand(application));
@@ -84,7 +96,7 @@ public class Renderer {
 		return output;
 	}
 	
-	protected static String next(StringBuilder code) {
+	public static String next(StringBuilder code) {
 		StringBuilder buffer = new StringBuilder();
 		boolean insideString = false;
 		boolean escaped = false;

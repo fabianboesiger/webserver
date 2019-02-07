@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import database.structures.ObjectTemplate;
-import database.structures.ObjectTemplateException;
+import database.templates.ObjectTemplate;
+import database.templates.ObjectTemplateException;
 
 public class Database {
 	

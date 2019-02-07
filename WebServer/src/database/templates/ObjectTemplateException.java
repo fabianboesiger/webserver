@@ -1,4 +1,4 @@
-package database.structures;
+package database.templates;
 
 public class ObjectTemplateException extends Exception {
 
