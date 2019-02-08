@@ -3,20 +3,16 @@ package server.renderer.commands;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import application.Application;
 import server.renderer.InterpreterException;
+import server.renderer.Renderer;
+import server.renderer.container.Container;
 
 public class GetCommand extends Command {
-	
-	private Application application;
-	
-	public GetCommand(Application application) {
-		this.application = application;
-	}
 
 	@Override
-	public String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
-		return null;
+	public Container run(StringBuilder code, LinkedList <String> languages, Container container, StringBuilder printer) throws IOException, InterpreterException {
+		String key = Renderer.nextString(code);
+		return Renderer.run(Renderer.nextString(code), code, languages, container, printer).get(key);
 	}
 	
 }

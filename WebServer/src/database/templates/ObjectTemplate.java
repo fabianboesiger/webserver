@@ -38,6 +38,7 @@ public class ObjectTemplate implements Template, Serializable {
 		for(Field field : fields) {
 			String name = field.getName();
 			if(input.containsKey(name)) {
+				field.setAccessible(true);
 				try {
 					((ObjectTemplateField) field.get(this)).fromString(input.get(name));
 				} catch (IllegalArgumentException | IllegalAccessException e) {

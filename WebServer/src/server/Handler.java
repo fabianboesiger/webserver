@@ -32,7 +32,7 @@ public class Handler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
-		
+
 		long start = System.currentTimeMillis();
 		server.handles.add(start);
 		
@@ -49,7 +49,7 @@ public class Handler implements HttpHandler {
  		    	languages = getOrderedValue(languageString);
  		    }
  		}
-    	
+
     	HashMap <String, String> parameters = new HashMap <String, String> ();
     	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
     	if(urlParameters != null) {
@@ -91,26 +91,25 @@ public class Handler implements HttpHandler {
             	responseHeaders.set(pair.getKey(), pair.getValue());
         	}
     	}
-    	
-        OutputStream outputStream = httpExchange.getResponseBody();
-    	httpExchange.sendResponseHeaders(response.statusCode, response.size);
 
-    	try {
-        	if(response.inputStream != null) {
+    	OutputStream outputStream = httpExchange.getResponseBody();
+    	httpExchange.sendResponseHeaders(response.statusCode, response.size);
+    	
+		if(response.inputStream != null) {
+	    	try {
 	        	byte[] buffer = new byte[BUFFER_SIZE];
 		        int read;
 			    while((read = response.inputStream.read(buffer)) != -1) {
 			    	outputStream.write(buffer, 0, read);
 			    }
-        	}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-		    outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			response.inputStream.close();
 		}
-    	
-	    response.inputStream.close();
-    	
+		
+	    outputStream.close();
+	    
     	long time = System.currentTimeMillis() - start;
     	
 		System.out.println(method + " " + uri.toString() + " " + response.statusCode + " " + time + "ms");

@@ -1,19 +1,27 @@
 :root{
-	--text-color: #1f1f1f;
-	--background-color: #dfdfdf;
+	--text-color: #373737;
+	--background-color: #f7f7f7;
 	--max-width: 1024px;
+	--heading-font: Roboto, sans-serif;
+	--text-font: Merriweather, serif;
+	--text-size: 18px;
 }
 
 @font-face{
-	font-family: font;
+	font-family: Merriweather;
+	src: url("merriweather-regular.ttf");
+}
+
+@font-face{
+	font-family: Roboto;
 	src: url("font.ttf");
 }
 
 html{
 	background-color: var(--background-color);
 	color: var(--text-color);
-	font-family: font, sans-serif;
-	font-size: 16px;
+	font-size: var(--text-size);
+	font-family: var(--text-font);
 }
 
 body{
@@ -22,10 +30,12 @@ body{
 
 h1{
 	font-size: 48px;
+	font-family: var(--heading-font);
 }
 
 h2{
 	font-size: 32px;
+	font-family: var(--heading-font);
 }
 
 #main{
@@ -38,15 +48,15 @@ h2{
 
 .collapsible{
 	cursor: pointer;
-	border-bottom: 2px solid var(--text-color);
+	border-bottom: 2px dotted var(--text-color);
 }
 
 .collapsible::after{
-	content: " ▼";
+	content: " ▽";
 }
 
 .collapsible.active::after{
-	content: " ▲";
+	content: " △";
 }
 
 .content{
@@ -57,6 +67,7 @@ h2{
 	padding: 8px;
 	background-color: var(--text-color);
 	color: var(--background-color);
+	font-family: var(--heading-font);
 	text-decoration: none;
 	display: inline-block;
 }

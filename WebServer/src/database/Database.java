@@ -18,7 +18,7 @@ public class Database {
 		
 	}
 	
-	public ObjectTemplate load(String name, String id) throws ObjectTemplateException, IOException, ClassNotFoundException {
+	public synchronized ObjectTemplate load(String name, String id) throws ObjectTemplateException, IOException, ClassNotFoundException {
 		FileInputStream fileInputStream = new FileInputStream(getFile(name, id));
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         ObjectTemplate output = (ObjectTemplate) objectInputStream.readObject();
@@ -27,7 +27,7 @@ public class Database {
         return output;
 	}
 	
-	public boolean save(ObjectTemplate objectTemplate) {
+	public synchronized boolean save(ObjectTemplate objectTemplate) {
 		try {
 			String id = objectTemplate.getId();
 			if(id != null) {

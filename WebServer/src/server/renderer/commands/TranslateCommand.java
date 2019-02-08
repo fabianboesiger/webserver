@@ -10,20 +10,15 @@ import java.util.LinkedList;
 
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
+import server.renderer.container.Container;
 
 public class TranslateCommand extends Command {
 	
 	private static final File LANGUAGES_FOLDER = new File("languages");
 	private static final File LANGUAGES_INDEX_FILE = new File("languages/index.txt");
 	
-	private Renderer renderer;
-	
-	public TranslateCommand(Renderer renderer) {
-		this.renderer = renderer;
-	}
-
 	@Override
-	public String run(StringBuilder code, LinkedList <String> languages) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, Container container, StringBuilder printer) throws IOException, InterpreterException {
 
 		if(languages != null) {
 			
@@ -72,7 +67,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = Renderer.next(code).toString();
+		 			String key = Renderer.nextString(code);
 		 			
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {
@@ -89,7 +84,8 @@ public class TranslateCommand extends Command {
 			 			line = bufferedReader.readLine();
 			 			bufferedReader.close();
 		    		
-			 			return renderer.render(new BufferedReader(new StringReader(line)), languages);
+			 			printer.append(Renderer.render(new BufferedReader(new StringReader(line)), languages, container));
+			 			return null;
 		 			}
 		        }
 	        }

@@ -18,7 +18,7 @@ public class Application {
 	public Application() throws IOException {
 		
 		ObjectContainer predefined = new ObjectContainer();
-		predefined.put("title", new StringContainer("Blog"));
+		predefined.put("title", new StringContainer("Fälis Blog"));
 		
 		database = new Database();
 		responder = new Responder(this, predefined);
@@ -33,7 +33,6 @@ public class Application {
 			return responder.render("index.html", request.languages);
 		});
 		
-		// Serve server statistics
 		server.on("GET", "/server", (Request request) -> {
 			long uptimeMillis = server.uptime();
 			return responder.text(
@@ -57,7 +56,11 @@ public class Application {
 			}
 			return responder.redirect("/signup");
 		});
-
+		
+		server.on("GET", "/redirect", (Request request) -> {
+			return responder.redirect("/signup");
+		});
+		
 	}
 	
 }
