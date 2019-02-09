@@ -2,19 +2,9 @@
 	--text-color: #373737;
 	--background-color: #f7f7f7;
 	--max-width: 1024px;
-	--heading-font: Roboto, sans-serif;
-	--text-font: Merriweather, serif;
+	--heading-font: sans-serif;
+	--text-font: serif;
 	--text-size: 18px;
-}
-
-@font-face{
-	font-family: Merriweather;
-	src: url("merriweather-regular.ttf");
-}
-
-@font-face{
-	font-family: Roboto;
-	src: url("font.ttf");
 }
 
 html{

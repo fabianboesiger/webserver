@@ -45,7 +45,7 @@ public class Application {
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
-			return responder.render("signup.html");
+			return responder.render("signup.html", request.session.getFlashAsObjectContainer("errors"));
 		});
 		
 		server.on("POST", "/signup", (Request request) -> {
@@ -54,11 +54,12 @@ public class Application {
 			if(database.save(user)) {
 				return responder.text("success");
 			}
+			request.session.addFlash("error", "user-already-exists");
 			return responder.redirect("/signup");
 		});
 		
 		server.on("GET", "/redirect", (Request request) -> {
-			return responder.redirect("/signup");
+			return responder.text(request.session.getFlash("errors").toString());
 		});
 		
 	}

@@ -3,11 +3,14 @@
 	<server>include "head.html"</server>
 	<body>
 		<div id="main">
-			<form method="POST">
+			<form action="/signup" method="POST">
 				<input type="text" name="username"/>
 				<input type="password" name="password"/>
 				<input type="submit"/>
 			</form>
+			<server>
+				include "messages.html"
+			</server>
 		</div>
 	</body>
 <html>

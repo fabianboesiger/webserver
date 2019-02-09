@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
 import server.renderer.container.Container;
+import server.renderer.container.ObjectContainer;
 
 public class TranslateCommand extends Command {
 	
@@ -18,7 +19,7 @@ public class TranslateCommand extends Command {
 	private static final File LANGUAGES_INDEX_FILE = new File("languages/index.txt");
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, Container container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
 
 		if(languages != null) {
 			

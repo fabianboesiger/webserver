@@ -1,0 +1,11 @@
+<server>
+	if exists error all
+		print string "<ul>"
+		each message get error all
+			print string "<li>"
+			print get message all
+			print string "</li>"
+		end
+		print string "</ul>"
+	end
+</server>

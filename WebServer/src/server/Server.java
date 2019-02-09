@@ -104,7 +104,7 @@ public class Server {
 		do {
 			key = generateKey(64);
 		}while(sessions.containsKey(key));
-		Session session = new Session(this, key);
+		Session session = new Session(key);
 		sessions.put(key, session);
 		return session;
 	}

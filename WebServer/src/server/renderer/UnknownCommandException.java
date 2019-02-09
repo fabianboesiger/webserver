@@ -1,6 +1,4 @@
-package server.renderer.commands;
-
-import server.renderer.InterpreterException;
+package server.renderer;
 
 public class UnknownCommandException extends InterpreterException {
 

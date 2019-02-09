@@ -9,14 +9,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import server.renderer.commands.AllCommand;
+import server.renderer.commands.BooleanCommand;
 import server.renderer.commands.Command;
+import server.renderer.commands.EachCommand;
+import server.renderer.commands.ExistsCommand;
 import server.renderer.commands.GetCommand;
+import server.renderer.commands.IfCommand;
 import server.renderer.commands.IncludeCommand;
 import server.renderer.commands.PrintCommand;
 import server.renderer.commands.SetCommand;
+import server.renderer.commands.StringCommand;
 import server.renderer.commands.TranslateCommand;
-import server.renderer.commands.UnknownCommandException;
 import server.renderer.container.Container;
+import server.renderer.container.ObjectContainer;
 
 public class Renderer {
 	
@@ -36,13 +41,19 @@ public class Renderer {
 		commands.put("include", new IncludeCommand());
 		commands.put("translate", new TranslateCommand());
 		commands.put("all", new AllCommand());
+		commands.put("string", new StringCommand());
+		commands.put("each", new EachCommand());
+		commands.put("if", new IfCommand());
+		commands.put("exists", new ExistsCommand());
+		commands.put("boolean", new BooleanCommand());
 	}
 	
-	public static String render(File file, LinkedList <String> languages, Container variables) throws IOException, InterpreterException {
+	public static String render(File file, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
 		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file))), languages, variables);
 	}
 	
-	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, Container variables) throws IOException, InterpreterException {
+	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
+		System.out.println(variables);
 		
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
@@ -79,18 +90,15 @@ public class Renderer {
         return output.toString();
 	}
 	
-	private static StringBuilder interpret(StringBuilder code, LinkedList <String> languages, Container variables) throws InterpreterException, IOException {
+	private static StringBuilder interpret(StringBuilder code, LinkedList <String> languages, ObjectContainer variables) throws InterpreterException, IOException {
 		StringBuilder printer = new StringBuilder();
 		while(code.length() > 0) {
-			String command = nextString(code);
-			if(command != null) {
-				run(command.toLowerCase(), code, languages, variables, printer);
-			}
+			runNext(code, languages, variables, printer);
 		}
 		return printer;
 	}
 	
-	public static String nextString(StringBuilder code) throws MalformedCommandException {
+	public static String nextString(StringBuilder code) {
 		StringBuilder buffer = new StringBuilder();
 		boolean insideString = false;
 		boolean escaped = false;
@@ -134,15 +142,23 @@ public class Renderer {
 		if(buffer.length() > 0) {
 			return buffer.toString();
 		}
-
-		throw new MalformedCommandException();
+		
+		return null;
 	}
 	
-	public static Container run(String command, StringBuilder code, LinkedList <String> languages, Container container, StringBuilder printer) throws InterpreterException, IOException {
-		if(commands.containsKey(command)) {
-			return commands.get(command).run(code, languages, container, printer);
+	public static Container runNext(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws InterpreterException, IOException {
+		return run(nextString(code), code, languages, container, printer);
+	}
+	
+	public static Container run(String command, StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws InterpreterException, IOException {
+		if(command != null) {
+			command = command.toLowerCase();
+			if(commands.containsKey(command)) {
+				return commands.get(command).run(code, languages, container, printer);
+			}
+			throw new UnknownCommandException(command);
 		}
-		throw new UnknownCommandException(command);
+		return null;
 	}
 	
 	public static int parseInt(String string) throws ParserException {
@@ -153,7 +169,7 @@ public class Renderer {
 		}
 	}
 	
-	public static int nextInt(StringBuilder code) throws ParserException, MalformedCommandException {
+	public static int nextInt(StringBuilder code) throws ParserException {
 		return parseInt(nextString(code));
 	}
 	
@@ -165,8 +181,20 @@ public class Renderer {
 		}
 	}
 	
-	public static double nextDouble(StringBuilder code) throws ParserException, MalformedCommandException {
+	public static double nextDouble(StringBuilder code) throws ParserException {
 		return parseDouble(nextString(code));
+	}
+	
+	public static boolean parseBoolean(String string) throws ParserException {
+		try {
+			return Boolean.parseBoolean(string);
+		} catch (NumberFormatException e) {
+			throw new ParserException(string);
+		}
+	}
+	
+	public static boolean nextBoolean(StringBuilder code) throws ParserException {
+		return parseBoolean(nextString(code));
 	}
 	
 }

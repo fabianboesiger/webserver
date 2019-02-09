@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import server.renderer.InterpreterException;
+import server.renderer.Renderer;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
+import server.renderer.container.StringContainer;
 
-public class SetCommand extends Command {
-	
+public class StringCommand extends Command {
+
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
-		return null;
+		return new StringContainer(Renderer.nextString(code));
 	}
 	
 }

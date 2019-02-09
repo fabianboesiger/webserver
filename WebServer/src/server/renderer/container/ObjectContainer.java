@@ -17,7 +17,7 @@ public class ObjectContainer implements Container {
 	public void putAll(ObjectContainer objectContainer) {
 		values.putAll(objectContainer.values);
 	}
-	
+
 	@Override
 	public Container get(String key) {
 		return values.get(key);
@@ -26,6 +26,10 @@ public class ObjectContainer implements Container {
 	@Override
 	public String toString() {
 		return values.toString();
+	}
+
+	public boolean containsKey(String key) {
+		return values.containsKey(key);
 	}
 	
 }

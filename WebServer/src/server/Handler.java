@@ -117,7 +117,8 @@ public class Handler implements HttpHandler {
 	}
 	
 	Session getSession(Headers requestHeaders, Headers responseHeaders) {
- 		List <String> requestCookies = requestHeaders.get("Cookie");
+
+		List <String> requestCookies = requestHeaders.get("Cookie");
  		ArrayList <String> responseCookies = new ArrayList <String> ();
  		String sessionId = null;
  		boolean visited = false;
