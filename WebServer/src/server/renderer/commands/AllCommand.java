@@ -10,8 +10,8 @@ import server.renderer.container.ObjectContainer;
 public class AllCommand extends Command {
 
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
-		return container;
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
+		return variables;
 	}
 	
 }

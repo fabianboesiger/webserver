@@ -9,6 +9,6 @@ import server.renderer.container.ObjectContainer;
 
 public abstract class Command {
 	
-	public abstract Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException;
+	public abstract Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException;
 	
 }

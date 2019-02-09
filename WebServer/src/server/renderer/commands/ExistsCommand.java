@@ -12,9 +12,9 @@ import server.renderer.container.ObjectContainer;
 public class ExistsCommand extends Command {
 		
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
 		String key = Renderer.nextString(code);
-		if(((ObjectContainer) Renderer.runNext(code, languages, container, printer)).containsKey(key)) {
+		if(((ObjectContainer) Renderer.runNext(code, languages, variables, printer)).containsKey(key)) {
 			return new BooleanContainer(true);
 		}
 		return new BooleanContainer(false);

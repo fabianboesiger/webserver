@@ -13,4 +13,10 @@ window.onload = function(){
 			}
 		});
 	}
+	
+	let year = new Date().getFullYear();
+	let years = document.getElementsByClassName("year");
+	for(let i = 0; i < years.length; i++){
+		years[i].innerHTML = year;
+	}
 }

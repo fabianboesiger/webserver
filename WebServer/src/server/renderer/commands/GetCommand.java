@@ -11,9 +11,9 @@ import server.renderer.container.ObjectContainer;
 public class GetCommand extends Command {
 
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
 		String key = Renderer.nextString(code);
-		return Renderer.runNext(code, languages, container, printer).get(key);
+		return Renderer.runNext(code, languages, variables, printer).get(key);
 	}
 	
 }

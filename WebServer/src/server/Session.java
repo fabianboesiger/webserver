@@ -52,7 +52,7 @@ public class Session {
 
 	}
 	
-	public LinkedList <String> getFlash(String key) {		
+	public LinkedList <String> getFlash(String key) {
 		return flashes.remove(key);
 	}
 	
@@ -65,7 +65,9 @@ public class Session {
 			}
 		}
 		ObjectContainer objectContainer = new ObjectContainer();
-		objectContainer.put(key, arrayContainer);
+		if(arrayContainer.size() > 0) {
+			objectContainer.put(key, arrayContainer);
+		}
 		return objectContainer;
 	}
 

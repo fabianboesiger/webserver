@@ -1,1 +1,5 @@
-Dies ist eine Beschreibung.
+Benutzername
+Passwort
+Registrieren
+Dieser Benutzername is bereits vergeben.
+Anmelden

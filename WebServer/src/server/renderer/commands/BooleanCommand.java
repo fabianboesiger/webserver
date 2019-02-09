@@ -12,7 +12,7 @@ import server.renderer.container.ObjectContainer;
 public class BooleanCommand extends Command {
 
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
 		return new BooleanContainer(Renderer.nextBoolean(code));
 	}
 	

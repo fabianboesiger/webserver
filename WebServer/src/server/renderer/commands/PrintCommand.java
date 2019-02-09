@@ -11,8 +11,8 @@ import server.renderer.container.ObjectContainer;
 public class PrintCommand extends Command {
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
-		printer.append(Renderer.runNext(code, languages, container, printer).toString());
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
+		printer.append(Renderer.runNext(code, languages, variables, printer).toString());
 		return null;
 	}
 	

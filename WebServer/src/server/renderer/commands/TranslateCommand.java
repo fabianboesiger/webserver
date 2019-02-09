@@ -10,8 +10,10 @@ import java.util.LinkedList;
 
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
+import server.renderer.TranslatorException;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
+import server.renderer.container.StringContainer;
 
 public class TranslateCommand extends Command {
 	
@@ -19,7 +21,7 @@ public class TranslateCommand extends Command {
 	private static final File LANGUAGES_INDEX_FILE = new File("languages/index.txt");
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
 
 		if(languages != null) {
 			
@@ -60,6 +62,10 @@ public class TranslateCommand extends Command {
 			    		}
 		    		}
 		    		
+		    		if(index == -1) {
+		    			throw new TranslatorException("Language file not found");
+		    		}
+		    		
 		    		BufferedReader bufferedReader = new BufferedReader(new FileReader(LANGUAGES_INDEX_FILE));  
 		 			String line = null;
 		 			ArrayList <String> keys = new ArrayList <String> ();
@@ -68,7 +74,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = Renderer.nextString(code);
+		 			String key = ((StringContainer) Renderer.runNext(code, languages, variables, printer)).get();
 		 			
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {
@@ -76,6 +82,11 @@ public class TranslateCommand extends Command {
 		 					keyIndex = i;
 		 				}
 		 			}
+		 			
+		    		if(keyIndex == -1) {
+		    			throw new TranslatorException("Language key not found");
+		    		}
+
 		 					 			
 		 			if(keyIndex >= 0) {
 			 			bufferedReader = new BufferedReader(new FileReader(languageFiles.get(index)));  
@@ -85,14 +96,13 @@ public class TranslateCommand extends Command {
 			 			line = bufferedReader.readLine();
 			 			bufferedReader.close();
 		    		
-			 			printer.append(Renderer.render(new BufferedReader(new StringReader(line)), languages, container));
-			 			return null;
+			 			return new StringContainer(Renderer.render(new BufferedReader(new StringReader(line)), languages, variables));
 		 			}
 		        }
 	        }
 		}
 		
-		throw new InterpreterException("No Language Files found");
+		throw new TranslatorException("No Language Files found");
 	}
 	
 }

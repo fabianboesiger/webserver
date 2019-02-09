@@ -53,7 +53,6 @@ public class Renderer {
 	}
 	
 	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
-		System.out.println(variables);
 		
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
@@ -102,7 +101,7 @@ public class Renderer {
 		StringBuilder buffer = new StringBuilder();
 		boolean insideString = false;
 		boolean escaped = false;
-						
+
 		while(code.length() > 0) {
 			char character = code.charAt(0);
 			code.deleteCharAt(0);
@@ -125,6 +124,7 @@ public class Renderer {
 					if(character == ESCAPE) {
 						buffer.append(ESCAPE);
 					}
+					escaped = false;
 				} else {
 					if(character == ESCAPE) {
 						escaped = true;
@@ -146,17 +146,18 @@ public class Renderer {
 		return null;
 	}
 	
-	public static Container runNext(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws InterpreterException, IOException {
-		return run(nextString(code), code, languages, container, printer);
+	public static Container runNext(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws InterpreterException, IOException {
+		return run(nextString(code), code, languages, variables, printer);
 	}
 	
-	public static Container run(String command, StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws InterpreterException, IOException {
-		if(command != null) {
-			command = command.toLowerCase();
-			if(commands.containsKey(command)) {
-				return commands.get(command).run(code, languages, container, printer);
+	public static Container run(String commandString, StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws InterpreterException, IOException {
+		if(commandString != null) {
+			Command command = getCommand(commandString);
+			if(command != null) {
+				return command.run(code, languages, variables, printer);
+			} else {
+				throw new UnknownCommandException(commandString);
 			}
-			throw new UnknownCommandException(command);
 		}
 		return null;
 	}
@@ -167,6 +168,16 @@ public class Renderer {
 		} catch (NumberFormatException e) {
 			throw new ParserException(string);
 		}
+	}
+	
+	public static Command getCommand(String command){
+		if(command != null) {
+			command = command.toLowerCase();
+			if(commands.containsKey(command)) {
+				return commands.get(command);
+			}
+		}
+		return null;
 	}
 	
 	public static int nextInt(StringBuilder code) throws ParserException {

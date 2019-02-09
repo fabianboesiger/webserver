@@ -12,7 +12,7 @@ import server.renderer.container.StringContainer;
 public class StringCommand extends Command {
 
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer container, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
 		return new StringContainer(Renderer.nextString(code));
 	}
 	

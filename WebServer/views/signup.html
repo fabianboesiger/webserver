@@ -2,15 +2,23 @@
 <html>
 	<server>include "head.html"</server>
 	<body>
-		<div id="main">
+		<server>include "header.html"</server>
+		<server>include "nav.html"</server>
+		<main>
 			<form action="/signup" method="POST">
-				<input type="text" name="username"/>
-				<input type="password" name="password"/>
+				<h2><server>print translate string signup</server></h2>
+				<div class="pair">
+					<label for="username"><server>print translate string username</server></label>
+					<input type="text" name="username" id="username"/>
+				</div>
+				<div class="pair">
+					<label for="password"><server>print translate string password</server></label>
+					<input type="password" name="password" id="password"/>
+				</div>
+				<server>include "messages.html"</server>
 				<input type="submit"/>
 			</form>
-			<server>
-				include "messages.html"
-			</server>
-		</div>
+		</main>
+		<server>include "footer.html"</server>
 	</body>
 <html>
