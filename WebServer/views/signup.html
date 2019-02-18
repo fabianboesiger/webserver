@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
-	<server>include "head.html"</server>
+	{{include "head.html"}}
 	<body>
-		<server>include "header.html"</server>
-		<server>include "nav.html"</server>
+		{{include "header.html"}}
+		{{include "nav.html"}}
 		<main>
 			<form action="/signup" method="POST">
-				<h2><server>translate "signup"</server></h2>
+				<h2>{{translate "signup"}}</h2>
 				<div class="block">
-					<label for="username"><server>translate "username"</server></label>
+					<label for="username">{{translate "username"}}</label>
 					<input type="text" name="username" id="username"/>
 				</div>
 				<div class="block">
-					<label for="password"><server>translate "password"</server></label>
+					<label for="password">{{translate "password"}}</label>
 					<input type="password" name="password" id="password"/>
 				</div>
-				<server>include "messages.html"</server>
+				{{include "messages.html"}}
 				<input type="submit"/>
 			</form>
 		</main>
-		<server>include "footer.html"</server>
+		{{include "footer.html"}}
 	</body>
 <html>
