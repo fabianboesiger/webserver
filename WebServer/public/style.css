@@ -1,10 +1,11 @@
 /* Predefined */
 
 :root{
-	--text-color: #171717;
-	--background-color: #f7f7f7;
-	--primary-color: #577737;
-	--error-color: #f75737;
+	--outside-color: #4E6E7D;
+	--main-color: #F5F1F2;
+	--outside-text-color: #CD9F64;
+	--main-text-color: #2C2C2C;
+	--error-color: #C94731;
 	
 	--max-width: 1024px;
 	--max-form-width: 512px;
@@ -14,7 +15,7 @@
 	
 	--text-size: 18px;
 	
-	--border-style: 2px dotted var(--text-color);
+	--border-style: 2px dotted var(--main-text-color);
 	
 	--padding: 48px;
 	--margin: 24px;
@@ -28,7 +29,7 @@
 /* Structure */
 
 html{
-	background-color: var(--primary-color);
+	background-color: var(--outside-color);
 	font-size: var(--text-size);
 	font-family: var(--text-font);
 }
@@ -38,9 +39,14 @@ body{
 }
 
 main{
-	background-color: var(--background-color);
 	padding-top: var(--padding);
 	padding-bottom: var(--padding);
+	background-color: var(--main-color);
+	color: var(--main-text-color);
+}
+
+header, footer{
+	color: var(--outside-text-color);
 }
 
 header{
@@ -80,10 +86,25 @@ ul{
 
 a{
 	text-decoration: none;
-	padding-left: 0.2em;
-	padding-right: 0.2em;
-	background-color: var(--text-color);
-	color: var(--background-color);
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+	background-color: var(--outside-text-color);
+	color: var(--outside-color);
+	transition: all 0.2s;
+}
+
+main a{
+	background-color: var(--main-text-color);
+	color: var(--main-color);
+}
+
+a:hover{
+	background-color: transparent;
+	color: var(--outside-text-color);
+}
+
+main a:hover{
+	color: var(--main-text-color);
 }
 
 img{
@@ -93,7 +114,7 @@ img{
 #title{
 	padding: 0px;
 	background-color: transparent;
-	color: var(--text-color);
+	color: var(--outside-text-color);
 }
 
 /* Form and Button Styling */
@@ -107,9 +128,13 @@ input{
 	width: 100%;
 	outline: none;
 	border: none;
-	color: var(--text-color);
+	color: var(--main-text-color);
 	font-size: var(--text-size);
 	font-family: var(--heading-font);
+	border-radius: 0px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 }
 
 input[type=text], input[type=password]{
@@ -126,8 +151,23 @@ input[type=submit], .button{
 	width: 100%;
 	padding: 8px;
 	text-align: center;
-	background-color: var(--text-color);
-	color: var(--background-color);
+	background-color: var(--main-text-color);
+	color: var(--main-color);
+	cursor: pointer;
+	
+	transition: all 0.2s;
+	transform: translate(0, 4px); 
+	box-shadow: 0px -4px var(--outside-color);
+}
+
+input[type=submit]:hover, .button:hover, input[type=submit]:focus, .button:focus{
+	transform: translate(0, 3px); 
+	box-shadow: 0px -3px var(--outside-color);
+}
+
+input[type=submit]:active, .button:active{
+	transform: translate(0, 0px); 
+	box-shadow: 0px 0px var(--outside-color);
 }
 
 .errors{
@@ -141,15 +181,21 @@ input[type=submit], .button{
 /* Navigation */
 
 nav{
+	background-color: var(--outside-color);
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0px;
 	display: flex;
 	justify-content: center;
+	align-self: flex-start;
 	flex-flow: row wrap;
+	z-index: 1000;
 }
 
 nav > a{
-	padding: 16px;
-	background-color: transparent;
-	color: var(--text-color);
+	margin: 8px;
+	margin-top: 16px;
+	margin-bottom: 16px;
 }
 
 /* Collapsibles */

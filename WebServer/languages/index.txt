@@ -1,5 +1,11 @@
+hello
+introduction
+projects
+submit
 username
 password
 signup
 username-taken
 signin
+visit-my
+github-profile

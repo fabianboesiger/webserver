@@ -1,5 +1,11 @@
+Hallo, Welt!
+Willkommen bei {{print get "title" variables}} <a href="/">Link</a>.
+Projekte
+Senden
 Benutzername
 Passwort
 Registrieren
 Dieser Benutzername is bereits vergeben.
 Anmelden
+Besuche mein
+GitHub-Profil
