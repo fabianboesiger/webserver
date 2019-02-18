@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import server.renderer.commands.VariablesCommand;
+import server.Response;
 import server.renderer.commands.Command;
 import server.renderer.commands.EachCommand;
 import server.renderer.commands.ExistsCommand;
@@ -47,11 +48,11 @@ public abstract class Renderer {
 	}
 	
 	public static String render(File file, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
-		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file))), languages, variables);
+		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file), Response.ENCODING)), languages, variables);
 	}
 	
 	public static String render(File file, LinkedList <String> languages, ObjectContainer variables, BufferedReader insert) throws IOException, InterpreterException {
-		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file))), languages, variables, insert);
+		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file), Response.ENCODING)), languages, variables, insert);
 	}
 	
 	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
@@ -59,7 +60,6 @@ public abstract class Renderer {
 	}
 	
 	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, ObjectContainer variables, BufferedReader insert) throws IOException, InterpreterException {
-		
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
     	StringBuilder output = new StringBuilder();
@@ -158,7 +158,7 @@ public abstract class Renderer {
 		return run(nextCommand(code), code, languages, variables, printer, insert);
 	}
 	
-	public static Container run(String commandString, StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws InterpreterException, IOException {
+	public static Container run(String commandString, StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws InterpreterException, IOException {		
 		if(commandString != null) {
 			Command command = getCommand(commandString);
 			if(command != null) {
@@ -167,6 +167,7 @@ public abstract class Renderer {
 				throw new UnknownCommandException(commandString);
 			}
 		}
+
 		return null;
 	}
 	

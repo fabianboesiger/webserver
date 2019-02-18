@@ -2,29 +2,37 @@ package server.renderer.commands;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import server.Response;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
 import server.renderer.TranslatorException;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
-import server.renderer.container.StringContainer;
 
 public class TranslateCommand extends Command {
 	
 	private static final File LANGUAGES_FOLDER = new File("languages");
 	private static final File LANGUAGES_INDEX_FILE = new File("languages/index.txt");
 	
+	private static final LinkedList <String> DEFAULT_LANGUAGES;
+
+	static {
+		DEFAULT_LANGUAGES = new LinkedList <String> ();
+		DEFAULT_LANGUAGES.add("de");
+		DEFAULT_LANGUAGES.add("en");
+	}
+	
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws IOException, InterpreterException {
 
 		if(languages != null) {
-			
 	        File[] files = LANGUAGES_FOLDER.listFiles();
 	        if(files.length > 0) {
 	        	
@@ -37,6 +45,8 @@ public class TranslateCommand extends Command {
 		        }
 
 		        if(languageFiles.size() > 0) {
+		        	
+		        	languages.addAll(DEFAULT_LANGUAGES);
 		        	
 		        	int index = -1;
 		    		int confidence = 0;
@@ -63,10 +73,10 @@ public class TranslateCommand extends Command {
 		    		}
 		    		
 		    		if(index == -1) {
-		    			throw new TranslatorException("Language file not found");
+		    			throw new TranslatorException("Language file not found for " + languages.toString());
 		    		}
 		    		
-		    		BufferedReader bufferedReader = new BufferedReader(new FileReader(LANGUAGES_INDEX_FILE));  
+		    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(LANGUAGES_INDEX_FILE), Response.ENCODING));  
 		 			String line = null;
 		 			ArrayList <String> keys = new ArrayList <String> ();
 		 			while((line = bufferedReader.readLine()) != null) {
@@ -89,7 +99,7 @@ public class TranslateCommand extends Command {
 
 		 					 			
 		 			if(keyIndex >= 0) {
-			 			bufferedReader = new BufferedReader(new FileReader(languageFiles.get(index)));  
+			 			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(languageFiles.get(index)), Response.ENCODING));  
 			 			for(int i = 0; i < keyIndex; i++) {
 			 				bufferedReader.readLine();
 			 			}

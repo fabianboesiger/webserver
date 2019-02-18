@@ -33,6 +33,10 @@ public class Application {
 			return responder.render("index.html", request.languages);
 		});
 		
+		server.on("GET", "/projects", (Request request) -> {
+			return responder.render("projects.html", request.languages);
+		});
+		
 		server.on("GET", "/server", (Request request) -> {
 			long uptimeMillis = server.uptime();
 			return responder.text(

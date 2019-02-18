@@ -16,12 +16,6 @@ import server.renderer.container.ObjectContainer;
 public class Responder {
 	
 	public static final File VIEWS_FOLDER = new File("views");
-	private static final LinkedList <String> DEFAULT_LANGUAGES;
-
-	static {
-		DEFAULT_LANGUAGES = new LinkedList <String> ();
-		DEFAULT_LANGUAGES.add("en");
-	}
 	 
 	private Application application;
 	private ObjectContainer predefined;
@@ -56,19 +50,19 @@ public class Responder {
 	}
 	
 	public Response render(String name) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), DEFAULT_LANGUAGES, new ObjectContainer());
+		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, new ObjectContainer());
 	}
 	
 	public Response render(File file) throws IOException {
-		return render(file, DEFAULT_LANGUAGES, new ObjectContainer());
+		return render(file, null, new ObjectContainer());
 	}
 	
 	public Response render(String name, ObjectContainer variables) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), DEFAULT_LANGUAGES, variables);
+		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, variables);
 	}
 	
 	public Response render(File file, ObjectContainer variables) throws IOException {
-		return render(file, DEFAULT_LANGUAGES, variables);
+		return render(file, null, variables);
 	}
 	
 	public Response render(String name, LinkedList <String> languages) throws IOException {

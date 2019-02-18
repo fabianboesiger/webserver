@@ -1,9 +1,9 @@
 {{
-	if exists "errors" all
+	if exists "errors" variables
 		print "<div class=\"errors\"><ul>"
-		each "message" get "errors" all
+		each "message" get "errors" variables
 			print "<li>"
-			translate get "message" all
+			translate get "message" variables
 			print "</li>"
 		end
 		print "</ul></div>"
