@@ -13,7 +13,7 @@ public class ExistsCommand extends Command {
 		
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code);
+		String key = Renderer.nextString(code, languages, variables, printer);
 		if(((ObjectContainer) Renderer.runNext(code, languages, variables, printer)).containsKey(key)) {
 			return new BooleanContainer(true);
 		}

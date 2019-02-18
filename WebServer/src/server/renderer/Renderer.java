@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import server.renderer.commands.AllCommand;
-import server.renderer.commands.BooleanCommand;
 import server.renderer.commands.Command;
 import server.renderer.commands.EachCommand;
 import server.renderer.commands.ExistsCommand;
@@ -17,11 +16,10 @@ import server.renderer.commands.GetCommand;
 import server.renderer.commands.IfCommand;
 import server.renderer.commands.IncludeCommand;
 import server.renderer.commands.PrintCommand;
-import server.renderer.commands.SetCommand;
-import server.renderer.commands.StringCommand;
 import server.renderer.commands.TranslateCommand;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
+import server.renderer.container.StringContainer;
 
 public class Renderer {
 	
@@ -36,16 +34,13 @@ public class Renderer {
 	static {
 		commands = new HashMap <String, Command> ();
 		commands.put("print", new PrintCommand());
-		commands.put("set", new SetCommand());
 		commands.put("get", new GetCommand());
 		commands.put("include", new IncludeCommand());
 		commands.put("translate", new TranslateCommand());
 		commands.put("all", new AllCommand());
-		commands.put("string", new StringCommand());
 		commands.put("each", new EachCommand());
 		commands.put("if", new IfCommand());
 		commands.put("exists", new ExistsCommand());
-		commands.put("boolean", new BooleanCommand());
 	}
 	
 	public static String render(File file, LinkedList <String> languages, ObjectContainer variables) throws IOException, InterpreterException {
@@ -97,7 +92,7 @@ public class Renderer {
 		return printer;
 	}
 	
-	public static String nextString(StringBuilder code) {
+	public static String nextCommand(StringBuilder code) {
 		StringBuilder buffer = new StringBuilder();
 		boolean insideString = false;
 		boolean escaped = false;
@@ -107,6 +102,7 @@ public class Renderer {
 			code.deleteCharAt(0);
 			if(!insideString) {
 				if(character == STRING) {
+					buffer.append(STRING);
 					insideString = true;
 				} else
 				if(Character.isWhitespace(character)) {
@@ -130,6 +126,7 @@ public class Renderer {
 						escaped = true;
 					} else
 					if(character == STRING) {
+						buffer.append(STRING);
 						if(buffer.length() > 0) {
 							return buffer.toString();
 						}
@@ -147,7 +144,7 @@ public class Renderer {
 	}
 	
 	public static Container runNext(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws InterpreterException, IOException {
-		return run(nextString(code), code, languages, variables, printer);
+		return run(nextCommand(code), code, languages, variables, printer);
 	}
 	
 	public static Container run(String commandString, StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws InterpreterException, IOException {
@@ -162,14 +159,6 @@ public class Renderer {
 		return null;
 	}
 	
-	public static int parseInt(String string) throws ParserException {
-		try {
-			return Integer.parseInt(string);
-		} catch (NumberFormatException e) {
-			throw new ParserException(string);
-		}
-	}
-	
 	public static Command getCommand(String command){
 		if(command != null) {
 			command = command.toLowerCase();
@@ -180,32 +169,43 @@ public class Renderer {
 		return null;
 	}
 	
-	public static int nextInt(StringBuilder code) throws ParserException {
-		return parseInt(nextString(code));
-	}
-	
-	public static double parseDouble(String string) throws ParserException {
+	public static int nextInt(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws ParserException {
+		String command = nextCommand(code);
 		try {
-			return Double.parseDouble(string);
-		} catch (NumberFormatException e) {
-			throw new ParserException(string);
+			return Integer.parseInt(command);
+		} catch (NumberFormatException e1) {
+			try {
+				return Integer.parseInt(((StringContainer) run(command, code, languages, variables, printer)).get());
+			} catch (NumberFormatException | InterpreterException | IOException e2) {
+				throw new ParserException("Parse Integer Failed");
+			}
 		}
 	}
 	
-	public static double nextDouble(StringBuilder code) throws ParserException {
-		return parseDouble(nextString(code));
-	}
-	
-	public static boolean parseBoolean(String string) throws ParserException {
+	public static boolean nextBoolean(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws ParserException {
+		String command = nextCommand(code);
 		try {
-			return Boolean.parseBoolean(string);
-		} catch (NumberFormatException e) {
-			throw new ParserException(string);
+			return Boolean.parseBoolean(command);
+		} catch (NumberFormatException e1) {
+			try {
+				return Boolean.parseBoolean(((StringContainer) run(command, code, languages, variables, printer)).get());
+			} catch (NumberFormatException | InterpreterException | IOException e2) {
+				throw new ParserException("Parse Boolean Failed");
+			}
 		}
 	}
 	
-	public static boolean nextBoolean(StringBuilder code) throws ParserException {
-		return parseBoolean(nextString(code));
+	public static String nextString(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws ParserException {
+		String command = nextCommand(code);
+		if(command.startsWith("" + STRING) && command.endsWith("" + STRING)) {
+			return command.substring(1, command.length() - 1);
+		} else {
+				try {
+					return ((StringContainer) runNext(code, languages, variables, printer)).get();
+				} catch (InterpreterException | IOException e) {
+					throw new ParserException("Parse String Failed");
+				}
+		}
 	}
 	
 }

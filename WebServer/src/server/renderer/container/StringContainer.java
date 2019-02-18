@@ -17,11 +17,6 @@ public class StringContainer implements Container {
 	}
 
 	@Override
-	public Container get(String key) {
-		return null;
-	}
-	
-	@Override
 	public String toString() {
 		return value;
 	}

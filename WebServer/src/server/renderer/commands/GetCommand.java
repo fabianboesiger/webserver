@@ -12,8 +12,8 @@ public class GetCommand extends Command {
 
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code);
-		return Renderer.runNext(code, languages, variables, printer).get(key);
+		String key = Renderer.nextString(code, languages, variables, printer);
+		return ((ObjectContainer) Renderer.runNext(code, languages, variables, printer)).get(key);
 	}
 	
 }

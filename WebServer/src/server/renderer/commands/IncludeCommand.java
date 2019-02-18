@@ -14,7 +14,7 @@ public class IncludeCommand extends Command {
 
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		printer.append(Renderer.render(new File(Responder.VIEWS_FOLDER.getName() + "/" + Renderer.nextString(code)), languages, variables));
+		printer.append(Renderer.render(new File(Responder.VIEWS_FOLDER.getName() + "/" + Renderer.nextString(code, languages, variables, printer)), languages, variables));
 		return null;
 	}
 	

@@ -13,10 +13,9 @@ public class IfCommand extends CommandBlock {
 		
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		BooleanContainer doIt = (BooleanContainer) Renderer.runNext(code, languages, variables, printer);		
-		if(doIt.get()) {
+		if(Renderer.nextBoolean(code, languages, variables, printer)) {
 			String next;
-			while(!(next = Renderer.nextString(code)).toLowerCase().equals(END)) {
+			while(!(next = Renderer.nextCommand(code)).toLowerCase().equals(END)) {
 				Renderer.run(next, code, languages, variables, printer);
 			}
 		} else {

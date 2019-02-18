@@ -2,9 +2,6 @@ package server.renderer.container;
 
 import java.util.ArrayList;
 
-import server.renderer.ParserException;
-import server.renderer.Renderer;
-
 public class ArrayContainer implements Container {
 	
 	private ArrayList <Container> values;
@@ -31,11 +28,6 @@ public class ArrayContainer implements Container {
 	
 	public int size() {
 		return values.size();
-	}
-
-	@Override
-	public Container get(String key) throws ParserException {
-		return get(Renderer.parseInt(key));
 	}
 	
 	@Override

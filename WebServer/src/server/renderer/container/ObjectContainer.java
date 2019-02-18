@@ -18,7 +18,6 @@ public class ObjectContainer implements Container {
 		values.putAll(objectContainer.values);
 	}
 
-	@Override
 	public Container get(String key) {
 		return values.get(key);
 	}

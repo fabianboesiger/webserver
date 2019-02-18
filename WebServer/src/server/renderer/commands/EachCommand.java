@@ -15,7 +15,7 @@ public class EachCommand extends CommandBlock {
 	
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code);
+		String key = Renderer.nextString(code, languages, variables, printer);
 		ArrayContainer arrayContainer = (ArrayContainer) Renderer.runNext(code, languages, variables, printer);		
 		
 		if(arrayContainer.size() == 0) {
@@ -32,7 +32,7 @@ public class EachCommand extends CommandBlock {
 				Container value = arrayContainer.get(i);
 				variables.put(key, value);
 				String next;
-				while(!(next = Renderer.nextString(codeCopy)).toLowerCase().equals(END)) {
+				while(!(next = Renderer.nextCommand(codeCopy)).toLowerCase().equals(END)) {
 					Renderer.run(next, codeCopy, languages, variables, printer);
 				}
 			}

@@ -9,7 +9,7 @@ public abstract class CommandBlock extends Command {
 	protected void skip(StringBuilder code) {
 		int count = 1;
 		while(count != 0) {
-			String next = Renderer.nextString(code).toLowerCase();
+			String next = Renderer.nextCommand(code).toLowerCase();
 			if(next.equals(END)) {
 				count--;
 			} else
