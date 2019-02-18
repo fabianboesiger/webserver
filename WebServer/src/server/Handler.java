@@ -35,14 +35,13 @@ public class Handler implements HttpHandler {
 
 		long start = System.currentTimeMillis();
 		server.handles.add(start);
-		
+
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
     	Session session = getSession(requestHeaders, responseHeaders);
     	String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
     	LinkedList <String> languages = new LinkedList <String> ();
-    	
     	List <String> languageList = requestHeaders.get("Accept-Language");
     	if(languageList != null) {
  		    for(String languageString : languageList) {
@@ -61,7 +60,7 @@ public class Handler implements HttpHandler {
     	}
     	
     	Response response = null;
-	
+
     	LinkedList <Listener> listeners = server.listeners.get(method);
     	if(listeners != null) {
     		for(Listener listener : listeners) {
@@ -75,7 +74,7 @@ public class Handler implements HttpHandler {
     			}
     		}
     	}
-    	
+
     	if(response == null) {
 			response = server.responder.error("Not Found", 404);
 		}
@@ -122,7 +121,7 @@ public class Handler implements HttpHandler {
  		ArrayList <String> responseCookies = new ArrayList <String> ();
  		String sessionId = null;
  		boolean visited = false;
- 		
+
  		if(requestCookies != null) {
  		    for(String cookie : requestCookies) {
  		    	String sessionIdValue = getValue(SESSION_ID_COOKIE_NAME, cookie);
@@ -161,7 +160,7 @@ public class Handler implements HttpHandler {
     	String[] pairs = content.split(";");
     	for(String pair : pairs) {
     		String[] splittedPair = pair.split("=");
-    		if(key.equals(splittedPair[0].trim())) {
+    		if(splittedPair.length == 2 && key.equals(splittedPair[0].trim())) {
     			return splittedPair[1].trim();
     		}
     	}

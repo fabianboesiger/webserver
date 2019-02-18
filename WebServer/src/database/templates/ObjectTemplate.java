@@ -8,8 +8,8 @@ public class ObjectTemplate implements Template, Serializable {
 
 	private static final long serialVersionUID = -3949241716730057312L;
 	
-	private transient ObjectTemplateField idTemplate;
-	private transient String name;
+	private ObjectTemplateField idTemplate;
+	private String name;
 	
 	public ObjectTemplate(String name) {
 		this.name = name;

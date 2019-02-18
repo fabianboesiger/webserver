@@ -1,5 +1,6 @@
 package server.renderer.commands;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -14,9 +15,9 @@ public class EachCommand extends CommandBlock {
 	private static final String END = "end";
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code, languages, variables, printer);
-		ArrayContainer arrayContainer = (ArrayContainer) Renderer.runNext(code, languages, variables, printer);		
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws IOException, InterpreterException {
+		String key = Renderer.nextString(code, languages, variables, printer, insert);
+		ArrayContainer arrayContainer = (ArrayContainer) Renderer.runNext(code, languages, variables, printer, insert);		
 		
 		if(arrayContainer.size() == 0) {
 			skip(code);
@@ -33,7 +34,7 @@ public class EachCommand extends CommandBlock {
 				variables.put(key, value);
 				String next;
 				while(!(next = Renderer.nextCommand(codeCopy)).toLowerCase().equals(END)) {
-					Renderer.run(next, codeCopy, languages, variables, printer);
+					Renderer.run(next, codeCopy, languages, variables, printer, insert);
 				}
 			}
 		}

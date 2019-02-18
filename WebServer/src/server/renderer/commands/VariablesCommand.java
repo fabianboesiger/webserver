@@ -7,7 +7,7 @@ import server.renderer.InterpreterException;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
 
-public class AllCommand extends Command {
+public class VariablesCommand extends Command {
 
 	@Override
 	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {

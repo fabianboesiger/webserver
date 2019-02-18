@@ -21,7 +21,7 @@ public class TranslateCommand extends Command {
 	private static final File LANGUAGES_INDEX_FILE = new File("languages/index.txt");
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer) throws IOException, InterpreterException {
+	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws IOException, InterpreterException {
 
 		if(languages != null) {
 			
@@ -74,7 +74,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = Renderer.nextString(code, languages, variables, printer);
+		 			String key = Renderer.nextString(code, languages, variables, printer, insert);
 		 			
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {
