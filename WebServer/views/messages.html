@@ -1,11 +1,11 @@
 <server>
-	if exists errors all
-		print string "<div class=\"errors\"><ul>"
-		each message get errors all
-			print string "<li>"
-			translate get message all
-			print string "</li>"
+	if exists "errors" all
+		print "<div class=\"errors\"><ul>"
+		each "message" get "errors" all
+			print "<li>"
+			translate get "message" all
+			print "</li>"
 		end
-		print string "</ul></div>"
+		print "</ul></div>"
 	end
 </server>

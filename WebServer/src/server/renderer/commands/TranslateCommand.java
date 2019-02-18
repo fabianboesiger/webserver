@@ -74,7 +74,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = ((StringContainer) Renderer.runNext(code, languages, variables, printer)).get();
+		 			String key = Renderer.nextString(code, languages, variables, printer);
 		 			
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {

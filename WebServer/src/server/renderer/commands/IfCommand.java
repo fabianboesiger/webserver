@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
-import server.renderer.container.BooleanContainer;
 import server.renderer.container.Container;
 import server.renderer.container.ObjectContainer;
 
