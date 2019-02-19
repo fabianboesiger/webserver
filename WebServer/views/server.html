@@ -1,0 +1,17 @@
+{{include "top.html"}}
+  <script>
+    window.addEventListener("load", function(){
+      let stats = document.getElementById("stats");
+      function update(){
+        loadHTML("/stats", stats);
+      }
+
+      update();
+      setInterval(function(){
+        update();
+      }, 1000);
+    });
+  </script>
+  <div id="stats">
+  </div>
+{{include "bottom.html"}}

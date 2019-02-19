@@ -1,5 +1,5 @@
-window.onload = function(){
-	
+window.addEventListener("load", function(){
+
 	// Make Collapsibles functional
 	let collapsibles = document.getElementsByClassName("collapsible");
 	for(let i = 0; i < collapsibles.length; i++){
@@ -13,12 +13,20 @@ window.onload = function(){
 			}
 		});
 	}
-	
+
 	// Replace Date
 	let year = new Date().getFullYear();
 	let years = document.getElementsByClassName("year");
 	for(let i = 0; i < years.length; i++){
 		years[i].innerHTML = year;
 	}
-	
+
+});
+
+// Loader
+function loadHTML(href, element){
+	let request = new XMLHttpRequest();
+  request.open("GET", href, false);
+  request.send();
+  element.innerHTML = request.responseText;
 }

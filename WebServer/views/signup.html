@@ -1,24 +1,15 @@
-<!DOCTYPE html>
-<html>
-	{{include "head.html"}}
-	<body>
-		{{include "header.html"}}
-		{{include "nav.html"}}
-		<main>
-			<form action="/signup" method="POST">
-				<h2>{{translate "signup"}}</h2>
-				<div class="block">
-					<label for="username">{{translate "username"}}</label>
-					<input type="text" name="username" id="username"/>
-				</div>
-				<div class="block">
-					<label for="password">{{translate "password"}}</label>
-					<input type="password" name="password" id="password"/>
-				</div>
-				{{include "messages.html"}}
-				<input type="submit" value="{{translate "submit"}}"/>
-			</form>
-		</main>
-		{{include "footer.html"}}
-	</body>
-<html>
+{{include "top.html"}}
+	<form action="/signup" method="POST">
+		<h2>{{translate "signup"}}</h2>
+		<div class="block">
+			<label for="username">{{translate "username"}}</label>
+			<input type="text" name="username" id="username"/>
+		</div>
+		<div class="block">
+			<label for="password">{{translate "password"}}</label>
+			<input type="password" name="password" id="password"/>
+		</div>
+		{{include "messages.html"}}
+		<input type="submit" value="{{translate "submit"}}"/>
+	</form>
+{{include "bottom.html"}}

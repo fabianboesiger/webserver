@@ -38,14 +38,16 @@ public class Application {
 		});
 		
 		server.on("GET", "/server", (Request request) -> {
+			return responder.render("server.html", request.languages);
+		});
+		
+		server.on("GET", "/stats", (Request request) -> {
 			long uptimeMillis = server.uptime();
-			return responder.text(
-				"Uptime: \t" + String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60) + "\n" +
-				"Sessions: \t" + server.sessionsCount() + "\n" +
-				"Active: \t" + server.activeCount() + "\n" +
-				"Handles/Hour: \t" + server.handlesPerHour() + "\n" +
-				"Visitors/Hour: \t" + server.visitorsPerHour()
-			);
+			ObjectContainer variables = new ObjectContainer();
+			variables.put("uptime", new StringContainer(String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60)));
+			variables.put("sessions-count", new StringContainer("" + server.sessionsCount()));
+			variables.put("active-count", new StringContainer("" + server.activeCount()));
+			return responder.render("stats.html", request.languages, variables);
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
