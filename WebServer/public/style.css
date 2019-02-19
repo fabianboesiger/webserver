@@ -10,20 +10,64 @@
 	--max-width: 1024px;
 	--max-form-width: 512px;
 
-	--heading-font: font, sans-serif;
-	--text-font: font, serif;
-
+	--heading-font: AbrilFatface, sans-serif;
+	--text-font: CrimsonText, serif;
+	--code-font: FiraCode, monospace;
+	
 	--text-size: 18px;
-
-	--border-style: 2px dotted var(--main-text-color);
+	--footer-text-size: 14px;
 
 	--padding: 48px;
 	--margin: 24px;
 }
 
-@font-face {
-  font-family: font;
-  src: url(font.ttf);
+/* Fonts */
+
+@font-face{
+  font-family: CrimsonText;
+  src: url(fonts/CrimsonText/CrimsonText-Regular.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-weight: bold;
+  src: url(fonts/CrimsonText/CrimsonText-Bold.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-style: italic;
+  src: url(fonts/CrimsonText/CrimsonText-Italic.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-weight: bold;
+   font-style: italic;
+  src: url(fonts/CrimsonText/CrimsonText-BoldItalic.ttf);
+}
+
+@font-face{
+  font-family: FiraCode;
+  src: url(fonts/FiraCode/FiraCode-Regular.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-weight: bold;
+  src: url(fonts/FiraCode/FiraCode-Bold.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-style: italic;
+  src: url(fonts/FiraCode/FiraCode-Italic.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-weight: bold;
+   font-style: italic;
+  src: url(fonts/FiraCode/FiraCode-BoldItalic.ttf);
+}
+
+@font-face{
+  font-family: AbrilFatface;
+  src: url(fonts/AbrilFatface/AbrilFatface-Regular.ttf);
 }
 
 /* Structure */
@@ -53,6 +97,10 @@ header{
 	text-align: center;
 }
 
+footer{
+	font-size: var(--footer-text-size);
+}
+
 main, header, footer{
 	box-sizing: border-box;
 	width: 100%;
@@ -70,14 +118,17 @@ img, p, h1, h2, .block, input[type=submit]{
 
 /* General Element Styling */
 
+h1, h2{
+	font-family: var(--heading-font);
+	font-weight: normal;
+}
+
 h1{
 	font-size: 48px;
-	font-family: var(--heading-font);
 }
 
 h2{
 	font-size: 32px;
-	font-family: var(--heading-font);
 }
 
 ul{
@@ -94,8 +145,12 @@ a{
 }
 
 main a{
-	background-color: var(--main-text-color);
-	color: var(--main-color);
+	padding-left: 0em;
+	padding-right: 0em;
+	background-color: transparent;
+	color: var(--main-text-color);
+	text-decoration: underline;
+	box-shadow: none;
 }
 
 a:hover{
@@ -104,7 +159,7 @@ a:hover{
 }
 
 main a:hover{
-	color: var(--main-text-color);
+	color: var(--outside-text-color);
 }
 
 img{
@@ -117,20 +172,20 @@ img{
 	color: var(--outside-text-color);
 }
 
+/* Tables */
+
 table{
 	width: 100%;
-}
-
-tr:not(:last-child) > th, tr:not(:last-child) > td{
-	border-bottom: 1px solid var(--main-text-color);
-}
-
-th + td{
-	border-left: 1px solid var(--main-text-color);
+	table-layout: fixed;
+	border-spacing: 0px;
+	font-family: var(--code-font);
 }
 
 th, td{
 	text-align: left;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	border-bottom: 2px solid var(--main-text-color);
 }
 
 /* Form and Button Styling */
@@ -151,14 +206,19 @@ input{
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
+	transition: all 0.2s;
 }
 
 input[type=text], input[type=password]{
 	padding: 0px;
 	padding-top: 8px;
 	padding-bottom: 2px;
-	border-bottom: var(--border-style);
+	border-bottom: 2px dotted var(--main-text-color);
 	background-color: transparent;
+}
+
+input[type=text]:hover, input[type=text]:focus, input[type=password]:hover, input[type=password]:focus{
+	border-bottom: 2px dotted var(--outside-text-color);
 }
 
 input[type=submit], .button{
@@ -170,20 +230,23 @@ input[type=submit], .button{
 	background-color: var(--main-text-color);
 	color: var(--main-color);
 	cursor: pointer;
-
-	transition: all 0.2s;
+	text-decoration: none;
 	transform: translate(0, 4px);
 	box-shadow: 0px -4px var(--outside-color);
 }
 
 input[type=submit]:hover, .button:hover, input[type=submit]:focus, .button:focus{
+	background-color: var(--main-text-color);
+	color: var(--main-color);
 	transform: translate(0, 3px);
 	box-shadow: 0px -3px var(--outside-color);
 }
 
-input[type=submit]:active, .button:active{
+input[type=submit]:active, input[type=submit].active, .button:active, .button.active{
+	background-color: var(--main-text-color);
+	color: var(--main-color);
 	transform: translate(0, 0px);
-	box-shadow: 0px 0px var(--outside-color);
+	box-shadow: 0px -1px var(--outside-color);
 }
 
 .errors{
@@ -218,7 +281,7 @@ nav > a{
 
 .collapsible{
 	cursor: pointer;
-	border-bottom: var(--border-style);
+	border-bottom: 2px dashed var(--main-text-color);
 }
 
 .collapsible::after{

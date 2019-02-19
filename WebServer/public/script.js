@@ -25,8 +25,32 @@ window.addEventListener("load", function(){
 
 // Loader
 function loadHTML(href, element){
-	let request = new XMLHttpRequest();
-  request.open("GET", href, false);
-  request.send();
-  element.innerHTML = request.responseText;
+	var request = new XMLHttpRequest();
+	request.open("GET", href, true);
+	request.send(null);
+	request.onload = function(e){
+		if(request.readyState === 4){
+			if(request.status === 200){
+				element.innerHTML = request.responseText;
+			}
+		}
+	}
+}
+
+// Copy to Clipboard
+function copy(element, text) {
+	let temporary = element.getAttribute("switch");
+	element.setAttribute("switch", element.innerHTML);
+	element.innerHTML = temporary;
+	if(element.classList.contains("active")){
+		element.classList.remove("active");
+	}else{
+		let pseudo = document.createElement("input");
+		pseudo.value = text;
+		document.body.appendChild(pseudo);
+		pseudo.select();
+		document.execCommand("copy");
+		pseudo.parentElement.removeChild(pseudo);
+		element.classList.add("active");
+	}
 }

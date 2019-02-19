@@ -2,11 +2,12 @@ hello
 introduction
 projects
 submit
+copy
+copied
 username
 password
 signup
 username-taken
 signin
-visit-my
 github-profile
 server-stats

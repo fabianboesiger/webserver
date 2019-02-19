@@ -2,11 +2,12 @@ Hello, World!
 Welcome at {{print get "title" variables}} <a href="/">Link</a>.
 Projects
 Submit
+Copy to Clipboard
+Copied to Clipboard
 Username
 Password
 Sign up
 This username is already taken.
 Sign in
-Visit my
 GitHub Profile
 Server Statistics
