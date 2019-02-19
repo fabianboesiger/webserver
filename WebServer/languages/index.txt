@@ -9,3 +9,4 @@ username-taken
 signin
 visit-my
 github-profile
+server-stats

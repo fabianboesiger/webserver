@@ -9,3 +9,4 @@ Dieser Benutzername is bereits vergeben.
 Anmelden
 Besuche mein
 GitHub-Profil
+Server-Statistiken

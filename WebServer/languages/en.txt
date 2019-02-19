@@ -9,3 +9,4 @@ This username is already taken.
 Sign in
 Visit my
 GitHub Profile
+Server Statistics

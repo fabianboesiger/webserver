@@ -6,17 +6,17 @@
 	--outside-text-color: #CD9F64;
 	--main-text-color: #2C2C2C;
 	--error-color: #C94731;
-	
+
 	--max-width: 1024px;
 	--max-form-width: 512px;
-	
+
 	--heading-font: font, sans-serif;
 	--text-font: font, serif;
-	
+
 	--text-size: 18px;
-	
+
 	--border-style: 2px dotted var(--main-text-color);
-	
+
 	--padding: 48px;
 	--margin: 24px;
 }
@@ -117,6 +117,22 @@ img{
 	color: var(--outside-text-color);
 }
 
+table{
+	width: 100%;
+}
+
+tr:not(:last-child) > th, tr:not(:last-child) > td{
+	border-bottom: 1px solid var(--main-text-color);
+}
+
+th + td{
+	border-left: 1px solid var(--main-text-color);
+}
+
+th, td{
+	text-align: left;
+}
+
 /* Form and Button Styling */
 
 form{
@@ -154,19 +170,19 @@ input[type=submit], .button{
 	background-color: var(--main-text-color);
 	color: var(--main-color);
 	cursor: pointer;
-	
+
 	transition: all 0.2s;
-	transform: translate(0, 4px); 
+	transform: translate(0, 4px);
 	box-shadow: 0px -4px var(--outside-color);
 }
 
 input[type=submit]:hover, .button:hover, input[type=submit]:focus, .button:focus{
-	transform: translate(0, 3px); 
+	transform: translate(0, 3px);
 	box-shadow: 0px -3px var(--outside-color);
 }
 
 input[type=submit]:active, .button:active{
-	transform: translate(0, 0px); 
+	transform: translate(0, 0px);
 	box-shadow: 0px 0px var(--outside-color);
 }
 
