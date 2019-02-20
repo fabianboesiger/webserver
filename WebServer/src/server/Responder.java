@@ -7,26 +7,29 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import application.Application;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
-import server.renderer.container.ObjectContainer;
 
 public class Responder {
 	
 	public static final File VIEWS_FOLDER = new File("views");
 	 
 	private Application application;
-	private ObjectContainer predefined;
+	private Map <String, Object> predefined;
 	
-	public Responder(Application application, ObjectContainer predefined) {
+	public Responder(Application application, Map <String, Object> predefined) {
 		this.application = application;
 		this.predefined = predefined;
 	}
 	
-	public Response error(String text, int statusCode) throws IOException { 
-		return new Response(application, text, "text/plain", statusCode, null, false);
+	public Response error(int code, String message, LinkedList <String> languages) throws IOException {
+		HashMap <String, Object> variables = new HashMap <String, Object>();
+		variables.put("code", new String("" + code));
+		variables.put("message", new String(message));
+		return render("error.html", languages, variables);
 	}
 	
 	public Response text(String text) throws IOException {
@@ -50,40 +53,40 @@ public class Responder {
 	}
 	
 	public Response render(String name) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, new ObjectContainer());
+		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, new HashMap <String, Object>());
 	}
 	
 	public Response render(File file) throws IOException {
-		return render(file, null, new ObjectContainer());
+		return render(file, null, new HashMap <String, Object>());
 	}
 	
-	public Response render(String name, ObjectContainer variables) throws IOException {
+	public Response render(String name, Map <String, Object> variables) throws IOException {
 		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, variables);
 	}
 	
-	public Response render(File file, ObjectContainer variables) throws IOException {
+	public Response render(File file, Map <String, Object> variables) throws IOException {
 		return render(file, null, variables);
 	}
 	
 	public Response render(String name, LinkedList <String> languages) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), languages, new ObjectContainer());
+		return render(new File(VIEWS_FOLDER.getName() + "/" + name), languages, new HashMap <String, Object>());
 	}
 	
 	public Response render(File file, LinkedList <String> languages) throws IOException {
-		return render(file, languages, new ObjectContainer());
+		return render(file, languages, new HashMap <String, Object> ());
 	}
 	
-	public Response render(String name, LinkedList <String> languages, ObjectContainer variables) throws IOException {
+	public Response render(String name, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
 		return render(new File(VIEWS_FOLDER.getName() + "/" + name), languages, variables);
 	}
 	
-	public Response render(File file, LinkedList <String> languages, ObjectContainer variables) throws IOException {
+	public Response render(File file, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
 		variables.putAll(predefined);
 		try {
 			return new Response(application, Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
 		} catch (InterpreterException e) {
 			e.printStackTrace();
-			return error(e.getMessage(), 500);
+			return error(500, "internal-server-error", languages);
 		}
 	}
 	

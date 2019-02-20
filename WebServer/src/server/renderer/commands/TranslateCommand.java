@@ -8,13 +8,12 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 
 import server.Response;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
 import server.renderer.TranslatorException;
-import server.renderer.container.Container;
-import server.renderer.container.ObjectContainer;
 
 public class TranslateCommand extends Command {
 	
@@ -30,7 +29,7 @@ public class TranslateCommand extends Command {
 	}
 	
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws IOException, InterpreterException {
+	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
 
 		if(languages != null) {
 	        File[] files = LANGUAGES_FOLDER.listFiles();
@@ -84,8 +83,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = Renderer.nextString(code, languages, variables, printer, insert);
-		 			
+		 			String key = Renderer.nextString(code, languages, variables, printer);
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {
 		 				if(keys.get(i).equals(key)) {

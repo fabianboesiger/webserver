@@ -76,7 +76,7 @@ public class Handler implements HttpHandler {
     	}
 
     	if(response == null) {
-			response = server.responder.error("Not Found", 404);
+			response = server.responder.error(404, "not-found", languages);
 		}
     	
     	if(response.contentType != null) {

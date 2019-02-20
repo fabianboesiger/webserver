@@ -1,11 +1,9 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import server.renderer.container.ArrayContainer;
-import server.renderer.container.ObjectContainer;
-import server.renderer.container.StringContainer;
+import java.util.Map;
 
 public class Session {
 	
@@ -56,15 +54,15 @@ public class Session {
 		return flashes.remove(key);
 	}
 	
-	public ObjectContainer getFlashAsObjectContainer(String key) {	
-		ArrayContainer arrayContainer = new ArrayContainer();
+	public Map <String, Object> getFlashAsMap(String key) {	
+		ArrayList <String> arrayContainer = new ArrayList <String> ();
 		LinkedList <String> messages = getFlash(key);
 		if(messages != null) {
 			for(String value : messages) {
-				arrayContainer.add(new StringContainer(value));
+				arrayContainer.add(value);
 			}
 		}
-		ObjectContainer objectContainer = new ObjectContainer();
+		HashMap <String, Object> objectContainer = new HashMap <String, Object> ();
 		if(arrayContainer.size() > 0) {
 			objectContainer.put(key, arrayContainer);
 		}

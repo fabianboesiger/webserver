@@ -1,24 +1,22 @@
 package server.renderer.commands;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Map;
 
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
-import server.renderer.container.BooleanContainer;
-import server.renderer.container.Container;
-import server.renderer.container.ObjectContainer;
 
 public class ExistsCommand extends Command {
 		
+	@SuppressWarnings("unchecked")
 	@Override
-	public Container run(StringBuilder code, LinkedList <String> languages, ObjectContainer variables, StringBuilder printer, BufferedReader insert) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code, languages, variables, printer, insert);
-		if(((ObjectContainer) Renderer.runNext(code, languages, variables, printer, insert)).containsKey(key)) {
-			return new BooleanContainer(true);
+	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
+		String key = Renderer.nextString(code, languages, variables, printer);
+		if(((Map <String, Object>) Renderer.runNext(code, languages, variables, printer)).containsKey(key)) {
+			return new Boolean(true);
 		}
-		return new BooleanContainer(false);
+		return new Boolean(false);
 	}
 	
 }

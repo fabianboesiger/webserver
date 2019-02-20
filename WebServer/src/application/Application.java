@@ -1,13 +1,12 @@
 package application;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import database.Database;
 import server.Request;
 import server.Responder;
 import server.Server;
-import server.renderer.container.ObjectContainer;
-import server.renderer.container.StringContainer;
 
 public class Application {
 	
@@ -17,8 +16,8 @@ public class Application {
 	
 	public Application() throws IOException {
 		
-		ObjectContainer predefined = new ObjectContainer();
-		predefined.put("title", new StringContainer("Fälis Blog"));
+		HashMap <String, Object> predefined = new HashMap <String, Object>();
+		predefined.put("title", "Fälis Blog");
 		
 		database = new Database();
 		responder = new Responder(this, predefined);
@@ -43,15 +42,15 @@ public class Application {
 		
 		server.on("GET", "/stats", (Request request) -> {
 			long uptimeMillis = server.uptime();
-			ObjectContainer variables = new ObjectContainer();
-			variables.put("uptime", new StringContainer(String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60)));
-			variables.put("sessions-count", new StringContainer("" + server.sessionsCount()));
-			variables.put("active-count", new StringContainer("" + server.activeCount()));
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			variables.put("uptime", String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60));
+			variables.put("sessions-count", "" + server.sessionsCount());
+			variables.put("active-count", "" + server.activeCount());
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
-			return responder.render("signup.html", request.languages, request.session.getFlashAsObjectContainer("errors"));
+			return responder.render("signup.html", request.languages, request.session.getFlashAsMap("errors"));
 		});
 		
 		server.on("POST", "/signup", (Request request) -> {
