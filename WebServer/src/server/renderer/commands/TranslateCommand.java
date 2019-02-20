@@ -92,7 +92,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			
 		    		if(keyIndex == -1) {
-		    			throw new TranslatorException("Language key not found");
+		    			throw new TranslatorException("Language key not found for " + key);
 		    		}
 
 		 					 			

@@ -11,7 +11,7 @@ public class PrintCommand extends Command {
 	
 	@Override
 	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
-		printer.append(Renderer.nextString(code, languages, variables, printer).toString());
+		printer.append(Renderer.nextString(code, languages, variables, printer));
 		return null;
 	}
 	

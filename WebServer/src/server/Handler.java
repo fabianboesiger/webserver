@@ -32,7 +32,7 @@ public class Handler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
-
+				
 		long start = System.currentTimeMillis();
 		server.handles.add(start);
 
@@ -48,7 +48,7 @@ public class Handler implements HttpHandler {
  		    	languages = getOrderedValue(languageString);
  		    }
  		}
-
+    	    	
     	HashMap <String, String> parameters = new HashMap <String, String> ();
     	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
     	if(urlParameters != null) {
@@ -58,7 +58,7 @@ public class Handler implements HttpHandler {
     	if(bodyParameters != null) {
     		parameters.putAll(bodyParameters);
     	}
-    	
+    	    	
     	Response response = null;
 
     	LinkedList <Listener> listeners = server.listeners.get(method);
@@ -74,7 +74,7 @@ public class Handler implements HttpHandler {
     			}
     		}
     	}
-
+    	
     	if(response == null) {
 			response = server.responder.error(404, "not-found", languages);
 		}
@@ -90,7 +90,7 @@ public class Handler implements HttpHandler {
             	responseHeaders.set(pair.getKey(), pair.getValue());
         	}
     	}
-
+    	
     	OutputStream outputStream = httpExchange.getResponseBody();
     	httpExchange.sendResponseHeaders(response.statusCode, response.size);
     	

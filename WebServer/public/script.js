@@ -11,6 +11,7 @@ window.addEventListener("load", function(){
 			}else{
 				content.style.display = "block";
 			}
+			// Collapse other collapsibles
 			/*
 			for(let j = 0; j < collapsibles.length; j++){
 				if(collapsibles[j] !== this){

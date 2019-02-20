@@ -6,8 +6,16 @@
 			<input type="text" name="username" id="username"/>
 		</div>
 		<div class="block">
+			<label for="email">{{translate "email"}}</label>
+			<input type="email" name="email" id="email"/>
+		</div>
+		<div class="block">
 			<label for="password">{{translate "password"}}</label>
 			<input type="password" name="password" id="password"/>
+		</div>
+		<div class="block">
+			<label for="repeat-password">{{translate "repeat-password"}}</label>
+			<input type="password" name="repeat-password" id="repeat-password"/>
 		</div>
 		<input type="submit" value="{{translate "submit"}}"/>
 		{{include "messages.html"}}

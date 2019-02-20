@@ -1,14 +1,22 @@
-Hallo, Welt!
+Betriebszeit
+Sitzungen
+Aktive Sitzungen
+Verarbeitungen pro Stunde
+Besucher pro Stunde
+{{print get "active-sessions" variables}} Benutzer online!
 Fehler
 Seite nicht gefunden
 Interner Server-Fehler
+Hallo, Welt!
 Willkommen bei {{print get "title" variables}}.
 Projekte
-Senden
 In die Zwischenablage kopieren
 In die Zwischenablage kopiert
+Senden
 Benutzername
+E-Mail Adresse
 Passwort
+Passwort wiederholen
 Registrieren
 Dieser Benutzername is bereits vergeben.
 Anmelden

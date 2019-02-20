@@ -1,14 +1,22 @@
-Hello, World!
+Uptime
+Sessions
+Active Sessions
+Handles per Hour
+Visitors per Hour
+{{print get "active-sessions" variables}} users online!
 Error
 Page not found
 Internal server error
+Hello, World!
 Welcome at {{print get "title" variables}}.
 Projects
-Submit
 Copy to Clipboard
 Copied to Clipboard
+Submit
 Username
+Email Address
 Password
+Repeat Password
 Sign up
 This username is already taken.
 Sign in

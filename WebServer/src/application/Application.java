@@ -14,11 +14,10 @@ public class Application {
 	private Responder responder;
 	private Server server;
 	
-	public Application() throws IOException {
-		
-		HashMap <String, Object> predefined = new HashMap <String, Object>();
-		predefined.put("title", "Fälis Blog");
-		
+	private HashMap <String, Object> predefined = new HashMap <String, Object>();
+
+	
+	public Application() throws IOException {		
 		database = new Database();
 		responder = new Responder(this, predefined);
 		server = new Server(database, responder);
@@ -27,6 +26,13 @@ public class Application {
 	}
 	
 	public void setup() throws IOException {
+		
+		predefined.put("title", "Fälis Blog");
+
+		server.on("GET", ".*", (Request request) -> {
+			predefined.put("active-sessions", "" + server.activeCount());
+			return responder.next();
+		});
 		
 		server.on("GET", "/", (Request request) -> {
 			return responder.render("index.html", request.languages);
@@ -44,8 +50,10 @@ public class Application {
 			long uptimeMillis = server.uptime();
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			variables.put("uptime", String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60));
-			variables.put("sessions-count", "" + server.sessionsCount());
-			variables.put("active-count", "" + server.activeCount());
+			variables.put("sessions", "" + server.sessionsCount());
+			variables.put("active-sessions", "" + server.activeCount());
+			variables.put("handles-per-hour", "" + server.handlesPerHour());
+			variables.put("visitors-per-hour", "" + server.visitorsPerHour());
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
