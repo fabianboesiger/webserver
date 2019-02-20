@@ -1,5 +1,8 @@
 Hello, World!
-Welcome at {{print get "title" variables}} <a href="/">Link</a>.
+Error
+Page not found
+Internal server error
+Welcome at {{print get "title" variables}}.
 Projects
 Submit
 Copy to Clipboard

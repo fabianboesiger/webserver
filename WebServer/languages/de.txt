@@ -1,5 +1,8 @@
 Hallo, Welt!
-Willkommen bei {{print get "title" variables}} <a href="/">Link</a>.
+Fehler
+Seite nicht gefunden
+Interner Server-Fehler
+Willkommen bei {{print get "title" variables}}.
 Projekte
 Senden
 In die Zwischenablage kopieren

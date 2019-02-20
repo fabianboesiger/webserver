@@ -11,6 +11,14 @@ window.addEventListener("load", function(){
 			}else{
 				content.style.display = "block";
 			}
+			/*
+			for(let j = 0; j < collapsibles.length; j++){
+				if(collapsibles[j] !== this){
+					collapsibles[j].classList.remove("active");
+					collapsibles[j].nextElementSibling.style.display = "none";
+				}
+			}
+			*/
 		});
 	}
 
@@ -19,6 +27,14 @@ window.addEventListener("load", function(){
 	let years = document.getElementsByClassName("year");
 	for(let i = 0; i < years.length; i++){
 		years[i].innerHTML = year;
+	}
+
+	let loaders = document.getElementsByClassName("loader");
+	for(let i = 0; i < loaders.length; i++){
+		loadHTML(loaders[i].getAttribute("href"), loaders[i]);
+		setInterval(function(){
+			loadHTML(loaders[i].getAttribute("href"), loaders[i]);
+		}, 1000);
 	}
 
 });

@@ -1,4 +1,7 @@
 hello
+error
+not-found
+internal-server-error
 introduction
 projects
 submit
