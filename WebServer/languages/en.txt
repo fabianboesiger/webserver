@@ -18,7 +18,10 @@ Email Address
 Password
 Repeat Password
 Sign up
-This username is already taken.
+is already taken.
+is required.
+is too short.
+is too long.
 Sign in
 GitHub Profile
 Server Statistics

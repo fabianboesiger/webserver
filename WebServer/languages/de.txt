@@ -18,7 +18,10 @@ E-Mail Adresse
 Passwort
 Passwort wiederholen
 Registrieren
-Dieser Benutzername is bereits vergeben.
+bereits vergeben.
+wird benötigt.
+ist zu kurz.
+ist zu lang.
 Anmelden
 GitHub-Profil
 Server-Statistiken

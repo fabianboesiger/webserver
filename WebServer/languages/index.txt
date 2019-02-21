@@ -19,6 +19,9 @@ password
 repeat-password
 signup
 username-taken
+not-initialized
+minimum-length-exceeded
+maximum-length-exceeded
 signin
 github-profile
 server-stats
