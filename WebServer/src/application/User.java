@@ -12,8 +12,8 @@ public class User extends ObjectTemplate {
 	
 	public User() {
 		super("user");
-		username = new StringTemplate(4, 16);
-		password = new StringTemplate(4, 64);
+		username = new StringTemplate("username", 4, 16);
+		password = new StringTemplate("password", 4, 64);
 		setId(username);
 	}
 	

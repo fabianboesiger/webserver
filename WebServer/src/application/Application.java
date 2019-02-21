@@ -2,6 +2,8 @@ package application;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import database.Database;
 import server.Request;
@@ -63,10 +65,21 @@ public class Application {
 		
 		server.on("POST", "/signup", (Request request) -> {
 			User user = new User();
-			user.parse(request.parameters);
-			if(database.save(user)) {
-				return responder.text("success");
+			System.out.println("!1");
+			user.setFromStringMap(request.parameters);
+			LinkedList <String> errors = new LinkedList <String> ();
+			System.out.println("!2");
+
+			if(user.validate(errors)) {
+				System.out.println("!3");
+
+				if(database.save(user)) {
+					return responder.text("success");
+				}
 			}
+			System.out.println("!4");
+
+			
 			request.session.addFlash("errors", "username-taken");
 			return responder.redirect("/signup");
 		});

@@ -3,6 +3,7 @@ package server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Session {
@@ -12,11 +13,11 @@ public class Session {
 	
 	private String id;
 	private long lastConnect;
-	private HashMap <String, LinkedList <String>> flashes;
+	private HashMap <String, Object> flashes;
 	
 	public Session(String id) {
 		this.id = id;
-		flashes = new HashMap <String, LinkedList <String>> ();
+		flashes = new HashMap <String, Object> ();
 		update();
 	}
 	
@@ -42,31 +43,13 @@ public class Session {
 		lastConnect = System.currentTimeMillis();
 	}
 	
-	public void addFlash(String key, String value) {
-		if(!flashes.containsKey(key)) {
-			flashes.put(key, new LinkedList <String> ());
-		}
-		flashes.get(key).add(value);
-
+	public void addFlash(String key, Object value) {
+		flashes.put(key, value);
 	}
 	
-	public LinkedList <String> getFlash(String key) {
+	public Object getFlash(String key) {
 		return flashes.remove(key);
 	}
 	
-	public Map <String, Object> getFlashAsMap(String key) {	
-		ArrayList <String> arrayContainer = new ArrayList <String> ();
-		LinkedList <String> messages = getFlash(key);
-		if(messages != null) {
-			for(String value : messages) {
-				arrayContainer.add(value);
-			}
-		}
-		HashMap <String, Object> objectContainer = new HashMap <String, Object> ();
-		if(arrayContainer.size() > 0) {
-			objectContainer.put(key, arrayContainer);
-		}
-		return objectContainer;
-	}
 
 }
