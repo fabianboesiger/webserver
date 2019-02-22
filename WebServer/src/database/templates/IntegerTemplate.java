@@ -1,19 +1,14 @@
 package database.templates;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-public class IntegerTemplate implements ObjectTemplateField {
+public class IntegerTemplate extends PrimitiveTemplate {
 	
 	private Integer value;
-	private String name;
 	private transient Integer minimum;
 	private transient Integer maximum;
 	private transient boolean notNull;
 	
 	public IntegerTemplate(String name, Integer minimum, Integer maximum, boolean notNull) {
-		this.name = name;
+		super(name);
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.notNull = notNull;
@@ -36,21 +31,24 @@ public class IntegerTemplate implements ObjectTemplateField {
 	}
 
 	@Override
-	public boolean validate(List <Map <String, String>> errors) {
+	public boolean validate(Errors errors) {
 		boolean valid = true;
 		if(value == null) {
 			if(notNull) {
 				valid = false;
+				errors.add(name, "not-initialized");
 			}
 		} else {
 			if(minimum != null) {
 				if(value < minimum) {
-					return false;
+					valid = false;
+					errors.add(name, "minimum-exceeded");
 				}
 			}
 			if(maximum != null) {
 				if(value > maximum) {
 					valid = false;
+					errors.add(name, "maximum-exceeded");
 				}
 			}
 		}

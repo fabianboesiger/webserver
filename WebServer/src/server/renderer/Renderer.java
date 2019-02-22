@@ -176,7 +176,7 @@ public abstract class Renderer {
 			try {
 				return Integer.parseInt((String) run(command, code, languages, variables, printer));
 			} catch (NumberFormatException | InterpreterException | IOException e2) {
-				throw new ParserException("Parse Integer Failed");
+				throw new ParserException("Parse Integer Failed for " + command);
 			}
 		}
 	}
@@ -192,7 +192,7 @@ public abstract class Renderer {
 			try {
 				return (boolean) run(command, code, languages, variables, printer);
 			} catch (InterpreterException | IOException e2) {
-				throw new ParserException("Parse Boolean Failed");
+				throw new ParserException("Parse Boolean Failed for " + command);
 			}
 		}
 	}
@@ -205,7 +205,8 @@ public abstract class Renderer {
 			try {
 				return ((String) run(command, code, languages, variables, printer));
 			} catch (InterpreterException | IOException e) {
-				throw new ParserException("Parse String Failed");
+				e.printStackTrace();
+				throw new ParserException("Parse String Failed for " + command);
 			}
 		}
 	}

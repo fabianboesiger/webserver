@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import application.Application;
 import server.renderer.InterpreterException;
 import server.renderer.Renderer;
 
@@ -17,11 +16,9 @@ public class Responder {
 	
 	public static final File VIEWS_FOLDER = new File("views");
 	 
-	private Application application;
 	private Map <String, Object> predefined;
 	
-	public Responder(Application application, Map <String, Object> predefined) {
-		this.application = application;
+	public Responder(Map <String, Object> predefined) {
 		this.predefined = predefined;
 	}
 	
@@ -33,7 +30,7 @@ public class Responder {
 	}
 	
 	public Response text(String text) throws IOException {
-		return new Response(application, text, "text/plain", 200, null, false);
+		return new Response(text, "text/plain", 200, null, false);
 	}
 	
 	public Response file(File file) throws IOException {
@@ -41,7 +38,7 @@ public class Responder {
 	}
 	
 	public Response file(File file, int statusCode) throws IOException {
-		return new Response(application, new FileInputStream(file), file.length(), Files.probeContentType(Paths.get(file.getAbsolutePath())), statusCode, null, false);
+		return new Response(new FileInputStream(file), file.length(), Files.probeContentType(Paths.get(file.getAbsolutePath())), statusCode, null, false);
 	}
 	
 	public Response file(String name, int statusCode) throws IOException {
@@ -83,7 +80,7 @@ public class Responder {
 	public Response render(File file, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
 		variables.putAll(predefined);
 		try {
-			return new Response(application, Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
+			return new Response(Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
 		} catch (InterpreterException e) {
 			e.printStackTrace();
 			return error(500, "internal-server-error", languages);
@@ -93,11 +90,11 @@ public class Responder {
 	public Response redirect(String path) throws IOException {
 		HashMap <String, String> responseHeaders = new HashMap <String, String> ();
 		responseHeaders.put("Location", path);
-		return new Response(application, null, 0, null, 302, responseHeaders, false);
+		return new Response(null, 0, null, 302, responseHeaders, false);
 	}
 	
 	public Response next() throws IOException {
-		return new Response(application, null, 0, null, 0, null, true);
+		return new Response(null, 0, null, 0, null, true);
 	}
 	
 }

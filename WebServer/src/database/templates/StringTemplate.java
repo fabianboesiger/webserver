@@ -1,20 +1,14 @@
 package database.templates;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-public class StringTemplate implements ObjectTemplateField {
+public class StringTemplate extends PrimitiveTemplate {
 		
 	private String value;
-	private String name;
 	private transient Integer minimumLength;
 	private transient Integer maximumLength;
 	private transient boolean notNull;
 	
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull) {
-		this.name = name;
+		super(name);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 		this.notNull = notNull;
@@ -38,23 +32,23 @@ public class StringTemplate implements ObjectTemplateField {
 	}
 
 	@Override
-	public boolean validate(List <Map <String, String>> errors) {
+	public boolean validate(Errors errors) {
 		boolean valid = true;
 		if(value == null) {
 			if(notNull) {
-				addError(errors, name, "not-initialized");
-				return false;
+				errors.add(name, "not-initialized");
+				valid = false;
 			}
 		} else {
 			if(minimumLength != null) {
 				if(value.length() < minimumLength) {
-					addError(errors, name, "minimum-length-exceeded");
+					errors.add(name, "minimum-length-exceeded");
 					valid = false;
 				}
 			}
 			if(maximumLength != null) {
 				if(value.length() > maximumLength) {
-					addError(errors, name, "maximum-length-exceeded");
+					errors.add(name, "maximum-length-exceeded");
 					valid = false;
 				}
 			}
