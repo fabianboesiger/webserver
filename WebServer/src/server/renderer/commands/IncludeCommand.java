@@ -13,7 +13,7 @@ public class IncludeCommand extends Command {
 
 	@Override
 	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
-		printer.append(Renderer.render(new File(Responder.VIEWS_FOLDER.getName() + "/" + Renderer.nextString(code, languages, variables, printer)), languages, variables));
+		printer.append(Renderer.render(new File(Responder.VIEWS_FOLDER.getName() + "/" + Renderer.next(code, languages, variables, printer)), languages, variables));
 		return null;
 	}
 	

@@ -21,16 +21,11 @@ public class StringTemplate extends PrimitiveTemplate {
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength) {
 		this(name, minimumLength, maximumLength, true);
 	}
-
 	
-	public StringTemplate(Integer minimumLength, Integer maximumLength) {
-		this(minimumLength, maximumLength, true);
+	public StringTemplate(String name) {
+		this(name, null, null);
 	}
 	
-	public StringTemplate() {
-		this(null, null);
-	}
-
 	@Override
 	public boolean validate(Errors errors) {
 		boolean valid = true;
@@ -57,8 +52,18 @@ public class StringTemplate extends PrimitiveTemplate {
 	}
 	
 	@Override
-	public String toString() {
-		return value;
+	public void fromCSV(String string) {
+		String trimmed = string.trim();
+		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+			value = trimmed.substring(1, trimmed.length() - 1).replaceAll("\"\"", "\"");
+		} else {
+			value = string.replaceAll("\"\"", "\"");
+		}
+	}
+	
+	@Override
+	public String toCSV() {
+		return "\"" + value.toString().replaceAll("\"", "\"\"") + "\"";
 	}
 
 	@Override

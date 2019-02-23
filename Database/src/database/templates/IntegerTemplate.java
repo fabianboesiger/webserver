@@ -22,12 +22,8 @@ public class IntegerTemplate extends PrimitiveTemplate {
 		this(name, minimum, maximum, true);
 	}
 	
-	public IntegerTemplate(Integer minimum, Integer maximum) {
-		this(minimum, maximum, true);
-	}
-	
-	public IntegerTemplate() {
-		this(null, null);
+	public IntegerTemplate(String name) {
+		this(name, null, null);
 	}
 
 	@Override
@@ -54,19 +50,24 @@ public class IntegerTemplate extends PrimitiveTemplate {
 		}
 		return valid;
 	}
+
+	@Override
+	public void fromCSV(String string) {
+		if(string.trim().isEmpty()) {
+			value = null;
+		} else {
+			value = Integer.parseInt((String) string);
+		}
+	}
 	
 	@Override
-	public String toString() {
+	public String toCSV() {
 		return value.toString();
 	}
 
 	@Override
 	public void set(Object object) {
-		if(object instanceof String) {
-			value = Integer.parseInt((String) object);
-		} else {
-			value = (Integer) object;
-		}
+		value = (Integer) object;
 	}
 
 	@Override

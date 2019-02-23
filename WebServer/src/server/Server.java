@@ -16,14 +16,14 @@ import java.util.concurrent.Executors;
 
 import com.sun.net.httpserver.HttpServer;
 
-import database.Database;
-
 public class Server {
 	
 	private static final int PORT = 8000;
-	private static final int HANDLER_THREADS = 4;
+	private static final int HANDLER_THREADS = 16;
 	private static final File PUBLIC_FOLDER = new File("public");
 	private static final int STATISTICS_MAX_AGE = 60 * 60;
+	private static final String ALL_HANDLER = "ALL";
+
 	
 	private HttpServer httpServer;
 	private ConcurrentHashMap <String, Session> sessions;
@@ -34,7 +34,7 @@ public class Server {
 	protected LinkedList <Long> visitors;
     Responder responder;
 	
-	public Server(Database database, Responder responder) throws IOException {
+	public Server(Responder responder) throws IOException {
 		System.out.println("Starting server on port " + PORT);
 		
 		this.responder = responder;
@@ -81,10 +81,22 @@ public class Server {
 	}
 	
 	public void on(String method, String path, ListenerAction listenerAction) {
+		Listener listener = new Listener(path, listenerAction);
 		if(!listeners.containsKey(method)) {
 			listeners.put(method, new LinkedList <Listener> ());
+			if(!method.equals(ALL_HANDLER)) {
+				if(listeners.containsKey(ALL_HANDLER)) {
+					listeners.get(method).addAll(listeners.get(ALL_HANDLER));
+				}
+			} else {
+				for(Map.Entry <String, LinkedList <Listener>> entry : listeners.entrySet()) {
+					if(!entry.getKey().equals(ALL_HANDLER)) {
+						entry.getValue().add(listener);
+					}
+				}
+			}
 		}
-		listeners.get(method).add(new Listener(path, listenerAction));
+		listeners.get(method).add(listener);
 	}
 	
 	protected Session getSession(String key) {

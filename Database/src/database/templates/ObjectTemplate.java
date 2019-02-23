@@ -1,35 +1,23 @@
 package database.templates;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 public class ObjectTemplate extends Template {
 	
-	private PrimitiveTemplate idTemplate;
-	private String id;
-	private String name;
+	private transient PrimitiveTemplate idTemplate;
+	private transient LinkedList <String> order;
 	
 	public ObjectTemplate(String name) {
 		super(name);
 	}
 	
-	public void setId(PrimitiveTemplate idTemplate) {
-		this.idTemplate = idTemplate;
-	}
-	
-	public String getId() throws ObjectTemplateException {
-		if(id == null) {
-			if(idTemplate != null) {
-				if(idTemplate.get() != null) {
-					id = idTemplate.get().toString();
-					return id;
-				}
-			}
-			return null;
-		} else {
-			return id;
-		}
+	public void addToOrder(String name) {
+		order.add(name);
 	}
 	
 	public String getName() {
@@ -65,6 +53,22 @@ public class ObjectTemplate extends Template {
 	}
 	
 	@Override
+	public Object get() {
+		HashMap <String, Object> output = new HashMap <String, Object> ();
+		Field[] fields = getClass().getDeclaredFields();
+		for(Field field : fields) {
+			try {
+				if(!Modifier.isTransient(field.getModifiers())) {
+					output.put(field.getName(), ((Template) field.get(this)).get());
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return output;
+	}
+	
+	@Override
 	public boolean validate(Errors errors) {
 		boolean valid = true;
 		Field[] fields = getClass().getDeclaredFields();
@@ -83,11 +87,22 @@ public class ObjectTemplate extends Template {
 		}
 		return valid;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override 
+	public String toCSV() {
+		StringBuilder stringBuilder = new StringBuilder();
+		Set <Map.Entry <String, Object>> map = ((HashMap <String, Object>) get()).entrySet();
+		for(int i = 0; i < map.size(); i++) {
+			return stringBuilder.toString();
+		}
+		return name;
+	}
 
 	@Override
-	public Object get() {
+	public void fromCSV(String string) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 	
 }

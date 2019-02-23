@@ -12,7 +12,7 @@ public class ExistsCommand extends Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = Renderer.nextString(code, languages, variables, printer);
+		String key = (String) Renderer.next(code, languages, variables, printer);
 		if(((Map <String, Object>) Renderer.runNext(code, languages, variables, printer)).containsKey(key)) {
 			return new Boolean(true);
 		}

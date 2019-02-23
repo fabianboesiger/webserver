@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -160,55 +161,52 @@ public abstract class Renderer {
 	
 	public static Command getCommand(String command){
 		if(command != null) {
-			command = command.toLowerCase();
 			if(commands.containsKey(command)) {
 				return commands.get(command);
 			}
 		}
 		return null;
 	}
-	
-	public static int nextInt(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws ParserException {
+
+	public static Object next(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws InterpreterException, IOException {
 		String command = nextCommand(code);
-		try {
-			return Integer.parseInt(command);
-		} catch (NumberFormatException e1) {
-			try {
-				return Integer.parseInt((String) run(command, code, languages, variables, printer));
-			} catch (NumberFormatException | InterpreterException | IOException e2) {
-				throw new ParserException("Parse Integer Failed for " + command);
-			}
-		}
-	}
-	
-	public static boolean nextBoolean(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws ParserException {
-		String command = nextCommand(code);
-		switch(command.toLowerCase()) {
-		case "true":
-			return true;
-		case "false":
-			return false;
-		default:
-			try {
-				return (boolean) run(command, code, languages, variables, printer);
-			} catch (InterpreterException | IOException e2) {
-				throw new ParserException("Parse Boolean Failed for " + command);
-			}
-		}
-	}
-	
-	public static String nextString(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws ParserException {
-		String command = nextCommand(code);
-		if(command.startsWith("" + STRING) && command.endsWith("" + STRING)) {
-			return command.substring(1, command.length() - 1);
+		Object output = parse(command);
+		if(output == null) {
+			return run(command, code, languages, variables, printer);
 		} else {
-			try {
-				return ((String) run(command, code, languages, variables, printer));
-			} catch (InterpreterException | IOException e) {
-				e.printStackTrace();
-				throw new ParserException("Parse String Failed for " + command);
-			}
+			return output;
 		}
+	}
+	
+	public static Object parse(String input) {
+		if(input.matches("[0-9]+")) {
+			return Integer.parseInt(input);
+		} else
+		if(input.matches("[0-9]*\\.[0-9]+")) {
+			return Double.parseDouble(input);
+		} else
+		if(input.matches("null")) {
+			return null;
+		} else
+		if(input.matches("true|false")) {
+			return Boolean.parseBoolean(input);
+		} else
+		if(input.matches("\\[.*(,.*)*\\]")) {
+			ArrayList <Object> list = new ArrayList <Object> ();
+			String trimmed = input.trim();
+			String string = trimmed.substring(1, trimmed.length() - 1);
+			String[] splitted = string.split(",");
+			for(String element : splitted) {
+				list.add(parse(element));
+			}
+			return list;
+		} else
+		if(input.matches("\".*\"")) {
+			String trimmed = input.trim();
+			String string = trimmed.substring(1, trimmed.length() - 1);
+			return string;
+		}
+		return null;
 	}
 	
 }

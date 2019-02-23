@@ -60,7 +60,7 @@ public class Handler implements HttpHandler {
     	}
     	    	
     	Response response = null;
-
+    	
     	LinkedList <Listener> listeners = server.listeners.get(method);
     	if(listeners != null) {
     		for(Listener listener : listeners) {
