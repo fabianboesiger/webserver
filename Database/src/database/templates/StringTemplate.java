@@ -6,16 +6,15 @@ public class StringTemplate extends PrimitiveTemplate {
 	private transient Integer minimumLength;
 	private transient Integer maximumLength;
 	private transient boolean notNull;
+	private static final char ESCAPE_CHARACTER = '\\';
+	private static final char[] RAW = {'\t', '\b', '\n', '\r', '\f', '"', '\\'};
+	private static final char[] ESCAPED = {'t', 'b', 'n', 'r', 'f', '"', '\\'};
 	
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull) {
 		super(name);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 		this.notNull = notNull;
-	}
-	
-	public StringTemplate(Integer minimumLength, Integer maximumLength, boolean notNull) {
-		this(null, minimumLength, maximumLength, notNull);
 	}
 	
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength) {
@@ -50,21 +49,6 @@ public class StringTemplate extends PrimitiveTemplate {
 		}
 		return valid;
 	}
-	
-	@Override
-	public void fromCSV(String string) {
-		String trimmed = string.trim();
-		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-			value = trimmed.substring(1, trimmed.length() - 1).replaceAll("\"\"", "\"");
-		} else {
-			value = string.replaceAll("\"\"", "\"");
-		}
-	}
-	
-	@Override
-	public String toCSV() {
-		return "\"" + value.toString().replaceAll("\"", "\"\"") + "\"";
-	}
 
 	@Override
 	public void set(Object object) {
@@ -74,6 +58,57 @@ public class StringTemplate extends PrimitiveTemplate {
 	@Override
 	public Object get() {
 		return value;
+	}
+
+	@Override
+	public String render() {
+		StringBuilder replaced = new StringBuilder();
+		for(int i = 0; i < value.length(); i++) {
+			boolean found = false;
+			for(int j = 0; j < RAW.length; j++) {
+				if(value.charAt(i) == RAW[j]) {
+					replaced.append(ESCAPE_CHARACTER);
+					replaced.append(ESCAPED[j]);
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				replaced.append(value.charAt(i));
+			}
+		}
+		return "\"" + replaced.toString() + "\"";
+	}
+
+	@Override
+	public void parse(String string) {
+		String temporary = null;
+		String trimmed = string.trim();
+		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+			temporary = trimmed.substring(1, trimmed.length() - 1);
+		} else {
+			temporary = string;
+		}
+		StringBuilder replaced = new StringBuilder();
+		boolean escaped = false;
+		for(int i = 0; i < temporary.length(); i++) {
+			if(!escaped) {
+				if(temporary.charAt(i) == ESCAPE_CHARACTER) {
+					escaped = true;
+				} else {
+					replaced.append(temporary.charAt(i));
+				}
+			} else {
+				for(int j = 0; j < ESCAPED.length; j++) {
+					if(temporary.charAt(i) == ESCAPED[j]) {
+						replaced.append(RAW[j]);
+						break;
+					}
+				}
+				escaped = false;
+			}
+		}
+		value = replaced.toString();
 	}
 	
 }

@@ -14,10 +14,6 @@ public class DoubleTemplate extends PrimitiveTemplate {
 		this.notNull = notNull;
 	}
 	
-	public DoubleTemplate(Integer minimum, Integer maximum, boolean notNull) {
-		this(null, minimum, maximum, notNull);
-	}
-	
 	public DoubleTemplate(String name, Integer minimum, Integer maximum) {
 		this(name, minimum, maximum, true);
 	}
@@ -52,20 +48,6 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public void fromCSV(String string) {
-		if(string.trim().isEmpty()) {
-			value = null;
-		} else {
-			value = Double.parseDouble((String) string);
-		}
-	}
-	
-	@Override
-	public String toCSV() {
-		return value.toString();
-	}
-
-	@Override
 	public void set(Object object) {
 		value = (Double) object;
 	}
@@ -73,6 +55,16 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	@Override
 	public Object get() {
 		return value;
+	}
+
+	@Override
+	public String render() {
+		return value.toString();
+	}
+
+	@Override
+	public void parse(String string) {
+		value = Double.parseDouble(string);
 	}
 	
 }

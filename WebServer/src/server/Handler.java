@@ -58,6 +58,10 @@ public class Handler implements HttpHandler {
     	if(bodyParameters != null) {
     		parameters.putAll(bodyParameters);
     	}
+    	
+    	for(Entry <String, String> entry : parameters.entrySet()) {
+    		entry.setValue(java.net.URLDecoder.decode(entry.getValue(), Response.ENCODING.name()));
+    	}
     	    	
     	Response response = null;
     	

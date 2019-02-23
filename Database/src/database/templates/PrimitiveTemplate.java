@@ -6,4 +6,7 @@ public abstract class PrimitiveTemplate extends Template {
 		super(name);
 	}
 	
+	public abstract String render();
+	public abstract void parse(String string);
+	
 }

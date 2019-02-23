@@ -3,11 +3,13 @@ package server;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Response {
 	
-	public static final String ENCODING = "UTF-8";
+	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	
 	protected InputStream inputStream;
 	protected long size;

@@ -1,6 +1,6 @@
 package database.templates;
 
-public class IntegerTemplate extends PrimitiveTemplate {
+public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	
 	private Integer value;
 	private transient Integer minimum;
@@ -12,10 +12,6 @@ public class IntegerTemplate extends PrimitiveTemplate {
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.notNull = notNull;
-	}
-	
-	public IntegerTemplate(Integer minimum, Integer maximum, boolean notNull) {
-		this(null, minimum, maximum, notNull);
 	}
 	
 	public IntegerTemplate(String name, Integer minimum, Integer maximum) {
@@ -52,20 +48,6 @@ public class IntegerTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public void fromCSV(String string) {
-		if(string.trim().isEmpty()) {
-			value = null;
-		} else {
-			value = Integer.parseInt((String) string);
-		}
-	}
-	
-	@Override
-	public String toCSV() {
-		return value.toString();
-	}
-
-	@Override
 	public void set(Object object) {
 		value = (Integer) object;
 	}
@@ -73,6 +55,21 @@ public class IntegerTemplate extends PrimitiveTemplate {
 	@Override
 	public Object get() {
 		return value;
+	}
+
+	@Override
+	public String getId() {
+		return value.toString();
+	}
+
+	@Override
+	public String render() {
+		return value.toString();
+	}
+
+	@Override
+	public void parse(String string) {
+		value = Integer.parseInt(string);
 	}
 	
 }
