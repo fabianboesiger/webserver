@@ -106,7 +106,7 @@ public class TranslateCommand extends Command {
 			 			
 			 			return Renderer.render(new BufferedReader(new StringReader(line)), languages, variables);
 		 			}
-		        } 
+		        }
 	        }
 		}
 		
