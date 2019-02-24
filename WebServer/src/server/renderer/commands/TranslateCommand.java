@@ -104,8 +104,7 @@ public class TranslateCommand extends Command {
 			 			line = bufferedReader.readLine();
 			 			bufferedReader.close();
 			 			
-			 			printer.append(Renderer.render(new BufferedReader(new StringReader(line)), languages, variables));
-			 			return null;
+			 			return Renderer.render(new BufferedReader(new StringReader(line)), languages, variables);
 		 			}
 		        }
 	        }

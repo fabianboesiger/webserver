@@ -4,27 +4,20 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
-import database.templates.Identifiable;
 import database.templates.ObjectTemplate;
 
 public class Database {
 	
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
-	private static final String METADATA_FILE_NAME = ".metadata.txt";
 	private static final File DATA_FOLDER = new File("data");
 	private static final String ENDING = "txt";
 	
@@ -33,23 +26,34 @@ public class Database {
 		DATA_FOLDER.mkdirs();
 	}
 	
-	public synchronized ObjectTemplate load(String name, String id) {
-		try {
-			File file = getFile(name, encrypt(id));
-			if(!file.exists()) {
-				return null;
-			}
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
-			String line = null;
-			ArrayList <String> keys = new ArrayList <String> ();
-			while((line = bufferedReader.readLine()) != null) {
-				keys.add(line);
-			}
-			bufferedReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}  
-		return null;
+	public synchronized boolean load(ObjectTemplate objectTemplate, String id) {
+		if(id != null) {
+			try {
+				File file = getFile(objectTemplate.getName(), encrypt(id));
+				if(file.exists()) {	
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
+					HashMap <String, String> map = new HashMap <String, String> ();
+					
+					String line = null;
+					while((line = bufferedReader.readLine()) != null) {
+						int indexOfEquals = line.indexOf("=");
+						if(indexOfEquals != -1) {
+							String key = line.substring(0, indexOfEquals).trim();
+							String value = line.substring(indexOfEquals + 1, line.length());
+							map.put(key, value);
+						}
+					}
+					bufferedReader.close();
+					
+					objectTemplate.parse(map);
+					
+					return true;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+		}
+		return false;
 	}
 	
 	public synchronized boolean save(ObjectTemplate objectTemplate, boolean overwrite) {

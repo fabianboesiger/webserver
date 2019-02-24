@@ -10,6 +10,7 @@ public class Session {
 	private String id;
 	private long lastConnect;
 	private HashMap <String, Object> flashes;
+	private String username;
 	
 	public Session(String id) {
 		this.id = id;
@@ -45,6 +46,18 @@ public class Session {
 	
 	public Object getFlash(String key) {
 		return flashes.remove(key);
+	}
+	
+	public void login(String username) {
+		this.username = username;
+	}
+	
+	public void logout() {
+		username = null;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 	
 }

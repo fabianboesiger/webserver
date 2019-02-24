@@ -10,12 +10,10 @@ public class ObjectTemplate extends Template {
 	
 	private transient Identifiable identifier;
 	private transient LinkedList <String> order;
-	private transient long loadedAt;
 	
 	public ObjectTemplate(String name) {
 		super(name);
 		identifier = null;
-		loadedAt = System.currentTimeMillis();
 	}
 	
 	public void addToOrder(String name) {
@@ -94,7 +92,7 @@ public class ObjectTemplate extends Template {
 	}
 
 	public LinkedList <String> render() {
-		LinkedList <String> list = new LinkedList <String> ();
+		LinkedList <String> lines = new LinkedList <String> ();
 		Field[] fields = getClass().getDeclaredFields();
 		for(int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -103,14 +101,14 @@ public class ObjectTemplate extends Template {
 				Object object = field.get(this);
 				if(object instanceof PrimitiveTemplate) {
 					if(!Modifier.isTransient(field.getModifiers())) {
-						list.add(((PrimitiveTemplate) object).name + "=" + ((PrimitiveTemplate) object).render());
+						lines.add(((PrimitiveTemplate) object).name + "=" + ((PrimitiveTemplate) object).render());
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-		return list;
+		return lines;
 	}
 
 	public void parse(Map <String, String> input) {

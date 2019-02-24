@@ -3,6 +3,8 @@ package server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,9 +25,16 @@ public class Responder {
 	}
 	
 	public Response error(int code, String message, LinkedList <String> languages) throws IOException {
+		return error(code, message, languages, null);
+	}
+	
+	public Response error(int code, String message, LinkedList <String> languages, String error) throws IOException {
 		HashMap <String, Object> variables = new HashMap <String, Object>();
 		variables.put("code", new String("" + code));
 		variables.put("message", new String(message));
+		if(error != null) {
+			variables.put("error", error);
+		}
 		return render("error.html", languages, variables);
 	}
 	
@@ -83,7 +92,10 @@ public class Responder {
 			return new Response(Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
 		} catch (InterpreterException e) {
 			e.printStackTrace();
-			return error(500, "internal-server-error", languages);
+			StringWriter stringWriter = new StringWriter();
+			e.printStackTrace(new PrintWriter(stringWriter));
+			String error = stringWriter.toString();
+			return error(500, "internal-server-error", languages, error);
 		}
 	}
 	

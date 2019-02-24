@@ -14,10 +14,13 @@ import server.renderer.commands.VariablesCommand;
 import server.Response;
 import server.renderer.commands.Command;
 import server.renderer.commands.EachCommand;
+import server.renderer.commands.EqualsCommand;
 import server.renderer.commands.ExistsCommand;
 import server.renderer.commands.GetCommand;
 import server.renderer.commands.IfCommand;
 import server.renderer.commands.IncludeCommand;
+import server.renderer.commands.NotCommand;
+import server.renderer.commands.NullCommand;
 import server.renderer.commands.PrintCommand;
 import server.renderer.commands.TranslateCommand;
 
@@ -40,6 +43,9 @@ public abstract class Renderer {
 		commands.put("each", new EachCommand());
 		commands.put("if", new IfCommand());
 		commands.put("exists", new ExistsCommand());
+		commands.put("equals", new EqualsCommand());
+		commands.put("null", new NullCommand());
+		commands.put("not", new NotCommand());
 	}
 	
 
