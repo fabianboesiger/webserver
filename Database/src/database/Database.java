@@ -56,6 +56,36 @@ public class Database {
 		return false;
 	}
 	
+	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
+		if(id < getCount(objectTemplate.getName())) {
+			try {
+				File file = getFile(objectTemplate.getName(), Integer.toHexString(id));
+				if(file.exists()) {	
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
+					HashMap <String, String> map = new HashMap <String, String> ();
+					
+					String line = null;
+					while((line = bufferedReader.readLine()) != null) {
+						int indexOfEquals = line.indexOf("=");
+						if(indexOfEquals != -1) {
+							String key = line.substring(0, indexOfEquals).trim();
+							String value = line.substring(indexOfEquals + 1, line.length());
+							map.put(key, value);
+						}
+					}
+					bufferedReader.close();
+					
+					objectTemplate.parse(map);
+					
+					return true;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+		}
+		return false;
+	}
+	
 	public synchronized boolean save(ObjectTemplate objectTemplate, boolean overwrite) {
 		try {
 			String id = objectTemplate.getIdentifier().getId();
@@ -89,7 +119,7 @@ public class Database {
 		return false;
 	}
 	
-	private int getCount(String name) {
+	public int getCount(String name) {
 		File folder = new File(DATA_FOLDER.getName() + "/" + name);
 		folder.mkdirs();
 		return folder.listFiles().length;

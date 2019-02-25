@@ -21,7 +21,7 @@ public class Server {
 	private static final int PORT = 8000;
 	private static final int HANDLER_THREADS = 16;
 	private static final File PUBLIC_FOLDER = new File("public");
-	private static final int STATISTICS_MAX_AGE = 60 * 60;
+	private static final int STATISTICS_MAX_AGE = 60;
 	private static final String ALL_HANDLER = "ALL";
 
 	
@@ -72,6 +72,7 @@ public class Server {
 				long removeTime = System.currentTimeMillis() - STATISTICS_MAX_AGE * 1000;
 				while(handles.peek() != null && handles.peek() < removeTime) {
 					handles.remove();
+					
 				}
 				while(visitors.peek() != null && visitors.peek() < removeTime) {
 					visitors.remove();

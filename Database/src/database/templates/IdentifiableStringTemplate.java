@@ -6,14 +6,22 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 	private transient Integer minimumLength;
 	private transient Integer maximumLength;
 	
-	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength) {
-		super(name);
+	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength, ParseAction parseAction) {
+		super(name, parseAction);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 	}
+	
+	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength) {
+		this(name, minimumLength, maximumLength, null);
+	}
+	
+	public IdentifiableStringTemplate(String name, ParseAction parseAction) {
+		this(name, null, null, parseAction);
+	}
 
 	public IdentifiableStringTemplate(String name) {
-		this(name, null, null);
+		this(name, null);
 	}
 	
 	@Override
@@ -77,12 +85,15 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 	@Override
 	public void parse(String string) {
 		String trimmed = string.trim();
+		String output;
 		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-			value = trimmed.substring(1, trimmed.length() - 1);
+			output = trimmed.substring(1, trimmed.length() - 1);
 		} else {
-			value = string;
+			output = string;
 		}
-		
+		if(parseAction != null) {
+			value = (String) parseAction.act(output);
+		}
 	}
 	
 }
