@@ -34,7 +34,7 @@ public class Handler implements HttpHandler {
 	public void handle(HttpExchange httpExchange) throws IOException {
 				
 		long start = System.currentTimeMillis();
-		server.handles.add(start);
+		server.addHandleCount();
 
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -150,7 +150,7 @@ public class Handler implements HttpHandler {
  		}
  		
  		if(!visited) {
- 			server.visitors.add(System.currentTimeMillis());
+ 			server.addVisitorCount();
  		}
  		
  		responseHeaders.put("Set-Cookie", responseCookies);

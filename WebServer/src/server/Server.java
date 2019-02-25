@@ -21,7 +21,6 @@ public class Server {
 	private static final int PORT = 8000;
 	private static final int HANDLER_THREADS = 16;
 	private static final File PUBLIC_FOLDER = new File("public");
-	private static final int STATISTICS_MAX_AGE = 60;
 	private static final String ALL_HANDLER = "ALL";
 
 	
@@ -30,8 +29,8 @@ public class Server {
 	protected HashMap <String, LinkedList <Listener>> listeners;
 	private Random random;
 	private long startingMillis;
-	protected LinkedList <Long> handles;
-	protected LinkedList <Long> visitors;
+	protected long handles;
+	protected long visitors;
     Responder responder;
 	
 	public Server(Responder responder) throws IOException {
@@ -44,8 +43,8 @@ public class Server {
 	    random = new Random();
 	    listeners = new HashMap <String, LinkedList <Listener>> ();
 	    sessions = new ConcurrentHashMap <String, Session> ();
-	    handles = new LinkedList <Long> ();
-	    visitors = new LinkedList <Long> ();
+	    handles = 0;
+	    visitors = 0;
 	    
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
@@ -68,15 +67,6 @@ public class Server {
 			@Override
 			public void run() {
 				sessions.entrySet().removeIf(entry -> entry.getValue().expired());
-				
-				long removeTime = System.currentTimeMillis() - STATISTICS_MAX_AGE * 1000;
-				while(handles.peek() != null && handles.peek() < removeTime) {
-					handles.remove();
-					
-				}
-				while(visitors.peek() != null && visitors.peek() < removeTime) {
-					visitors.remove();
-				}
 			}
 		}, 0, 1000);
 	}
@@ -157,12 +147,22 @@ public class Server {
         return count;
     }
     
-    public int handlesPerHour() {
-		return (int) ((double) handles.size() / STATISTICS_MAX_AGE  * 60 * 60);
+    protected void addHandleCount() {
+    	handles++;
+    }
+    
+    protected void addVisitorCount() {
+    	visitors++;
+    }
+    
+    public double handlesPerDay() {
+    	long uptime = uptime();
+		return (double) handles / uptime * Math.min(uptime, 1000 * 60 * 60 * 24);
 	}
     
-    public int visitorsPerHour() {
-		return (int) ((double) visitors.size() / STATISTICS_MAX_AGE  * 60 * 60);
+    public double visitorsPerDay() {
+    	long uptime = uptime();
+		return (double) visitors / uptime() * Math.min(uptime, 1000 * 60 * 60 * 24);
 	}
 
 }
