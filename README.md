@@ -15,7 +15,26 @@
 * Add the WebServer project as a library for your project (For Eclipse: Right click your project, select Build Path, Configure Build Path, select the Projects tab, add the WebServer project and click apply)
 ### Hello World
 ```
+import java.io.IOException;
 
+import server.Request;
+import server.Responder;
+import server.Server;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		
+		Responder responder = new Responder();
+		Server server = new Server(responder);
+		
+		server.on("GET", "/", (Request request) -> {
+			return responder.text("Hello World");
+		});
+
+	}
+
+}
 ```
 
 ## Documentation
