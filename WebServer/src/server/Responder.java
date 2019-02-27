@@ -20,6 +20,10 @@ public class Responder {
 	 
 	private Map <String, Object> predefined;
 	
+	public Responder() {
+		
+	}
+	
 	public Responder(Map <String, Object> predefined) {
 		this.predefined = predefined;
 	}
@@ -87,7 +91,9 @@ public class Responder {
 	}
 	
 	public Response render(File file, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
-		variables.putAll(predefined);
+		if(predefined != null) {
+			variables.putAll(predefined);
+		}
 		try {
 			return new Response(Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
 		} catch (InterpreterException e) {
