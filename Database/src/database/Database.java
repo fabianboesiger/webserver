@@ -26,6 +26,36 @@ public class Database {
 		DATA_FOLDER.mkdirs();
 	}
 	
+	public synchronized boolean loadId(ObjectTemplate objectTemplate, String id) {
+		if(id != null) {
+			try {
+				File file = getFile(objectTemplate.getName(), id);
+				if(file.exists()) {	
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
+					HashMap <String, String> map = new HashMap <String, String> ();
+					
+					String line = null;
+					while((line = bufferedReader.readLine()) != null) {
+						int indexOfEquals = line.indexOf("=");
+						if(indexOfEquals != -1) {
+							String key = line.substring(0, indexOfEquals).trim();
+							String value = line.substring(indexOfEquals + 1, line.length()).trim();
+							map.put(key, value);
+						}
+					}
+					bufferedReader.close();
+					
+					objectTemplate.parse(this, map);
+					
+					return true;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+		}
+		return false;
+	}
+	
 	public synchronized boolean load(ObjectTemplate objectTemplate, String id) {
 		if(id != null) {
 			try {
@@ -39,13 +69,13 @@ public class Database {
 						int indexOfEquals = line.indexOf("=");
 						if(indexOfEquals != -1) {
 							String key = line.substring(0, indexOfEquals).trim();
-							String value = line.substring(indexOfEquals + 1, line.length());
+							String value = line.substring(indexOfEquals + 1, line.length()).trim();
 							map.put(key, value);
 						}
 					}
 					bufferedReader.close();
 					
-					objectTemplate.parse(map);
+					objectTemplate.parse(this, map);
 					
 					return true;
 				}
@@ -69,13 +99,13 @@ public class Database {
 						int indexOfEquals = line.indexOf("=");
 						if(indexOfEquals != -1) {
 							String key = line.substring(0, indexOfEquals).trim();
-							String value = line.substring(indexOfEquals + 1, line.length());
+							String value = line.substring(indexOfEquals + 1, line.length()).trim();
 							map.put(key, value);
 						}
 					}
 					bufferedReader.close();
 					
-					objectTemplate.parse(map);
+					objectTemplate.parse(this, map);
 					
 					return true;
 				}
@@ -86,7 +116,7 @@ public class Database {
 		return false;
 	}
 	
-	public synchronized boolean save(ObjectTemplate objectTemplate, boolean overwrite) {
+	public synchronized String save(ObjectTemplate objectTemplate) {
 		try {
 			String id = objectTemplate.getIdentifier().getId();
 			if(id == null) {
@@ -96,14 +126,14 @@ public class Database {
 			}
 			File file = getFile(objectTemplate.getName(), id);
 			
-			if(!overwrite && file.exists()) {
-				return false;
+			if(file.exists()) {
+				return null;
 			}
 			
 			objectTemplate.get();
 		
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
-			LinkedList <String> lines = objectTemplate.render();
+			LinkedList <String> lines = objectTemplate.render(this);
 			for(int i = 0; i < lines.size(); i++) {
 				bufferedWriter.write(lines.get(i));
 				if(i != lines.size() - 1) {
@@ -112,11 +142,11 @@ public class Database {
 			}
 			bufferedWriter.close();
 			
-			return true;
+			return id;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 	
 	public int getCount(String name) {

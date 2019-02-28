@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import database.Database;
+
 public class ObjectTemplate extends Template {
 	
 	private transient Identifiable identifier;
@@ -91,7 +93,7 @@ public class ObjectTemplate extends Template {
 		return valid;
 	}
 
-	public LinkedList <String> render() {
+	public LinkedList <String> render(Database database) {
 		LinkedList <String> lines = new LinkedList <String> ();
 		Field[] fields = getClass().getDeclaredFields();
 		for(int i = 0; i < fields.length; i++) {
@@ -99,9 +101,12 @@ public class ObjectTemplate extends Template {
 			field.setAccessible(true);
 			try {
 				Object object = field.get(this);
-				if(object instanceof PrimitiveTemplate) {
-					if(!Modifier.isTransient(field.getModifiers())) {
+				if(!Modifier.isTransient(field.getModifiers())) {
+					if(object instanceof PrimitiveTemplate) {
 						lines.add(((PrimitiveTemplate) object).name + "=" + ((PrimitiveTemplate) object).render());
+					} else
+					if(object instanceof ObjectTemplate) {
+						lines.add(((PrimitiveTemplate) object).name + "=" + database.save((ObjectTemplate) object));
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -110,8 +115,12 @@ public class ObjectTemplate extends Template {
 		}
 		return lines;
 	}
-
+	
 	public void parse(Map <String, String> input) {
+		parse(null, input);
+	}
+
+	public void parse(Database database, Map <String, String> input) {
 		Field[] fields = getClass().getDeclaredFields();
 		for(Field field : fields) {
 			try {
@@ -122,9 +131,11 @@ public class ObjectTemplate extends Template {
 					if(input.containsKey(name)) {
 						if(object instanceof PrimitiveTemplate) {
 							((PrimitiveTemplate) field.get(this)).parse(input.get(name));
-						}
+						} else
 						if(object instanceof ObjectTemplate) {
-							
+							if(database != null) {
+								database.loadId((ObjectTemplate) field.get(this), input.get(name));
+							}
 						}
 					}
 				}
