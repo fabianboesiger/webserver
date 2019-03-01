@@ -8,8 +8,6 @@ public abstract class Template {
 		this.name = name;
 	}
 	
-	public abstract void set(Object object);
-	public abstract Object get();
 	public abstract boolean validate(Errors errors);
 	
 }

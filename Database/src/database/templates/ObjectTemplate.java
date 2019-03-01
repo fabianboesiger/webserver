@@ -2,16 +2,13 @@ package database.templates;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import database.Database;
 
 public abstract class ObjectTemplate extends Template {
-	
-	public static final transient String NAME = null;
-	
+		
 	private transient Identifiable identifier;
 	
 	public ObjectTemplate() {
@@ -30,7 +27,7 @@ public abstract class ObjectTemplate extends Template {
 	public Identifiable getIdentifier() {
 		return identifier;
 	}
-	
+	/*
 	@SuppressWarnings("unchecked")
 	@Override
 	public void set(Object object) {
@@ -69,7 +66,7 @@ public abstract class ObjectTemplate extends Template {
 		}
 		return output;
 	}
-	
+	*/
 	@Override
 	public boolean validate(Errors errors) {
 		boolean valid = true;

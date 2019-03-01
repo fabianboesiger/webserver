@@ -15,5 +15,7 @@ public abstract class PrimitiveTemplate extends Template {
 	
 	public abstract String render();
 	public abstract void parse(String string);
+	public abstract void set(Object object);
+	public abstract Object get();
 	
 }

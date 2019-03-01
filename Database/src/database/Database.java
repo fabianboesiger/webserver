@@ -29,7 +29,7 @@ public class Database {
 	
 	public synchronized boolean loadId(ObjectTemplate objectTemplate, String id) {
 		if(id != null) {
-			return loadId(objectTemplate, getFile(objectTemplate.NAME, id));		 
+			return loadId(objectTemplate, getFile(objectTemplate.getClass().getSimpleName(), id));		 
 		}
 		return false;
 	}
@@ -89,7 +89,7 @@ public class Database {
 	}
 	
 	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
-		if(id < getCount(objectTemplate.NAME)) {
+		if(id < getCount(objectTemplate.getClass().getSimpleName())) {
 			return loadId(objectTemplate, Integer.toHexString(id));
 		}
 		return false;
@@ -99,18 +99,16 @@ public class Database {
 		try {
 			String id = objectTemplate.getIdentifier().getId();
 			if(id == null) {
-				id = Integer.toHexString(getCount(objectTemplate.NAME));
+				id = Integer.toHexString(getCount(objectTemplate.getClass().getSimpleName()));
 			} else {
 				id = encrypt(id);
 			}
-			File file = getFile(objectTemplate.NAME, id);
+			File file = getFile(objectTemplate.getClass().getSimpleName(), id);
 			
 			if(file.exists()) {
 				return null;
 			}
-			
-			objectTemplate.get();
-		
+					
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
 			LinkedList <String> lines = objectTemplate.render(this);
 			for(int i = 0; i < lines.size(); i++) {
