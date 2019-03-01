@@ -9,7 +9,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		Responder responder = new Responder();
-		Server server = new Server(responder);
+		Server server = new Server(responder, 8000);
 		
 		server.on("GET", "/", (Request request) -> {
 			return responder.text("Hello World");
