@@ -8,30 +8,27 @@ import java.util.Map;
 
 import database.Database;
 
-public class ObjectTemplate extends Template {
+public abstract class ObjectTemplate extends Template {
+	
+	public static final transient String NAME = null;
 	
 	private transient Identifiable identifier;
-	private transient LinkedList <String> order;
+	
+	public ObjectTemplate() {
+		super(null);
+	}
 	
 	public ObjectTemplate(String name) {
 		super(name);
 		identifier = null;
 	}
-	
-	public void addToOrder(String name) {
-		order.add(name);
-	}
-	
+		
 	public void setIdentifier(Identifiable identifier) {
 		this.identifier = identifier;
 	}
 	
 	public Identifiable getIdentifier() {
 		return identifier;
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -42,8 +39,8 @@ public class ObjectTemplate extends Template {
 		for(Field field : fields) {
 			try {
 				field.setAccessible(true);
-				if(field.get(this) instanceof Template) {
-					String name = ((Template) field.get(this)).name;
+				if(field.get(this) instanceof PrimitiveTemplate) {
+					String name = ((PrimitiveTemplate) field.get(this)).name;
 					if(input.containsKey(name)) {
 						((Template) field.get(this)).set(input.get(name));
 					}
@@ -61,9 +58,9 @@ public class ObjectTemplate extends Template {
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
-				if(field.get(this) instanceof Template) {
-					if(!Modifier.isTransient(field.getModifiers())) {
-						output.put(((Template) field.get(this)).name, ((Template) field.get(this)).get());
+				if(field.get(this) instanceof PrimitiveTemplate) {
+					if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+						output.put(((PrimitiveTemplate) field.get(this)).name, ((Template) field.get(this)).get());
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -101,12 +98,12 @@ public class ObjectTemplate extends Template {
 			field.setAccessible(true);
 			try {
 				Object object = field.get(this);
-				if(!Modifier.isTransient(field.getModifiers())) {
+				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 					if(object instanceof PrimitiveTemplate) {
 						lines.add(((PrimitiveTemplate) object).name + "=" + ((PrimitiveTemplate) object).render());
 					} else
 					if(object instanceof ObjectTemplate) {
-						lines.add(((PrimitiveTemplate) object).name + "=" + database.save((ObjectTemplate) object));
+						lines.add(((ObjectTemplate) object).name + "=" + database.save((ObjectTemplate) object));
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {

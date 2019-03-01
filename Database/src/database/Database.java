@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -28,8 +29,15 @@ public class Database {
 	
 	public synchronized boolean loadId(ObjectTemplate objectTemplate, String id) {
 		if(id != null) {
+			return loadId(objectTemplate, getFile(objectTemplate.NAME, id));		 
+		}
+		return false;
+	}
+	
+
+	public synchronized boolean loadId(ObjectTemplate objectTemplate, File file) {
+		if(file != null) {
 			try {
-				File file = getFile(objectTemplate.getName(), id);
 				if(file.exists()) {	
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
 					HashMap <String, String> map = new HashMap <String, String> ();
@@ -56,62 +64,33 @@ public class Database {
 		return false;
 	}
 	
+	public synchronized ObjectTemplate[] loadAll(Class <?> target) {
+		try {
+			File folder = new File(DATA_FOLDER.getName() + "/" + target.getField("NAME").get(null));
+			folder.getParentFile().mkdirs();
+			File[] files = folder.listFiles();
+			ObjectTemplate[] output = new ObjectTemplate[files.length];
+			for(int i = 0; i < files.length; i++) {
+				output[i] = (ObjectTemplate) target.getConstructor().newInstance();
+				loadId(output[i], files[i]);
+			}
+			return output;
+		} catch (NoSuchFieldException | InstantiationException | IllegalArgumentException | IllegalAccessException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public synchronized boolean load(ObjectTemplate objectTemplate, String id) {
 		if(id != null) {
-			try {
-				File file = getFile(objectTemplate.getName(), encrypt(id));
-				if(file.exists()) {	
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
-					HashMap <String, String> map = new HashMap <String, String> ();
-					
-					String line = null;
-					while((line = bufferedReader.readLine()) != null) {
-						int indexOfEquals = line.indexOf("=");
-						if(indexOfEquals != -1) {
-							String key = line.substring(0, indexOfEquals).trim();
-							String value = line.substring(indexOfEquals + 1, line.length()).trim();
-							map.put(key, value);
-						}
-					}
-					bufferedReader.close();
-					
-					objectTemplate.parse(this, map);
-					
-					return true;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  
+			return loadId(objectTemplate, encrypt(id));
 		}
 		return false;
 	}
 	
 	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
-		if(id < getCount(objectTemplate.getName())) {
-			try {
-				File file = getFile(objectTemplate.getName(), Integer.toHexString(id));
-				if(file.exists()) {	
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
-					HashMap <String, String> map = new HashMap <String, String> ();
-					
-					String line = null;
-					while((line = bufferedReader.readLine()) != null) {
-						int indexOfEquals = line.indexOf("=");
-						if(indexOfEquals != -1) {
-							String key = line.substring(0, indexOfEquals).trim();
-							String value = line.substring(indexOfEquals + 1, line.length()).trim();
-							map.put(key, value);
-						}
-					}
-					bufferedReader.close();
-					
-					objectTemplate.parse(this, map);
-					
-					return true;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  
+		if(id < getCount(objectTemplate.NAME)) {
+			return loadId(objectTemplate, Integer.toHexString(id));
 		}
 		return false;
 	}
@@ -120,11 +99,11 @@ public class Database {
 		try {
 			String id = objectTemplate.getIdentifier().getId();
 			if(id == null) {
-				id = Integer.toHexString(getCount(objectTemplate.getName()));
+				id = Integer.toHexString(getCount(objectTemplate.NAME));
 			} else {
 				id = encrypt(id);
 			}
-			File file = getFile(objectTemplate.getName(), id);
+			File file = getFile(objectTemplate.NAME, id);
 			
 			if(file.exists()) {
 				return null;
