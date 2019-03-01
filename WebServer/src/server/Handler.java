@@ -21,7 +21,6 @@ import com.sun.net.httpserver.HttpHandler;
 public class Handler implements HttpHandler {
 	
 	private static final String SESSION_ID_COOKIE_NAME = "session-id";
-	private static final String VISITED_COOKIE_NAME = "visited";
 	private static final int BUFFER_SIZE = 4096;
 	
 	Server server;
@@ -124,17 +123,12 @@ public class Handler implements HttpHandler {
 		List <String> requestCookies = requestHeaders.get("Cookie");
  		ArrayList <String> responseCookies = new ArrayList <String> ();
  		String sessionId = null;
- 		boolean visited = false;
 
  		if(requestCookies != null) {
  		    for(String cookie : requestCookies) {
  		    	String sessionIdValue = getValue(SESSION_ID_COOKIE_NAME, cookie);
  		    	if(sessionIdValue != null) {
  		    		sessionId = sessionIdValue;
- 		    	}
- 		    	String visitedValue = getValue(VISITED_COOKIE_NAME, cookie);
- 		    	if(visitedValue != null) {
- 		    		visited = true;
  		    	}
  		    }
  		}
@@ -149,13 +143,8 @@ public class Handler implements HttpHandler {
  			session = server.createSession();
  		}
  		
- 		if(!visited) {
- 			server.addVisitorCount();
- 		}
- 		
  		responseHeaders.put("Set-Cookie", responseCookies);
  		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getId() + "; path=/; Max-Age=" + Session.MAX_AGE);
- 		responseCookies.add(VISITED_COOKIE_NAME + "=true; path=/;");
  		
  		return session;
     }

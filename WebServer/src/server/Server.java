@@ -18,7 +18,6 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 	
-	private static final int PORT = 8000;
 	private static final int HANDLER_THREADS = 16;
 	private static final File PUBLIC_FOLDER = new File("public");
 	private static final String ALL_HANDLER = "ALL";
@@ -33,8 +32,8 @@ public class Server {
 	protected long visitors;
     Responder responder;
 	
-	public Server(Responder responder) throws IOException {
-		System.out.println("Starting server on port " + PORT);
+	public Server(Responder responder, int port) throws IOException {
+		System.out.println("Starting server on port " + port);
 		
 		this.responder = responder;
 		
@@ -47,7 +46,7 @@ public class Server {
 	    visitors = 0;
 	    
 		// Set up Handler
-		httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 		httpServer.setExecutor(Executors.newFixedThreadPool(HANDLER_THREADS));
 		httpServer.createContext("/", new Handler(this));
 	    httpServer.start();
@@ -158,11 +157,6 @@ public class Server {
     public double handlesPerDay() {
     	long uptime = uptime();
 		return (double) handles / uptime * Math.min(uptime, 1000 * 60 * 60 * 24);
-	}
-    
-    public double visitorsPerDay() {
-    	long uptime = uptime();
-		return (double) visitors / uptime() * Math.min(uptime, 1000 * 60 * 60 * 24);
 	}
 
 }
