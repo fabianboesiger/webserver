@@ -1,13 +1,17 @@
 package database.templates;
 
+import java.util.Map;
+
+import database.Database;
+
 public class IdentifiableStringTemplate extends PrimitiveTemplate implements Identifiable {
 		
 	private String value;
 	private transient Integer minimumLength;
 	private transient Integer maximumLength;
 	
-	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength, ParseAction parseAction) {
-		super(name, parseAction);
+	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength, SaveAction saveAction) {
+		super(name, saveAction);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 	}
@@ -16,8 +20,8 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 		this(name, minimumLength, maximumLength, null);
 	}
 	
-	public IdentifiableStringTemplate(String name, ParseAction parseAction) {
-		this(name, null, null, parseAction);
+	public IdentifiableStringTemplate(String name, SaveAction saveAction) {
+		this(name, null, null, saveAction);
 	}
 
 	public IdentifiableStringTemplate(String name) {
@@ -78,12 +82,16 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 	}
 
 	@Override
-	public String render() {
-		return "\"" + value + "\"";
+	public String render(Database database) throws Exception {
+		if(saveAction != null) {
+			return "\"" + saveAction.act(value) + "\"";
+		} else {
+			return "\"" + value + "\"";
+		}
 	}
 
 	@Override
-	public void parse(String string) {
+	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
 		String trimmed = string.trim();
 		String output;
 		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
@@ -91,9 +99,7 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 		} else {
 			output = string;
 		}
-		if(parseAction != null) {
-			value = (String) parseAction.act(output);
-		}
+		value = output;
 	}
 	
 }

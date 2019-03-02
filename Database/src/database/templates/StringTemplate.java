@@ -1,5 +1,9 @@
 package database.templates;
 
+import java.util.Map;
+
+import database.Database;
+
 public class StringTemplate extends PrimitiveTemplate {
 		
 	private String value;
@@ -10,15 +14,35 @@ public class StringTemplate extends PrimitiveTemplate {
 	private static final char[] RAW = {'\t', '\b', '\n', '\r', '\f', '"', '\\'};
 	private static final char[] ESCAPED = {'t', 'b', 'n', 'r', 'f', '"', '\\'};
 	
-	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull) {
-		super(name);
+	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull, SaveAction saveAction) {
+		super(name, saveAction);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 		this.notNull = notNull;
 	}
 	
+	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, SaveAction saveAction) {
+		this(name, minimumLength, maximumLength, true, saveAction);
+	}
+	
+	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull) {
+		this(name, minimumLength, maximumLength, notNull, null);
+	}
+	
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength) {
-		this(name, minimumLength, maximumLength, true);
+		this(name, minimumLength, maximumLength, true, null);
+	}
+	
+	public StringTemplate(String name, boolean notNull, SaveAction saveAction) {
+		this(name, null, null, notNull, saveAction);
+	}
+	
+	public StringTemplate(String name, SaveAction saveAction) {
+		this(name, null, null, saveAction);
+	}
+	
+	public StringTemplate(String name, boolean notNull) {
+		this(name, null, null, notNull);
 	}
 	
 	public StringTemplate(String name) {
@@ -61,7 +85,7 @@ public class StringTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public String render() {
+	public String render(Database database) throws Exception {
 		StringBuilder replaced = new StringBuilder();
 		for(int i = 0; i < value.length(); i++) {
 			boolean found = false;
@@ -77,11 +101,15 @@ public class StringTemplate extends PrimitiveTemplate {
 				replaced.append(value.charAt(i));
 			}
 		}
-		return "\"" + replaced.toString() + "\"";
+		if(saveAction != null) {
+			return "\"" + saveAction.act(replaced.toString()) + "\"";
+		} else {
+			return "\"" + replaced.toString() + "\"";
+		}
 	}
 
 	@Override
-	public void parse(String string) {
+	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
 		String temporary = null;
 		String trimmed = string.trim();
 		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {

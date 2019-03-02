@@ -81,7 +81,7 @@ public class Handler implements HttpHandler {
     	if(response == null) {
 			response = server.responder.error(404, "not-found", languages);
 		}
-    	
+
     	if(response.contentType != null) {
     		responseHeaders.set("Content-Type", response.contentType);
     	}
@@ -142,7 +142,7 @@ public class Handler implements HttpHandler {
  		}else {
  			session = server.createSession();
  		}
- 		
+ 				
  		responseHeaders.put("Set-Cookie", responseCookies);
  		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getId() + "; path=/; Max-Age=" + Session.MAX_AGE);
  		

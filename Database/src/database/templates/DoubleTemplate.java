@@ -1,5 +1,9 @@
 package database.templates;
 
+import java.util.Map;
+
+import database.Database;
+
 public class DoubleTemplate extends PrimitiveTemplate {
 	
 	private Double value;
@@ -58,12 +62,12 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public String render() {
+	public String render(Database database) {
 		return value.toString();
 	}
 
 	@Override
-	public void parse(String string) {
+	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) {
 		value = Double.parseDouble(string);
 	}
 	

@@ -1,24 +1,16 @@
 package database;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import database.templates.ObjectTemplate;
 
 public class Database {
 	
-	private static final Charset ENCODING = StandardCharsets.UTF_8;
+	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final File DATA_FOLDER = new File("data");
 	private static final String ENDING = "txt";
 	
@@ -29,37 +21,13 @@ public class Database {
 	
 	public synchronized boolean loadId(ObjectTemplate objectTemplate, String id) {
 		if(id != null) {
-			return loadId(objectTemplate, getFile(objectTemplate.getClass().getSimpleName(), id));		 
-		}
-		return false;
-	}
-	
-
-	public synchronized boolean loadId(ObjectTemplate objectTemplate, File file) {
-		if(file != null) {
+			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
 			try {
-				if(file.exists()) {	
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
-					HashMap <String, String> map = new HashMap <String, String> ();
-					
-					String line = null;
-					while((line = bufferedReader.readLine()) != null) {
-						int indexOfEquals = line.indexOf("=");
-						if(indexOfEquals != -1) {
-							String key = line.substring(0, indexOfEquals).trim();
-							String value = line.substring(indexOfEquals + 1, line.length()).trim();
-							map.put(key, value);
-						}
-					}
-					bufferedReader.close();
-					
-					objectTemplate.parse(this, map);
-					
-					return true;
-				}
-			} catch (IOException e) {
+				objectTemplate.parse(this, id, initialized);
+				return true;
+			} catch (Exception e) {
 				e.printStackTrace();
-			}  
+			}
 		}
 		return false;
 	}
@@ -72,7 +40,8 @@ public class Database {
 			ObjectTemplate[] output = new ObjectTemplate[files.length];
 			for(int i = 0; i < files.length; i++) {
 				output[i] = (ObjectTemplate) target.getConstructor().newInstance();
-				loadId(output[i], files[i]);
+				String name = files[i].getName();
+				loadId(output[i], name.substring(0, name.lastIndexOf(".")));
 			}
 			return output;
 		} catch (NoSuchFieldException | InstantiationException | IllegalArgumentException | IllegalAccessException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
@@ -87,43 +56,22 @@ public class Database {
 		}
 		return false;
 	}
-	
+	/*
 	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
 		if(id < getCount(objectTemplate.getClass().getSimpleName())) {
 			return loadId(objectTemplate, Integer.toHexString(id));
 		}
 		return false;
 	}
-	
-	public synchronized String save(ObjectTemplate objectTemplate) {
+	*/
+	public synchronized boolean save(ObjectTemplate objectTemplate) {
 		try {
-			String id = objectTemplate.getIdentifier().getId();
-			if(id == null) {
-				id = Integer.toHexString(getCount(objectTemplate.getClass().getSimpleName()));
-			} else {
-				id = encrypt(id);
-			}
-			File file = getFile(objectTemplate.getClass().getSimpleName(), id);
-			
-			if(file.exists()) {
-				return null;
-			}
-					
-			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
-			LinkedList <String> lines = objectTemplate.render(this);
-			for(int i = 0; i < lines.size(); i++) {
-				bufferedWriter.write(lines.get(i));
-				if(i != lines.size() - 1) {
-					bufferedWriter.newLine();
-				}
-			}
-			bufferedWriter.close();
-			
-			return id;
-		} catch (IOException e) {
+			objectTemplate.render(this);
+			return true;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return false;
 	}
 	
 	public int getCount(String name) {
@@ -132,7 +80,7 @@ public class Database {
 		return folder.listFiles().length;
 	}
 	
-	private File getFile(String name, String id) {
+	public File getFile(String name, String id) {
 		File file = new File(DATA_FOLDER.getName() + "/" + name + "/" + id + "." + ENDING);
 		file.getParentFile().mkdirs();
 		return file;

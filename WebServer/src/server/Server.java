@@ -29,7 +29,6 @@ public class Server {
 	private Random random;
 	private long startingMillis;
 	protected long handles;
-	protected long visitors;
     Responder responder;
 	
 	public Server(Responder responder, int port) throws IOException {
@@ -43,7 +42,6 @@ public class Server {
 	    listeners = new HashMap <String, LinkedList <Listener>> ();
 	    sessions = new ConcurrentHashMap <String, Session> ();
 	    handles = 0;
-	    visitors = 0;
 	    
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
@@ -148,10 +146,6 @@ public class Server {
     
     protected void addHandleCount() {
     	handles++;
-    }
-    
-    protected void addVisitorCount() {
-    	visitors++;
     }
     
     public double handlesPerDay() {

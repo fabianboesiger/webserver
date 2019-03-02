@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Session {
 	
 	protected static final int MAX_AGE = 7 * 24 * 60 * 60;
-	private static final int ACTIVE = 60;
+	private static final int ACTIVE = 5 * 60;
 	
 	private String id;
 	private long lastConnect;

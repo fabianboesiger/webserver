@@ -1,5 +1,9 @@
 package database.templates;
 
+import java.util.Map;
+
+import database.Database;
+
 public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	
 	private Integer value;
@@ -63,12 +67,12 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	}
 
 	@Override
-	public String render() {
+	public String render(Database database) {
 		return value.toString();
 	}
 
 	@Override
-	public void parse(String string) {
+	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) {
 		value = Integer.parseInt(string);
 	}
 	
