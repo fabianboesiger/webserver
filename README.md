@@ -8,6 +8,7 @@
 * Support for file upload
 * New project for hashing
 * New project for mail service
+* Sending mails asynchronously
 
 ## Getting Started
 ### Add Library
@@ -40,3 +41,14 @@ public class Main {
 ```
 
 ## Documentation
+### WebServer
+#### Server (server.Server)
+|Method|Description|
+|---|---|
+|`Server(Responder responder, int port)`|The constructor accepts a responder object and a port number to bind to.|
+|`void on(String method, String path, ListenerAction listenerAction)`|Adds a new handler that listens on the specified path for the specified method. The ListenerAction interface gets executed and responds to the request.|
+|`long uptime()`|Returns the uptime of the server in milliseconds.|
+|`int sessionsCount()`|Returns the number of sessions.|
+|`int activeCount()`|Returns the number of active sessions.|
+|`double handlesPerDay()`|Returns the average handles per day.|
+#### Responder (server.Responder)
