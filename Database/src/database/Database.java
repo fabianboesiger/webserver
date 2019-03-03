@@ -41,7 +41,9 @@ public class Database {
 			for(int i = 0; i < files.length; i++) {
 				output[i] = (ObjectTemplate) target.getConstructor().newInstance();
 				String name = files[i].getPath();
-				loadId(output[i], name.substring(0, name.lastIndexOf(".")));
+				if(!loadId(output[i], name.substring(0, name.lastIndexOf(".")))) {
+					return null;
+				}
 			}
 			return output;
 		} catch (NoSuchFieldException | InstantiationException | IllegalArgumentException | IllegalAccessException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
