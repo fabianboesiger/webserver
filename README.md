@@ -42,7 +42,7 @@ public class Main {
 
 ## Documentation
 ### WebServer
-* Dependencies: Renderer
+|Dependencies|Renderer|
 #### Server (server.Server)
 |Method|Description|
 |---|---|
