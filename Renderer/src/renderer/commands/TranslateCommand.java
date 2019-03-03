@@ -1,4 +1,4 @@
-package server.renderer.commands;
+package renderer.commands;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
 
-import server.Response;
-import server.renderer.InterpreterException;
-import server.renderer.Renderer;
-import server.renderer.TranslatorException;
+import renderer.InterpreterException;
+import renderer.Renderer;
+import renderer.TranslatorException;
 
 public class TranslateCommand extends Command {
 	
@@ -29,7 +29,7 @@ public class TranslateCommand extends Command {
 	}
 	
 	@Override
-	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
+	public Object run(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws IOException, InterpreterException {
 
 		if(languages != null) {
 	        File[] files = LANGUAGES_FOLDER.listFiles();
@@ -75,7 +75,7 @@ public class TranslateCommand extends Command {
 		    			throw new TranslatorException("Language file not found for " + languages.toString());
 		    		}
 		    		
-		    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(LANGUAGES_INDEX_FILE), Response.ENCODING));  
+		    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(LANGUAGES_INDEX_FILE), Renderer.ENCODING));  
 		 			String line = null;
 		 			ArrayList <String> keys = new ArrayList <String> ();
 		 			while((line = bufferedReader.readLine()) != null) {
@@ -83,7 +83,7 @@ public class TranslateCommand extends Command {
 		 			}
 		 			bufferedReader.close();
 		 			
-		 			String key = (String) Renderer.next(code, languages, variables, printer);
+		 			String key = (String) Renderer.next(code, languages, variables, printer, folder);
 		 			int keyIndex = -1;
 		 			for(int i = 0; i < keys.size(); i++) {
 		 				if(keys.get(i).equals(key)) {
@@ -97,14 +97,14 @@ public class TranslateCommand extends Command {
 
 		 					 			
 		 			if(keyIndex >= 0) {
-			 			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(languageFiles.get(index)), Response.ENCODING));  
+			 			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(languageFiles.get(index)), Renderer.ENCODING));  
 			 			for(int i = 0; i < keyIndex; i++) {
 			 				bufferedReader.readLine();
 			 			}
 			 			line = bufferedReader.readLine();
 			 			bufferedReader.close();
 			 			
-			 			return Renderer.render(new BufferedReader(new StringReader(line)), languages, variables);
+			 			return Renderer.render(new BufferedReader(new StringReader(line)), languages, variables, folder);
 		 			}
 		        } 
 	        }

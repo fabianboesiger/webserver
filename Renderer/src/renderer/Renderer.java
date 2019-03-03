@@ -1,31 +1,33 @@
-package server.renderer;
+package renderer;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import server.renderer.commands.VariablesCommand;
-import server.Response;
-import server.renderer.commands.Command;
-import server.renderer.commands.EachCommand;
-import server.renderer.commands.EqualsCommand;
-import server.renderer.commands.ExistsCommand;
-import server.renderer.commands.GetCommand;
-import server.renderer.commands.IfCommand;
-import server.renderer.commands.IncludeCommand;
-import server.renderer.commands.NotCommand;
-import server.renderer.commands.NullCommand;
-import server.renderer.commands.PrintCommand;
-import server.renderer.commands.TranslateCommand;
+import renderer.commands.Command;
+import renderer.commands.EachCommand;
+import renderer.commands.EqualsCommand;
+import renderer.commands.ExistsCommand;
+import renderer.commands.GetCommand;
+import renderer.commands.IfCommand;
+import renderer.commands.IncludeCommand;
+import renderer.commands.NotCommand;
+import renderer.commands.NullCommand;
+import renderer.commands.PrintCommand;
+import renderer.commands.TranslateCommand;
+import renderer.commands.VariablesCommand;
 
 public abstract class Renderer {
 	
+	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final String BEGIN = "{{";
 	private static final String END = "}}";
 	private static final char STRING = '"';
@@ -49,11 +51,12 @@ public abstract class Renderer {
 	}
 	
 
-	public static String render(File file, LinkedList <String> languages, Map <String, Object> variables) throws IOException, InterpreterException {
-		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file), Response.ENCODING)), languages, variables);
+	public static String render(File file, List <String> languages, Map <String, Object> variables, File folder) throws IOException, InterpreterException {
+		return render(new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING)), languages, variables, folder);
 	}
 	
-	public static String render(BufferedReader bufferedReader, LinkedList <String> languages, Map <String, Object> variables) throws IOException, InterpreterException {
+	public static String render(BufferedReader bufferedReader, List <String> languages, Map <String, Object> variables, File folder) throws IOException, InterpreterException {
+
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
     	StringBuilder output = new StringBuilder();
@@ -80,7 +83,7 @@ public abstract class Renderer {
         		if(buffer.length() >= END.length()) {
         			insideTag = false;
         			buffer.setLength(0);
-        			output.append(interpret(code, languages, variables));
+        			output.append(interpret(code, languages, variables, folder));
         		}
         	}
         }
@@ -89,10 +92,10 @@ public abstract class Renderer {
         return output.toString();
 	}
 	
-	private static StringBuilder interpret(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables) throws InterpreterException, IOException {
+	private static StringBuilder interpret(StringBuilder code, List <String> languages, Map <String, Object> variables, File folder) throws InterpreterException, IOException {
 		StringBuilder printer = new StringBuilder();
 		while(code.length() > 0) {
-			runNext(code, languages, variables, printer);
+			runNext(code, languages, variables, printer, folder);
 		}
 		return printer;
 	}
@@ -148,15 +151,15 @@ public abstract class Renderer {
 		return null;
 	}
 	
-	public static Object runNext(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws InterpreterException, IOException {
-		return run(nextCommand(code), code, languages, variables, printer);
+	public static Object runNext(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws InterpreterException, IOException {
+		return run(nextCommand(code), code, languages, variables, printer, folder);
 	}
 	
-	public static Object run(String commandString, StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws InterpreterException, IOException {		
+	public static Object run(String commandString, StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws InterpreterException, IOException {		
 		if(commandString != null) {
 			Command command = getCommand(commandString);
 			if(command != null) {
-				return command.run(code, languages, variables, printer);
+				return command.run(code, languages, variables, printer, folder);
 			} else {
 				throw new UnknownCommandException(commandString);
 			}
@@ -174,11 +177,11 @@ public abstract class Renderer {
 		return null;
 	}
 
-	public static Object next(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws InterpreterException, IOException {
+	public static Object next(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws InterpreterException, IOException {
 		String command = nextCommand(code);
 		Object output = parse(command);
 		if(output == null) {
-			return run(command, code, languages, variables, printer);
+			return run(command, code, languages, variables, printer, folder);
 		} else {
 			return output;
 		}

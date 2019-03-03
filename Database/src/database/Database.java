@@ -34,13 +34,13 @@ public class Database {
 	
 	public synchronized ObjectTemplate[] loadAll(Class <?> target) {
 		try {
-			File folder = new File(DATA_FOLDER.getName() + "/" + target.getField("NAME").get(null));
+			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
 			ObjectTemplate[] output = new ObjectTemplate[files.length];
 			for(int i = 0; i < files.length; i++) {
 				output[i] = (ObjectTemplate) target.getConstructor().newInstance();
-				String name = files[i].getName();
+				String name = files[i].getPath();
 				loadId(output[i], name.substring(0, name.lastIndexOf(".")));
 			}
 			return output;
@@ -75,13 +75,13 @@ public class Database {
 	}
 	
 	public int getCount(String name) {
-		File folder = new File(DATA_FOLDER.getName() + "/" + name);
+		File folder = new File(DATA_FOLDER.getPath() + File.separator + name);
 		folder.mkdirs();
 		return folder.listFiles().length;
 	}
 	
 	public File getFile(String name, String id) {
-		File file = new File(DATA_FOLDER.getName() + "/" + name + "/" + id + "." + ENDING);
+		File file = new File(DATA_FOLDER.getPath() + File.separator + name + File.separator + id + "." + ENDING);
 		file.getParentFile().mkdirs();
 		return file;
 	}

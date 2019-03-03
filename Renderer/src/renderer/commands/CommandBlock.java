@@ -1,6 +1,6 @@
-package server.renderer.commands;
+package renderer.commands;
 
-import server.renderer.Renderer;
+import renderer.Renderer;
 
 public abstract class CommandBlock extends Command {
 	

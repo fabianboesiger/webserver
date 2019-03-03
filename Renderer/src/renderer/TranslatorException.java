@@ -1,4 +1,4 @@
-package server.renderer;
+package renderer;
 
 public class TranslatorException extends InterpreterException {
 

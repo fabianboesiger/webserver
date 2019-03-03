@@ -11,17 +11,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import server.renderer.InterpreterException;
-import server.renderer.Renderer;
+import renderer.InterpreterException;
+import renderer.Renderer;
 
 public class Responder {
 	
-	public static final File VIEWS_FOLDER = new File("views");
+	public static final File VIEWS_FOLDER = new File("views\\web");
 	 
 	private Map <String, Object> predefined;
 	
 	public Responder() {
-		
+		this(null);
 	}
 	
 	public Responder(Map <String, Object> predefined) {
@@ -63,23 +63,23 @@ public class Responder {
 	}
 	
 	public Response render(String name) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, new HashMap <String, Object>());
+		return render(new File(VIEWS_FOLDER.getPath() + File.separator + name), new LinkedList <String> (), new HashMap <String, Object>());
 	}
 	
 	public Response render(File file) throws IOException {
-		return render(file, null, new HashMap <String, Object>());
+		return render(file, new LinkedList <String> (), new HashMap <String, Object>());
 	}
 	
 	public Response render(String name, Map <String, Object> variables) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), null, variables);
+		return render(new File(VIEWS_FOLDER.getPath() + File.separator + name), null, variables);
 	}
 	
 	public Response render(File file, Map <String, Object> variables) throws IOException {
-		return render(file, null, variables);
+		return render(file, new LinkedList <String> (), variables);
 	}
 	
 	public Response render(String name, LinkedList <String> languages) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), languages, new HashMap <String, Object>());
+		return render(new File(VIEWS_FOLDER.getPath() + File.separator + name), languages, new HashMap <String, Object>());
 	}
 	
 	public Response render(File file, LinkedList <String> languages) throws IOException {
@@ -87,15 +87,17 @@ public class Responder {
 	}
 	
 	public Response render(String name, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
-		return render(new File(VIEWS_FOLDER.getName() + "/" + name), languages, variables);
+		return render(new File(VIEWS_FOLDER.getPath() + File.separator + name), languages, variables);
 	}
 	
 	public Response render(File file, LinkedList <String> languages, Map <String, Object> variables) throws IOException {
 		if(predefined != null) {
-			variables.putAll(predefined);
+			HashMap <String, Object> copy = new HashMap <String, Object> (predefined);
+			copy.keySet().removeAll(variables.keySet());
+			variables.putAll(copy);
 		}
 		try {
-			return new Response(Renderer.render(file, languages, variables), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
+			return new Response(Renderer.render(file, languages, variables, VIEWS_FOLDER), Files.probeContentType(Paths.get(file.getAbsolutePath())), 200, null, false);
 		} catch (InterpreterException e) {
 			e.printStackTrace();
 			StringWriter stringWriter = new StringWriter();

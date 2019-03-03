@@ -161,7 +161,6 @@ public abstract class ObjectTemplate extends Template {
 			}
 		}
 		bufferedWriter.close();
-		
 		return id;
 	}
 

@@ -1,12 +1,12 @@
-package server.renderer.commands;
+package renderer.commands;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import server.renderer.InterpreterException;
-import server.renderer.Renderer;
+import renderer.InterpreterException;
+import renderer.Renderer;
 
 public class EachCommand extends CommandBlock {
 	
@@ -14,9 +14,9 @@ public class EachCommand extends CommandBlock {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object run(StringBuilder code, LinkedList <String> languages, Map <String, Object> variables, StringBuilder printer) throws IOException, InterpreterException {
-		String key = (String) Renderer.next(code, languages, variables, printer);
-		List <Object> list = (List <Object>) Renderer.runNext(code, languages, variables, printer);		
+	public Object run(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws IOException, InterpreterException {
+		String key = (String) Renderer.next(code, languages, variables, printer, folder);
+		List <Object> list = (List <Object>) Renderer.runNext(code, languages, variables, printer, folder);		
 		
 		if(list.size() == 0) {
 			skip(code);
@@ -33,7 +33,7 @@ public class EachCommand extends CommandBlock {
 				variables.put(key, value);
 				String next;
 				while(!(next = Renderer.nextCommand(codeCopy)).toLowerCase().equals(END)) {
-					Renderer.run(next, codeCopy, languages, variables, printer);
+					Renderer.run(next, codeCopy, languages, variables, printer, folder);
 				}
 			}
 		}
