@@ -56,7 +56,6 @@ public abstract class Renderer {
 	}
 	
 	public static String render(BufferedReader bufferedReader, List <String> languages, Map <String, Object> variables, File folder) throws IOException, InterpreterException {
-
 		StringBuilder buffer = new StringBuilder();
 		StringBuilder code = new StringBuilder();
     	StringBuilder output = new StringBuilder();

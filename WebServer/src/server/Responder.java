@@ -16,7 +16,7 @@ import renderer.Renderer;
 
 public class Responder {
 	
-	public static final File VIEWS_FOLDER = new File("views\\web");
+	public static final File VIEWS_FOLDER = new File("views/web");
 	 
 	private Map <String, Object> predefined;
 	

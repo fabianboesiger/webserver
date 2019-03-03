@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libraries/mail-1.4.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Renderer"/>
+	<classpathentry kind="lib" path="libraries/activation-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
