@@ -48,7 +48,6 @@ public class Mailer {
 			copy.keySet().removeAll(variables.keySet());
 			variables.putAll(copy);
 		}
-		System.out.println(variables);
 		try {
 			new Sender(email, Renderer.render(new BufferedReader(new StringReader(subject)), languages, variables, VIEWS_FOLDER), Renderer.render(new File(VIEWS_FOLDER.getPath() + File.separator + name), languages, variables, VIEWS_FOLDER), "text/html");
 		} catch (InterpreterException | IOException e) {
