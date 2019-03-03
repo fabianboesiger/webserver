@@ -42,6 +42,7 @@ public class Main {
 
 ## Documentation
 ### WebServer
+* Dependencies: Renderer
 #### Server (server.Server)
 |Method|Description|
 |---|---|
@@ -52,3 +53,5 @@ public class Main {
 |`int activeCount()`|Returns the number of active sessions.|
 |`double handlesPerDay()`|Returns the average handles per day.|
 #### Responder (server.Responder)
+### Renderer
+### Mailer
