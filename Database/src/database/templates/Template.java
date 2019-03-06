@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import database.Database;
+import database.Messages;
 
 public abstract class Template {	
 	
@@ -36,7 +37,7 @@ public abstract class Template {
 		}
 	}
 	
-	public abstract boolean validate(Errors errors);
+	public abstract boolean validate(Messages messages);
 	public abstract String render(Database database) throws Exception;
 	public abstract void parse(Database database, String string, Map <String, ObjectTemplate> initalized) throws Exception;
 	

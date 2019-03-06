@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import database.Database;
+import database.Messages;
 
 public class ArrayTemplate extends PrimitiveTemplate {
 	
@@ -58,24 +59,24 @@ public class ArrayTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public boolean validate(Errors errors) {
+	public boolean validate(Messages messages) {
 		boolean valid = true;
 		if(values == null) {
 			if(notNull) {
 				valid = false;
-				errors.add(name, "not-initialized");
+				messages.add(name, "not-initialized");
 			}
 		} else {
 			if(minimumSize != null) {
 				if(values.size() < minimumSize) {
 					valid = false;
-					errors.add(name, "minimum-elements-exceeded");
+					messages.add(name, "minimum-elements-exceeded");
 				}
 			}
 			if(maximumSize != null) {
 				if(values.size() > maximumSize) {
 					valid = false;
-					errors.add(name, "maximum-elements-exceeded");
+					messages.add(name, "maximum-elements-exceeded");
 				}
 			}
 		}

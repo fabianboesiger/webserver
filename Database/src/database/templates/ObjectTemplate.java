@@ -9,24 +9,28 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import database.Database;
-import database.DatabaseException;
+import database.Messages;
 
 public abstract class ObjectTemplate extends Template {
 		
 	private transient Identifiable identifier;
+	private LongTemplate timestamp;
 	
 	public ObjectTemplate() {
-		super(null);
+		super(null);	
 	}
 	
 	public ObjectTemplate(String name) {
 		super(name);
 		identifier = null;
+		timestamp = new LongTemplate("timestamp");
+		timestamp.set(new Long(0));
 	}
 		
 	public void setIdentifier(Identifiable identifier) {
@@ -41,7 +45,7 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public void set(Object object) {
 		Map <String, Object> input = (Map <String, Object>) object;
-		Field[] fields = getClass().getDeclaredFields();
+		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
 				field.setAccessible(true);
@@ -60,7 +64,7 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public Object get() {
 		HashMap <String, Object> output = new HashMap <String, Object> ();
-		Field[] fields = getClass().getDeclaredFields();
+		Field[] fields = getFields();
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
@@ -77,14 +81,14 @@ public abstract class ObjectTemplate extends Template {
 	}
 	*/
 	@Override
-	public boolean validate(Errors errors) {
+	public boolean validate(Messages messages) {
 		boolean valid = true;
-		Field[] fields = getClass().getDeclaredFields();
+		Field[] fields = getFields();
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
 				if(field.get(this) instanceof Template) {
-					if(!((Template) field.get(this)).validate(errors)) {
+					if(!((Template) field.get(this)).validate(messages)) {
 						valid = false;
 					}
 				}
@@ -98,7 +102,7 @@ public abstract class ObjectTemplate extends Template {
 	
 	public LinkedList <String> renderToList(Database database) {
 		LinkedList <String> lines = new LinkedList <String> ();
-		Field[] fields = getClass().getDeclaredFields();
+		Field[] fields = getFields();
 		for(int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			field.setAccessible(true);
@@ -121,7 +125,7 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public void parseFromMap(Database database, Map <String, String> input, Map <String, ObjectTemplate> initialized) {
-		Field[] fields = getClass().getDeclaredFields();
+		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
 				field.setAccessible(true);
@@ -140,6 +144,8 @@ public abstract class ObjectTemplate extends Template {
 	
 	@Override
 	public String render(Database database) throws Exception {
+		timestamp.set(System.currentTimeMillis());
+		
 		String id = getIdentifier().getId();
 		if(id == null) {
 			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
@@ -147,11 +153,11 @@ public abstract class ObjectTemplate extends Template {
 			id = Database.encrypt(id);
 		}
 		File file = database.getFile(getClass().getSimpleName(), id);
-		
+		/*
 		if(file.exists()) {
 			throw new DatabaseException("File already exists");
 		}
-				
+		*/		
 		BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
 		LinkedList <String> lines = renderToList(database);
 		for(int i = 0; i < lines.size(); i++) {
@@ -165,7 +171,7 @@ public abstract class ObjectTemplate extends Template {
 	}
 
 	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
+	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {		
 		File file = database.getFile(getClass().getSimpleName(), string);
 		if(file != null) {
 			if(file.exists()) {	
@@ -186,6 +192,74 @@ public abstract class ObjectTemplate extends Template {
 				parseFromMap(database, map, initialized);
 			}
 		}
+	}
+	
+	public boolean check(Database database, boolean overwrite) {
+
+		String id = getIdentifier().getId();
+		if(id == null) {
+			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
+		} else {
+			id = Database.encrypt(id);
+		}
+		File file = database.getFile(getClass().getSimpleName(), id);
+		
+		if(file.exists()) {
+			if(!overwrite) {
+				return false;
+			} else {
+				ObjectTemplate clone;
+				try {
+					clone = getClass().getConstructor().newInstance();
+					clone.parse(database, id, null);
+					if((Long) clone.timestamp.get() < (Long) timestamp.get()) {
+						return false;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+
+			}
+		}
+		try {
+			Field[] fields = getFields();
+			for(int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				field.setAccessible(true);
+				Object object = field.get(this);
+				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+					if(object instanceof ObjectTemplate) {
+						if(!((ObjectTemplate) object).check(database, overwrite)) {
+							return false;
+						}
+					}
+				}
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	private Field[] getFields() {
+		Class <?> c = getClass();
+		LinkedList <Field> output = getFields(c);
+		Field[] array = new Field[output.size()];
+		output.toArray(array);
+		return output.toArray(array);
+	}
+	
+	private LinkedList <Field> getFields(Class <?> c) {
+		LinkedList <Field> output = new LinkedList <Field> ();
+		output.addAll(Arrays.asList(c.getDeclaredFields()));
+		if(c.getSuperclass() != Object.class) {
+			output.addAll(getFields(c.getSuperclass()));
+		}
+		return output;
 	}
 	
 }

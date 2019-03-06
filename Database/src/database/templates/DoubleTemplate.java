@@ -3,6 +3,7 @@ package database.templates;
 import java.util.Map;
 
 import database.Database;
+import database.Messages;
 
 public class DoubleTemplate extends PrimitiveTemplate {
 	
@@ -27,24 +28,24 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public boolean validate(Errors errors) {
+	public boolean validate(Messages messages) {
 		boolean valid = true;
 		if(value == null) {
 			if(notNull) {
 				valid = false;
-				errors.add(name, "not-initialized");
+				messages.add(name, "not-initialized");
 			}
 		} else {
 			if(minimum != null) {
 				if(value < minimum) {
 					valid = false;
-					errors.add(name, "minimum-exceeded");
+					messages.add(name, "minimum-exceeded");
 				}
 			}
 			if(maximum != null) {
 				if(value > maximum) {
 					valid = false;
-					errors.add(name, "maximum-exceeded");
+					messages.add(name, "maximum-exceeded");
 				}
 			}
 		}

@@ -72,15 +72,15 @@ public class Server {
 		Listener listener = new Listener(path, listenerAction);
 		if(!listeners.containsKey(method)) {
 			listeners.put(method, new LinkedList <Listener> ());
-			if(!method.equals(ALL_HANDLER)) {
-				if(listeners.containsKey(ALL_HANDLER)) {
-					listeners.get(method).addAll(listeners.get(ALL_HANDLER));
-				}
-			} else {
-				for(Map.Entry <String, LinkedList <Listener>> entry : listeners.entrySet()) {
-					if(!entry.getKey().equals(ALL_HANDLER)) {
-						entry.getValue().add(listener);
-					}
+		}
+		if(!method.equals(ALL_HANDLER)) {
+			if(listeners.containsKey(ALL_HANDLER)) {
+				listeners.get(method).addAll(listeners.get(ALL_HANDLER));
+			}
+		} else {
+			for(Map.Entry <String, LinkedList <Listener>> entry : listeners.entrySet()) {
+				if(!entry.getKey().equals(ALL_HANDLER)) {
+					entry.getValue().add(listener);
 				}
 			}
 		}

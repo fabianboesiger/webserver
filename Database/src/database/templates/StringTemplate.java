@@ -3,6 +3,7 @@ package database.templates;
 import java.util.Map;
 
 import database.Database;
+import database.Messages;
 
 public class StringTemplate extends PrimitiveTemplate {
 		
@@ -50,23 +51,23 @@ public class StringTemplate extends PrimitiveTemplate {
 	}
 	
 	@Override
-	public boolean validate(Errors errors) {
+	public boolean validate(Messages messages) {
 		boolean valid = true;
 		if(value == null) {
 			if(notNull) {
-				errors.add(name, "not-initialized");
+				messages.add(name, "not-initialized");
 				valid = false;
 			}
 		} else {
 			if(minimumLength != null) {
 				if(value.length() < minimumLength) {
-					errors.add(name, "minimum-length-exceeded");
+					messages.add(name, "minimum-length-exceeded");
 					valid = false;
 				}
 			}
 			if(maximumLength != null) {
 				if(value.length() > maximumLength) {
-					errors.add(name, "maximum-length-exceeded");
+					messages.add(name, "maximum-length-exceeded");
 					valid = false;
 				}
 			}
@@ -101,11 +102,13 @@ public class StringTemplate extends PrimitiveTemplate {
 				replaced.append(value.charAt(i));
 			}
 		}
+		
+		String output = replaced.toString();
 		if(saveAction != null) {
-			return "\"" + saveAction.act(replaced.toString()) + "\"";
-		} else {
-			return "\"" + replaced.toString() + "\"";
+			output = (String) saveAction.act(output);
 		}
+		
+		return "\"" + output + "\"";
 	}
 
 	@Override

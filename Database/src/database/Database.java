@@ -1,7 +1,6 @@
 package database;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -19,17 +18,34 @@ public class Database {
 		DATA_FOLDER.mkdirs();
 	}
 	
-	public synchronized boolean loadId(ObjectTemplate objectTemplate, String id) {
+	public synchronized boolean deleteId(Class <?> target, String id) {
 		if(id != null) {
-			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
 			try {
-				objectTemplate.parse(this, id, initialized);
-				return true;
+				File file = getFile(target.getSimpleName(), id);
+				return file.delete();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return false;
+	}
+	
+	public synchronized ObjectTemplate loadId(Class <?> target, String id) {
+		if(id != null) {
+			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
+			try {
+				File file = getFile(target.getSimpleName(), id);
+				if(file == null || !file.exists()) {
+					return null;
+				}
+				ObjectTemplate objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
+				objectTemplate.parse(this, id, initialized);
+				return objectTemplate;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 	
 	public synchronized ObjectTemplate[] loadAll(Class <?> target) {
@@ -39,25 +55,32 @@ public class Database {
 			File[] files = folder.listFiles();
 			ObjectTemplate[] output = new ObjectTemplate[files.length];
 			for(int i = 0; i < files.length; i++) {
-				output[i] = (ObjectTemplate) target.getConstructor().newInstance();
 				String name = files[i].getPath();
-				if(!loadId(output[i], name.substring(0, name.lastIndexOf(".")))) {
+				if((output[i] = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
 					return null;
 				}
 			}
 			return output;
-		} catch (NoSuchFieldException | InstantiationException | IllegalArgumentException | IllegalAccessException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public synchronized boolean load(ObjectTemplate objectTemplate, String id) {
+	public synchronized ObjectTemplate load(Class <?> target, String id) {
 		if(id != null) {
-			return loadId(objectTemplate, encrypt(id));
+			return loadId(target, encrypt(id));
+		}
+		return null;
+	}
+	
+	public synchronized boolean delete(Class <?> target, String id) {
+		if(id != null) {
+			return deleteId(target, encrypt(id));
 		}
 		return false;
 	}
+
 	/*
 	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
 		if(id < getCount(objectTemplate.getClass().getSimpleName())) {
@@ -66,12 +89,27 @@ public class Database {
 		return false;
 	}
 	*/
+	
 	public synchronized boolean save(ObjectTemplate objectTemplate) {
-		try {
-			objectTemplate.render(this);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(objectTemplate.check(this, false)) {
+			try {
+				objectTemplate.render(this);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public synchronized boolean update(ObjectTemplate objectTemplate) {
+		if(objectTemplate.check(this, true)) {
+			try {
+				objectTemplate.render(this);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}

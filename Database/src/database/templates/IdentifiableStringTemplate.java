@@ -3,6 +3,7 @@ package database.templates;
 import java.util.Map;
 
 import database.Database;
+import database.Messages;
 
 public class IdentifiableStringTemplate extends PrimitiveTemplate implements Identifiable {
 		
@@ -29,36 +30,36 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 	}
 	
 	@Override
-	public boolean validate(Errors errors) {
+	public boolean validate(Messages messages) {
 		boolean valid = true;
 		if(value == null) {
-			errors.add(name, "not-initialized");
+			messages.add(name, "not-initialized");
 			valid = false;
 		} else {
 			for(int i = 0; i < value.length(); i++) {
 				char c = value.charAt(i);
 				if(((int) c) >= 256 || Character.isISOControl(c)) {
-					errors.add(name, "invalid-characters");
+					messages.add(name, "invalid-characters");
 					valid = false;
 				}
 			}
 			if(value.length() < 1) {
-				errors.add(name, "minimum-length-exceeded");
+				messages.add(name, "minimum-length-exceeded");
 				valid = false;
 			} else
 			if(minimumLength != null) {
 				if(value.length() < minimumLength) {
-					errors.add(name, "minimum-length-exceeded");
+					messages.add(name, "minimum-length-exceeded");
 					valid = false;
 				}
 			}
 			if(value.length() >= 128) {
-				errors.add(name, "maximum-length-exceeded");
+				messages.add(name, "maximum-length-exceeded");
 				valid = false;
 			} else
 			if(maximumLength != null) {
 				if(value.length() > maximumLength) {
-					errors.add(name, "maximum-length-exceeded");
+					messages.add(name, "maximum-length-exceeded");
 					valid = false;
 				}
 			}
@@ -83,11 +84,12 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 
 	@Override
 	public String render(Database database) throws Exception {
+		String output = value;
 		if(saveAction != null) {
-			return "\"" + saveAction.act(value) + "\"";
-		} else {
-			return "\"" + value + "\"";
+			output = (String) saveAction.act(output);
 		}
+		
+		return "\"" + output + "\"";
 	}
 
 	@Override
@@ -100,6 +102,9 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 			output = string;
 		}
 		value = output;
+		if(saveAction != null) {
+			value = (String) saveAction.act(value);
+		}
 	}
 	
 }

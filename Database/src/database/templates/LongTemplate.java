@@ -5,25 +5,25 @@ import java.util.Map;
 import database.Database;
 import database.Messages;
 
-public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
+public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 	
-	private Integer value;
-	private transient Integer minimum;
-	private transient Integer maximum;
+	private Long value;
+	private transient Long minimum;
+	private transient Long maximum;
 	private transient boolean notNull;
 	
-	public IntegerTemplate(String name, Integer minimum, Integer maximum, boolean notNull) {
+	public LongTemplate(String name, Long minimum, Long maximum, boolean notNull) {
 		super(name);
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.notNull = notNull;
 	}
 	
-	public IntegerTemplate(String name, Integer minimum, Integer maximum) {
+	public LongTemplate(String name, Long minimum, Long maximum) {
 		this(name, minimum, maximum, true);
 	}
 	
-	public IntegerTemplate(String name) {
+	public LongTemplate(String name) {
 		this(name, null, null);
 	}
 
@@ -54,7 +54,7 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void set(Object object) {
-		value = (Integer) object;
+		value = (Long) object;
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) {
-		value = Integer.parseInt(string);
+		value = Long.parseLong(string);
 	}
 	
 }
