@@ -1,20 +1,11 @@
 package database.templates;
 
-import java.util.Map;
-
-import database.Database;
 import database.Messages;
 
-public class IdentifiableStringTemplate extends PrimitiveTemplate implements Identifiable {
-		
-	private String value;
-	private transient Integer minimumLength;
-	private transient Integer maximumLength;
+public class IdentifiableStringTemplate extends StringTemplate implements Identifiable {
 	
 	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength, SaveAction saveAction) {
-		super(name, saveAction);
-		this.minimumLength = minimumLength;
-		this.maximumLength = maximumLength;
+		super(name, minimumLength, maximumLength, saveAction);
 	}
 	
 	public IdentifiableStringTemplate(String name, Integer minimumLength, Integer maximumLength) {
@@ -80,31 +71,6 @@ public class IdentifiableStringTemplate extends PrimitiveTemplate implements Ide
 	@Override
 	public String getId() {
 		return value;
-	}
-
-	@Override
-	public String render(Database database) throws Exception {
-		String output = value;
-		if(saveAction != null) {
-			output = (String) saveAction.act(output);
-		}
-		
-		return "\"" + output + "\"";
-	}
-
-	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
-		String trimmed = string.trim();
-		String output;
-		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-			output = trimmed.substring(1, trimmed.length() - 1);
-		} else {
-			output = string;
-		}
-		value = output;
-		if(saveAction != null) {
-			value = (String) saveAction.act(value);
-		}
 	}
 	
 }

@@ -30,7 +30,7 @@ public abstract class ObjectTemplate extends Template {
 		super(name);
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
-		timestamp.set(new Long(0));
+		timestamp.set(0);
 	}
 		
 	public void setIdentifier(Identifiable identifier) {

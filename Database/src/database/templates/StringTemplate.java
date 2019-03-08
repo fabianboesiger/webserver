@@ -7,10 +7,10 @@ import database.Messages;
 
 public class StringTemplate extends PrimitiveTemplate {
 		
-	private String value;
-	private transient Integer minimumLength;
-	private transient Integer maximumLength;
-	private transient boolean notNull;
+	protected String value;
+	protected transient Integer minimumLength;
+	protected transient Integer maximumLength;
+	protected transient boolean notNull;
 	private static final char ESCAPE_CHARACTER = '\\';
 	private static final char[] RAW = {'\t', '\b', '\n', '\r', '\f', '"', '\\'};
 	private static final char[] ESCAPED = {'t', 'b', 'n', 'r', 'f', '"', '\\'};
