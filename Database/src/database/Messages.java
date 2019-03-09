@@ -31,4 +31,9 @@ public class Messages {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return messages.toString();
+	}
+	
 }

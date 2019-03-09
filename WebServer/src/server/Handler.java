@@ -102,6 +102,7 @@ public class Handler implements HttpHandler {
 	        	byte[] buffer = new byte[BUFFER_SIZE];
 		        int read;
 			    while((read = response.inputStream.read(buffer)) != -1) {
+			    	server.addByteCount(read);
 			    	outputStream.write(buffer, 0, read);
 			    }
 			} catch (IOException e) {

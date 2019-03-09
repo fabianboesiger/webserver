@@ -28,7 +28,8 @@ public class Server {
 	protected HashMap <String, LinkedList <Listener>> listeners;
 	private Random random;
 	private long startingMillis;
-	protected long handles;
+	private long handles;
+	private long bytes;
     Responder responder;
 	
 	public Server(Responder responder, int port) throws IOException {
@@ -42,6 +43,7 @@ public class Server {
 	    listeners = new HashMap <String, LinkedList <Listener>> ();
 	    sessions = new ConcurrentHashMap <String, Session> ();
 	    handles = 0;
+	    bytes = 0;
 	    
 		// Set up Handler
 		httpServer = HttpServer.create(new InetSocketAddress(port), 0);
@@ -109,7 +111,7 @@ public class Server {
 		return session;
 	}
 	
-    private String generateKey(int length) {
+    public String generateKey(int length) {
     	String output = "";
     	for(int i = 0; i < length; i++) {
     		int r = random.nextInt(26*2+10)+48;
@@ -151,6 +153,15 @@ public class Server {
     public double handlesPerDay() {
     	long uptime = uptime();
 		return (double) handles / uptime * Math.min(uptime, 1000 * 60 * 60 * 24);
+	}
+
+	public void addByteCount(int bytesToAdd) {
+		bytes += bytesToAdd;
+	}
+	
+	public double bytesPerDay() {
+    	long uptime = uptime();
+		return (double) bytes / uptime * Math.min(uptime, 1000 * 60 * 60 * 24);
 	}
 
 }

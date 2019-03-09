@@ -30,7 +30,7 @@ public abstract class ObjectTemplate extends Template {
 		super(name);
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
-		timestamp.set(0);
+		timestamp.set(new Long(0));
 	}
 		
 	public void setIdentifier(Identifiable identifier) {
@@ -87,9 +87,11 @@ public abstract class ObjectTemplate extends Template {
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
-				if(field.get(this) instanceof Template) {
-					if(!((Template) field.get(this)).validate(messages)) {
-						valid = false;
+				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+					if(field.get(this) instanceof Template) {
+						if(!((Template) field.get(this)).validate(messages)) {
+							valid = false;
+						}
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -120,11 +122,13 @@ public abstract class ObjectTemplate extends Template {
 		return lines;
 	}
 	
-	public void parseFromMap(Map <String, String> input) {
-		parseFromMap(null, input, null);
+	public void parseFromParameters(Map <String, String> input) {
+		updated = true;
+		parseFromMap(null, input, null, true);
 	}
 	
-	public void parseFromMap(Database database, Map <String, String> input, Map <String, ObjectTemplate> initialized) {
+	public void parseFromMap(Database database, Map <String, String> input, Map <String, ObjectTemplate> initialized, boolean wasUpdated) {
+
 		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
@@ -133,7 +137,7 @@ public abstract class ObjectTemplate extends Template {
 				if(object instanceof Template) {
 					String name = ((Template) object).name;
 					if(input.containsKey(name)) {
-						setField(database, field, input.get(name), initialized);
+						setField(database, field, input.get(name), initialized, wasUpdated);
 					}
 				}
 			} catch (Exception e) {
@@ -171,10 +175,11 @@ public abstract class ObjectTemplate extends Template {
 	}
 
 	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {		
-		File file = database.getFile(getClass().getSimpleName(), string);
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {		
+		String id = crop(string).trim();
+		File file = database.getFile(getClass().getSimpleName(), id);
 		if(file != null) {
-			if(file.exists()) {	
+			if(file.exists()) {
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Database.ENCODING));
 				HashMap <String, String> map = new HashMap <String, String> ();
 				
@@ -188,8 +193,7 @@ public abstract class ObjectTemplate extends Template {
 					}
 				}
 				bufferedReader.close();
-				
-				parseFromMap(database, map, initialized);
+				parseFromMap(database, map, initialized, false);
 			}
 		}
 	}
@@ -212,7 +216,7 @@ public abstract class ObjectTemplate extends Template {
 				try {
 					clone = getClass().getConstructor().newInstance();
 					clone.parse(database, id, null);
-					if((Long) clone.timestamp.get() < (Long) timestamp.get()) {
+					if((Long) clone.timestamp.get() > (Long) timestamp.get()) {
 						return false;
 					}
 				} catch (Exception e) {

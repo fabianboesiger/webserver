@@ -1,5 +1,7 @@
 package database.templates;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,7 +12,10 @@ import java.util.Map;
 import database.Database;
 import database.Messages;
 
-public class ListTemplate <T extends PrimitiveTemplate> extends Template implements List <T> {
+public class ListTemplate <T extends Template> extends Template implements List <T> {
+	
+	private static final char LIST_START = '[';
+	private static final char LIST_END = ']';
 	
 	ArrayList <T> list;
 	private transient boolean notNull;
@@ -29,53 +34,74 @@ public class ListTemplate <T extends PrimitiveTemplate> extends Template impleme
 	public ListTemplate(String name) {
 		this(name, null, null);
 	}
+	
+	public ListTemplate() {
+		this(null);
+	}
 
 	@Override
 	public String render(Database database) throws Exception {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("[");
+		stringBuilder.append(LIST_START);
 		for(int i = 0; i < list.size(); i++) {
 			if(i != 0) {
-				stringBuilder.append(", ");
+				stringBuilder.append(SEPARATION_CHARACTER);
 			}
 			stringBuilder.append(list.get(i).render(database));
 		}
-		stringBuilder.append("]");
+		stringBuilder.append(LIST_END);
 		return null;
 	}
 
 	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
-		StringBuilder element = new StringBuilder();
-		
-		if(T instanceof StringTemplate)
-		
-		for(int i = 0; i < string.length(); i++) {
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		String trimmed = string.toString().trim();
+		StringBuilder content = new StringBuilder(trimmed.substring(1, trimmed.length() - 1));
+		while(content.length() > 0) {
 			
+			T element = createInstance();
+			element.parse(database, string, initialized);
+			list.add(element);
+			
+			while(string.length() > 0) {
+				if(string.charAt(0) == SEPARATION_CHARACTER) {
+					string.deleteCharAt(0);
+					break;
+				}
+				string.deleteCharAt(0);
+			}
 		}
-		
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	T createInstance() throws InstantiationException, IllegalAccessException {
+		 Type type = getClass().getGenericSuperclass();
+    	 ParameterizedType parameterizedType = (ParameterizedType) type;
+    	 Class <T> tClass = (Class <T>) parameterizedType.getActualTypeArguments()[0];
+    	 return tClass.newInstance();
+    }
 
 	@Override
 	public boolean validate(Messages messages) {
 		boolean valid = true;
-		if(list == null) {
-			if(notNull) {
-				valid = false;
-				messages.add(name, "not-initialized");
-			}
-		} else {
-			if(minimumSize != null) {
-				if(list.size() < minimumSize) {
+		if(updated) {
+			if(list == null) {
+				if(notNull) {
 					valid = false;
-					messages.add(name, "minimum-elements-exceeded");
+					messages.add(name, "not-initialized");
 				}
-			}
-			if(maximumSize != null) {
-				if(list.size() > maximumSize) {
-					valid = false;
-					messages.add(name, "maximum-elements-exceeded");
+			} else {
+				if(minimumSize != null) {
+					if(list.size() < minimumSize) {
+						valid = false;
+						messages.add(name, "minimum-elements-exceeded");
+					}
+				}
+				if(maximumSize != null) {
+					if(list.size() > maximumSize) {
+						valid = false;
+						messages.add(name, "maximum-elements-exceeded");
+					}
 				}
 			}
 		}
@@ -192,6 +218,7 @@ public class ListTemplate <T extends PrimitiveTemplate> extends Template impleme
 		return list.toArray();
 	}
 
+	@SuppressWarnings("hiding")
 	@Override
 	public <T> T[] toArray(T[] arg0) {
 		return list.toArray(arg0);

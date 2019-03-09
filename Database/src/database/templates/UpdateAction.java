@@ -1,6 +1,6 @@
 package database.templates;
 
-public interface SaveAction {
+public interface UpdateAction {
 	
 	public Object act(Object value) throws Exception;
 

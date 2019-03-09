@@ -26,26 +26,32 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	public IntegerTemplate(String name) {
 		this(name, null, null);
 	}
+	
+	public IntegerTemplate() {
+		this(null);
+	}
 
 	@Override
 	public boolean validate(Messages messages) {
 		boolean valid = true;
-		if(value == null) {
-			if(notNull) {
-				valid = false;
-				messages.add(name, "not-initialized");
-			}
-		} else {
-			if(minimum != null) {
-				if(value < minimum) {
+		if(updated) {
+			if(value == null) {
+				if(notNull) {
 					valid = false;
-					messages.add(name, "minimum-exceeded");
+					messages.add(name, "not-initialized");
 				}
-			}
-			if(maximum != null) {
-				if(value > maximum) {
-					valid = false;
-					messages.add(name, "maximum-exceeded");
+			} else {
+				if(minimum != null) {
+					if(value < minimum) {
+						valid = false;
+						messages.add(name, "minimum-exceeded");
+					}
+				}
+				if(maximum != null) {
+					if(value > maximum) {
+						valid = false;
+						messages.add(name, "maximum-exceeded");
+					}
 				}
 			}
 		}
@@ -54,6 +60,7 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void set(Object object) {
+		updated = true;
 		value = (Integer) object;
 	}
 
@@ -73,8 +80,8 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	}
 
 	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) {
-		value = Integer.parseInt(string);
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) {
+		value = Integer.parseInt(crop(string));
 	}
 	
 }

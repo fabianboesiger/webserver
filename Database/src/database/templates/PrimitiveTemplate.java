@@ -3,8 +3,8 @@ package database.templates;
 public abstract class PrimitiveTemplate extends Template {
 	
 	
-	public PrimitiveTemplate(String name, SaveAction saveAction) {
-		super(name, saveAction);
+	public PrimitiveTemplate(String name, UpdateAction updateAction) {
+		super(name, updateAction);
 	}
 	
 	public PrimitiveTemplate(String name) {

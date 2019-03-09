@@ -18,16 +18,17 @@ public class Mailer {
 	
 	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	protected static final File MAIL_DATA = new File("local/mail.txt");
-	public static final File VIEWS_FOLDER = new File("views/mail");
+	public File viewsFolder;
 	
 	private Map <String, Object> predefined;
 	
-	public Mailer() {
-		this(null);
+	public Mailer(File viewsFolder) {
+		this(null, viewsFolder);
 	}
 	
-	public Mailer(Map <String, Object> predefined) {
+	public Mailer(Map <String, Object> predefined, File viewsFolder) {
 		this.predefined = predefined;
+		this.viewsFolder = viewsFolder;
 	}
 	
 	public void send(String email, String subject, String name) {
@@ -49,7 +50,7 @@ public class Mailer {
 			variables.putAll(copy);
 		}
 		try {
-			new Sender(email, Renderer.render(new BufferedReader(new StringReader(subject)), languages, variables, VIEWS_FOLDER), Renderer.render(new File(VIEWS_FOLDER.getPath() + File.separator + name), languages, variables, VIEWS_FOLDER), "text/html");
+			new Sender(email, Renderer.render(new BufferedReader(new StringReader(subject)), languages, variables, viewsFolder), Renderer.render(new File(viewsFolder.getPath() + File.separator + name), languages, variables, viewsFolder), "text/html");
 		} catch (InterpreterException | IOException e) {
 			e.printStackTrace();
 		}

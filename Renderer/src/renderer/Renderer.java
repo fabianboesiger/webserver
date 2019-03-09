@@ -17,6 +17,7 @@ import renderer.commands.EachCommand;
 import renderer.commands.EqualsCommand;
 import renderer.commands.ExistsCommand;
 import renderer.commands.GetCommand;
+import renderer.commands.HTMLEncodeCommand;
 import renderer.commands.IfCommand;
 import renderer.commands.IncludeCommand;
 import renderer.commands.NotCommand;
@@ -48,6 +49,7 @@ public abstract class Renderer {
 		commands.put("equals", new EqualsCommand());
 		commands.put("null", new NullCommand());
 		commands.put("not", new NotCommand());
+		commands.put("htmlencode", new HTMLEncodeCommand());
 	}
 	
 

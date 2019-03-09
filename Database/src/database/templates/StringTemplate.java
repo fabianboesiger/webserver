@@ -11,19 +11,20 @@ public class StringTemplate extends PrimitiveTemplate {
 	protected transient Integer minimumLength;
 	protected transient Integer maximumLength;
 	protected transient boolean notNull;
+	private static final char STRING_CHARACTER = '"';
 	private static final char ESCAPE_CHARACTER = '\\';
 	private static final char[] RAW = {'\t', '\b', '\n', '\r', '\f', '"', '\\'};
 	private static final char[] ESCAPED = {'t', 'b', 'n', 'r', 'f', '"', '\\'};
 	
-	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull, SaveAction saveAction) {
-		super(name, saveAction);
+	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull, UpdateAction updateAction) {
+		super(name, updateAction);
 		this.minimumLength = minimumLength;
 		this.maximumLength = maximumLength;
 		this.notNull = notNull;
 	}
 	
-	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, SaveAction saveAction) {
-		this(name, minimumLength, maximumLength, true, saveAction);
+	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, UpdateAction updateAction) {
+		this(name, minimumLength, maximumLength, true, updateAction);
 	}
 	
 	public StringTemplate(String name, Integer minimumLength, Integer maximumLength, boolean notNull) {
@@ -34,12 +35,12 @@ public class StringTemplate extends PrimitiveTemplate {
 		this(name, minimumLength, maximumLength, true, null);
 	}
 	
-	public StringTemplate(String name, boolean notNull, SaveAction saveAction) {
-		this(name, null, null, notNull, saveAction);
+	public StringTemplate(String name, boolean notNull, UpdateAction updateAction) {
+		this(name, null, null, notNull, updateAction);
 	}
 	
-	public StringTemplate(String name, SaveAction saveAction) {
-		this(name, null, null, saveAction);
+	public StringTemplate(String name, UpdateAction updateAction) {
+		this(name, null, null, updateAction);
 	}
 	
 	public StringTemplate(String name, boolean notNull) {
@@ -50,25 +51,31 @@ public class StringTemplate extends PrimitiveTemplate {
 		this(name, null, null);
 	}
 	
+	public StringTemplate() {
+		this(null);
+	}
+	
 	@Override
 	public boolean validate(Messages messages) {
 		boolean valid = true;
-		if(value == null) {
-			if(notNull) {
-				messages.add(name, "not-initialized");
-				valid = false;
-			}
-		} else {
-			if(minimumLength != null) {
-				if(value.length() < minimumLength) {
-					messages.add(name, "minimum-length-exceeded");
+		if(updated) {
+			if(value == null) {
+				if(notNull) {
+					messages.add(name, "not-initialized");
 					valid = false;
 				}
-			}
-			if(maximumLength != null) {
-				if(value.length() > maximumLength) {
-					messages.add(name, "maximum-length-exceeded");
-					valid = false;
+			} else {
+				if(minimumLength != null) {
+					if(value.length() < minimumLength) {
+						messages.add(name, "minimum-length-exceeded");
+						valid = false;
+					}
+				}
+				if(maximumLength != null) {
+					if(value.length() > maximumLength) {
+						messages.add(name, "maximum-length-exceeded");
+						valid = false;
+					}
 				}
 			}
 		}
@@ -77,6 +84,7 @@ public class StringTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void set(Object object) {
+		updated = true;
 		value = (String) object;
 	}
 
@@ -104,42 +112,55 @@ public class StringTemplate extends PrimitiveTemplate {
 		}
 		
 		String output = replaced.toString();
-		if(saveAction != null) {
-			output = (String) saveAction.act(output);
+		if(updated && updateAction != null) {
+			set(updateAction.act(get()));
 		}
 		
 		return "\"" + output + "\"";
 	}
 
 	@Override
-	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
-		String temporary = null;
-		String trimmed = string.trim();
-		if(trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
-			temporary = trimmed.substring(1, trimmed.length() - 1);
-		} else {
-			temporary = string;
-		}
-		StringBuilder replaced = new StringBuilder();
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		
+		StringBuilder builder = new StringBuilder();
+	
 		boolean escaped = false;
-		for(int i = 0; i < temporary.length(); i++) {
-			if(!escaped) {
-				if(temporary.charAt(i) == ESCAPE_CHARACTER) {
-					escaped = true;
-				} else {
-					replaced.append(temporary.charAt(i));
-				}
-			} else {
-				for(int j = 0; j < ESCAPED.length; j++) {
-					if(temporary.charAt(i) == ESCAPED[j]) {
-						replaced.append(RAW[j]);
+		boolean started = false;
+
+		String trimmed = string.toString().trim();
+		if(!trimmed.startsWith("\"") && !trimmed.endsWith("\"")) {
+			started = true;
+		}
+		
+		while(string.length() > 0) {
+			if(started) {
+				if(!escaped) {
+					if(string.charAt(0) == STRING_CHARACTER) {
+						string.deleteCharAt(0);
 						break;
 					}
+					if(string.charAt(0) == ESCAPE_CHARACTER) {
+						escaped = true;
+					} else {
+						builder.append(string.charAt(0));
+					}
+				} else {
+					for(int j = 0; j < ESCAPED.length; j++) {
+						if(string.charAt(0) == ESCAPED[j]) {
+							builder.append(RAW[j]);
+							break;
+						}
+					}
+					escaped = false;
 				}
-				escaped = false;
+			} else {
+				if(string.charAt(0) == STRING_CHARACTER) {
+					started = true;
+				}
 			}
+			string.deleteCharAt(0);
 		}
-		value = replaced.toString();
+		value = builder.toString();
 	}
 	
 }
