@@ -26,7 +26,7 @@ public class Server {
 	private HttpServer httpServer;
 	private ConcurrentHashMap <String, Session> sessions;
 	protected HashMap <String, LinkedList <Listener>> listeners;
-	private Random random;
+	private static Random random = new Random();
 	private long startingMillis;
 	private long handles;
 	private long bytes;
@@ -39,7 +39,6 @@ public class Server {
 		
 		startingMillis = System.currentTimeMillis();
 		
-	    random = new Random();
 	    listeners = new HashMap <String, LinkedList <Listener>> ();
 	    sessions = new ConcurrentHashMap <String, Session> ();
 	    handles = 0;
@@ -111,7 +110,7 @@ public class Server {
 		return session;
 	}
 	
-    public String generateKey(int length) {
+    public static String generateKey(int length) {
     	String output = "";
     	for(int i = 0; i < length; i++) {
     		int r = random.nextInt(26*2+10)+48;

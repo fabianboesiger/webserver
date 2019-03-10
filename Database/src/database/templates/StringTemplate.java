@@ -113,7 +113,7 @@ public class StringTemplate extends PrimitiveTemplate {
 		
 		String output = replaced.toString();
 		if(updated && updateAction != null) {
-			set(updateAction.act(get()));
+			output = (String) updateAction.act(output);
 		}
 		
 		return "\"" + output + "\"";

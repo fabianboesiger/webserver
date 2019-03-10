@@ -80,15 +80,6 @@ public class Database {
 		}
 		return false;
 	}
-
-	/*
-	public synchronized boolean load(ObjectTemplate objectTemplate, int id) {
-		if(id < getCount(objectTemplate.getClass().getSimpleName())) {
-			return loadId(objectTemplate, Integer.toHexString(id));
-		}
-		return false;
-	}
-	*/
 	
 	public synchronized boolean save(ObjectTemplate objectTemplate) {
 		if(objectTemplate.check(this, false)) {
