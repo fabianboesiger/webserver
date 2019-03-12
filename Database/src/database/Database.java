@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.function.Predicate;
 
 import database.templates.ObjectTemplate;
 
@@ -48,16 +50,65 @@ public class Database {
 		return null;
 	}
 	
-	public synchronized ObjectTemplate[] loadAll(Class <?> target) {
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target) {
+		return loadAll(target, (ObjectTemplate) -> {
+			return true;
+		});
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
 		try {
 			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
-			ObjectTemplate[] output = new ObjectTemplate[files.length];
+			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
 			for(int i = 0; i < files.length; i++) {
 				String name = files[i].getPath();
-				if((output[i] = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
+				ObjectTemplate element = null; 
+				if((element = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
 					return null;
+				} else {
+					if(predicate.test(element)) {
+						output.add(element);
+					}
+				}
+			}
+			return output;
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from) {
+		return loadAll(target, from, null);
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer to) {
+		try {
+			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
+			folder.getParentFile().mkdirs();
+			File[] files = folder.listFiles();
+			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
+			for(int i = 0; i < files.length; i++) {
+				String name = files[i].getPath();
+				ObjectTemplate element = null; 
+				if((element = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
+					return null;
+				} else {
+					boolean add = true;
+					int index = Integer.valueOf(name, 16).intValue();
+					if(to != null) {
+						if(index >= to) {
+							add = false;
+						}
+					}
+					if(index < from) {
+						add = false;
+					}
+					if(add) {
+						output.add(element);
+					}
 				}
 			}
 			return output;
