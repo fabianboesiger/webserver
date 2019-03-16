@@ -60,7 +60,7 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void set(Object object) {
-		updated = true;
+		update();
 		value = (Integer) object;
 	}
 
@@ -82,6 +82,11 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) {
 		value = Integer.parseInt(crop(string));
+	}
+	
+	@Override
+	public void update() {
+		updated = true;
 	}
 	
 }

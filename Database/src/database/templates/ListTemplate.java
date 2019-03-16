@@ -1,7 +1,6 @@
 package database.templates;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -74,12 +73,14 @@ public class ListTemplate <T extends Template> extends Template implements List 
 	}
 	
 	@SuppressWarnings("unchecked")
-	T createInstance() throws InstantiationException, IllegalAccessException {
-		 Type type = getClass().getGenericSuperclass();
-    	 ParameterizedType parameterizedType = (ParameterizedType) type;
-    	 Class <T> tClass = (Class <T>) parameterizedType.getActualTypeArguments()[0];
-    	 return tClass.newInstance();
-    }
+	private T createInstance() {
+		try {
+			return (T) ((Class <?>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.getCause();
+		}
+		return null;
+	}
 
 	@Override
 	public boolean validate(Messages messages) {
@@ -107,29 +108,42 @@ public class ListTemplate <T extends Template> extends Template implements List 
 		}
 		return valid;
 	}
+	
+	@Override
+	public void update() {
+		updated = true;
+		for(int i = 0; i < list.size(); i++) {
+			list.get(i).update();
+		}
+	}
 
 	@Override
 	public boolean add(T arg0) {
+		update();
 		return list.add(arg0);
 	}
 
 	@Override
 	public void add(int arg0, T arg1) {
+		update();
 		list.add(arg0, arg1);
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends T> arg0) {
+		update();
 		return addAll(arg0);
 	}
 
 	@Override
 	public boolean addAll(int arg0, Collection<? extends T> arg1) {
+		update();
 		return addAll(arg0, arg1);
 	}
 
 	@Override
 	public void clear() {
+		update();
 		list.clear();
 	}
 
@@ -180,26 +194,31 @@ public class ListTemplate <T extends Template> extends Template implements List 
 
 	@Override
 	public boolean remove(Object arg0) {
+		update();
 		return list.remove(arg0);
 	}
 
 	@Override
 	public T remove(int arg0) {
+		update();
 		return list.remove(arg0);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> arg0) {
+		update();
 		return list.removeAll(arg0);
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> arg0) {
+		update();
 		return list.retainAll(arg0);
 	}
 
 	@Override
 	public T set(int arg0, T arg1) {
+		update();
 		return list.set(arg0, arg1);
 	}
 

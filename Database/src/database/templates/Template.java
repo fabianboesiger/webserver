@@ -46,6 +46,7 @@ public abstract class Template {
 	public abstract boolean validate(Messages messages);
 	public abstract String render(Database database) throws Exception;
 	public abstract void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initalized) throws Exception;
+	public abstract void update();
 	
 	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parse(database, new StringBuilder(string), initialized);

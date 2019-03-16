@@ -20,14 +20,10 @@ import database.Messages;
 public abstract class ObjectTemplate extends Template {
 		
 	private transient Identifiable identifier;
-	private LongTemplate timestamp;
+	protected LongTemplate timestamp;
 	
 	public ObjectTemplate() {
-		super(null);	
-	}
-	
-	public ObjectTemplate(String name) {
-		super(name);
+		super(null);
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
 		timestamp.set(new Long(0));
@@ -102,8 +98,8 @@ public abstract class ObjectTemplate extends Template {
 		return valid;
 	}
 	
-	public LinkedList <String> renderToList(Database database) {
-		LinkedList <String> lines = new LinkedList <String> ();
+	public HashMap <String, Object> renderToMap(Database database) {
+		HashMap <String, Object> map = new HashMap <String, Object> ();
 		Field[] fields = getFields();
 		for(int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -112,18 +108,18 @@ public abstract class ObjectTemplate extends Template {
 				Object object = field.get(this);
 				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 					if(object instanceof Template) {
-						lines.add(((Template) object).name + "=" + ((Template) object).render(database));
+						map.put(((Template) object).name, object);
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return lines;
+		return map;
 	}
 	
 	public void parseFromParameters(Map <String, String> input) {
-		updated = true;
+		update();
 		parseFromMap(null, input, null, true);
 	}
 	
@@ -149,28 +145,37 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public String render(Database database) throws Exception {
 		timestamp.set(System.currentTimeMillis());
-		
-		String id = getIdentifier().getId();
-		if(id == null) {
+		System.out.println("!!1");
+		Identifiable identifier = getIdentifier();
+		String id = null;
+		if(identifier == null) {
 			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
 		} else {
-			id = Database.encrypt(id);
+			id = Database.encrypt(identifier.getId());
 		}
-		File file = database.getFile(getClass().getSimpleName(), id);
-		/*
-		if(file.exists()) {
-			throw new DatabaseException("File already exists");
-		}
-		*/		
-		BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
-		LinkedList <String> lines = renderToList(database);
-		for(int i = 0; i < lines.size(); i++) {
-			bufferedWriter.write(lines.get(i));
-			if(i != lines.size() - 1) {
-				bufferedWriter.newLine();
+		System.out.println("!!2");
+		//if(updated) {
+			File file = database.getFile(getClass().getSimpleName(), id);
+			/*
+			if(file.exists()) {
+				throw new DatabaseException("File already exists");
 			}
-		}
-		bufferedWriter.close();
+			*/
+	
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
+			HashMap <String, Object> map = renderToMap(database);
+			int counter = 0;
+			System.out.println("!!3");
+			for(Map.Entry <String, Object> entry : map.entrySet()) {
+				bufferedWriter.write(entry.getKey() + "=" + ((Template) entry.getValue()).render(database));
+				if(counter != map.size() - 1) {
+					bufferedWriter.newLine();
+				}
+				counter++;
+			}
+			bufferedWriter.close();
+		//}
+		
 		return id;
 	}
 
@@ -199,24 +204,24 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-
-		String id = getIdentifier().getId();
-		if(id == null) {
+		Identifiable identifier = getIdentifier();
+		String id = null;
+		if(identifier == null) {
 			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
 		} else {
-			id = Database.encrypt(id);
+			id = Database.encrypt(identifier.getId());
 		}
 		File file = database.getFile(getClass().getSimpleName(), id);
-		
+		System.out.println("!1");
 		if(file.exists()) {
-			if(!overwrite) {
+			if(!overwrite && updated) {System.out.println("!2");
 				return false;
 			} else {
 				ObjectTemplate clone;
 				try {
 					clone = getClass().getConstructor().newInstance();
 					clone.parse(database, id, null);
-					if((Long) clone.timestamp.get() > (Long) timestamp.get()) {
+					if((Long) clone.timestamp.get() > (Long) timestamp.get()) {System.out.println("!3");
 						return false;
 					}
 				} catch (Exception e) {
@@ -264,6 +269,26 @@ public abstract class ObjectTemplate extends Template {
 			output.addAll(getFields(c.getSuperclass()));
 		}
 		return output;
+	}
+	
+	@Override
+	public void update() {
+		updated = true;
+		try {
+			Field[] fields = getFields();
+			for(int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				field.setAccessible(true);
+				Object object = field.get(this);
+				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+					if(object instanceof Template) {
+						((Template) object).update();
+					}
+				}
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -84,7 +84,7 @@ public class StringTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void set(Object object) {
-		updated = true;
+		update();
 		value = (String) object;
 	}
 
@@ -161,6 +161,11 @@ public class StringTemplate extends PrimitiveTemplate {
 			string.deleteCharAt(0);
 		}
 		value = builder.toString();
+	}
+
+	@Override
+	public void update() {
+		updated = true;
 	}
 	
 }

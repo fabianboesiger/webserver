@@ -50,69 +50,57 @@ public class Database {
 		return null;
 	}
 	
-	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target) {
-		return loadAll(target, (ObjectTemplate) -> {
-			return true;
-		});
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
+		return loadAll(target, 0, null, predicate);
 	}
 	
-	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
-		try {
-			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
-			folder.getParentFile().mkdirs();
-			File[] files = folder.listFiles();
-			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
-			for(int i = 0; i < files.length; i++) {
-				String name = files[i].getPath();
-				ObjectTemplate element = null; 
-				if((element = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
-					return null;
-				} else {
-					if(predicate.test(element)) {
-						output.add(element);
-					}
-				}
-			}
-			return output;
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target) {
+		return loadAll(target, 0, null, null);
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from) {
-		return loadAll(target, from, null);
+		return loadAll(target, from, null, null);
 	}
 	
-	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer to) {
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate) {
+		return loadAll(target, from, null, predicate);
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range) {
+		return loadAll(target, from, range, null);
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate) {
 		try {
-			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
+			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
 			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
+			int ignoreCount = 0;
 			for(int i = 0; i < files.length; i++) {
-				String name = files[i].getPath();
+				String fullName = files[i].getName();
+				String name = fullName.substring(0, fullName.lastIndexOf("."));
+
 				ObjectTemplate element = null; 
-				if((element = loadId(target, name.substring(0, name.lastIndexOf(".")))) == null) {
+				if((element = loadId(target, name)) == null) {
+					
 					return null;
 				} else {
-					boolean add = true;
 					int index = Integer.valueOf(name, 16).intValue();
-					if(to != null) {
-						if(index >= to) {
-							add = false;
+					if(predicate != null && !predicate.test(element)) {
+						ignoreCount++;
+					} else {
+						if(index - ignoreCount >= from) {
+							output.add(element);
+							if(range != null && output.size() == range) {
+								break;
+							}
 						}
-					}
-					if(index < from) {
-						add = false;
-					}
-					if(add) {
-						output.add(element);
 					}
 				}
 			}
 			return output;
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
+		} catch (IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;

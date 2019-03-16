@@ -16,8 +16,8 @@ public class EachCommand extends CommandBlock {
 	@Override
 	public Object run(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws IOException, InterpreterException {
 		String key = (String) Renderer.next(code, languages, variables, printer, folder);
-		List <Object> list = (List <Object>) Renderer.runNext(code, languages, variables, printer, folder);		
-		
+		List <Object> list = (List <Object>) Renderer.next(code, languages, variables, printer, folder);		
+				
 		if(list.size() == 0) {
 			skip(code);
 		} else {
@@ -31,7 +31,8 @@ public class EachCommand extends CommandBlock {
 				
 				Object value = list.get(i);
 				variables.put(key, value);
-				String next;
+				
+				String next;			
 				while(!(next = Renderer.nextCommand(codeCopy)).toLowerCase().equals(END)) {
 					Renderer.run(next, codeCopy, languages, variables, printer, folder);
 				}

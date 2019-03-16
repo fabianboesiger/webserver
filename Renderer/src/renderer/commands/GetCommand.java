@@ -14,7 +14,7 @@ public class GetCommand extends Command {
 	@Override
 	public Object run(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws IOException, InterpreterException {
 		String key = (String) Renderer.next(code, languages, variables, printer, folder);
-		return ((Map <String, Object>) Renderer.runNext(code, languages, variables, printer, folder)).get(key);
+		return ((Map <String, Object>) Renderer.next(code, languages, variables, printer, folder)).get(key);
 	}
 	
 }
