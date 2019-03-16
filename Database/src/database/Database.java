@@ -3,6 +3,7 @@ package database;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Predicate;
@@ -23,7 +24,7 @@ public class Database {
 	public synchronized boolean deleteId(Class <?> target, String id) {
 		if(id != null) {
 			try {
-				File file = getFile(target.getSimpleName(), id);
+				File file = getFile(target, id);
 				return file.delete();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -36,7 +37,7 @@ public class Database {
 		if(id != null) {
 			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
 			try {
-				File file = getFile(target.getSimpleName(), id);
+				File file = getFile(target, id);
 				if(file == null || !file.exists()) {
 					return null;
 				}
@@ -75,22 +76,20 @@ public class Database {
 			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
+			Arrays.sort(files);
 			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
 			int ignoreCount = 0;
 			for(int i = 0; i < files.length; i++) {
 				String fullName = files[i].getName();
 				String name = fullName.substring(0, fullName.lastIndexOf("."));
-
 				ObjectTemplate element = null; 
 				if((element = loadId(target, name)) == null) {
-					
 					return null;
 				} else {
-					int index = Integer.valueOf(name, 16).intValue();
 					if(predicate != null && !predicate.test(element)) {
 						ignoreCount++;
 					} else {
-						if(index - ignoreCount >= from) {
+						if(i - ignoreCount >= from) {
 							output.add(element);
 							if(range != null && output.size() == range) {
 								break;
@@ -144,14 +143,22 @@ public class Database {
 		return false;
 	}
 	
-	public int getCount(String name) {
-		File folder = new File(DATA_FOLDER.getPath() + File.separator + name);
-		folder.mkdirs();
+	public int getCount(Class <?> target) {
+		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 		return folder.listFiles().length;
 	}
 	
-	public File getFile(String name, String id) {
-		File file = new File(DATA_FOLDER.getPath() + File.separator + name + File.separator + id + "." + ENDING);
+	public int getNext(Class <?> target) {
+		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
+		folder.getParentFile().mkdirs();
+		File[] files = folder.listFiles();
+		Arrays.sort(files);
+		String name = files[files.length - 1].getName();
+		return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), 16).intValue() + 1;
+	}
+	
+	public File getFile(Class <?> target, String id) {
+		File file = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName() + File.separator + id + "." + ENDING);
 		file.getParentFile().mkdirs();
 		return file;
 	}

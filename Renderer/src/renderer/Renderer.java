@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import renderer.commands.AndCommand;
 import renderer.commands.Command;
 import renderer.commands.EachCommand;
 import renderer.commands.EqualsCommand;
@@ -22,6 +23,7 @@ import renderer.commands.IfCommand;
 import renderer.commands.IncludeCommand;
 import renderer.commands.NotCommand;
 import renderer.commands.NullCommand;
+import renderer.commands.OrCommand;
 import renderer.commands.PrintCommand;
 import renderer.commands.TranslateCommand;
 import renderer.commands.VariablesCommand;
@@ -50,6 +52,8 @@ public abstract class Renderer {
 		commands.put("null", new NullCommand());
 		commands.put("not", new NotCommand());
 		commands.put("htmlencode", new HTMLEncodeCommand());
+		commands.put("or", new OrCommand());
+		commands.put("and", new AndCommand());
 	}
 	
 

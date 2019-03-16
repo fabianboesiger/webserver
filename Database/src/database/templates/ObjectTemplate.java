@@ -21,6 +21,7 @@ public abstract class ObjectTemplate extends Template {
 		
 	private transient Identifiable identifier;
 	protected LongTemplate timestamp;
+	protected transient String id;
 	
 	public ObjectTemplate() {
 		super(null);
@@ -145,17 +146,9 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public String render(Database database) throws Exception {
 		timestamp.set(System.currentTimeMillis());
-		System.out.println("!!1");
-		Identifiable identifier = getIdentifier();
-		String id = null;
-		if(identifier == null) {
-			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
-		} else {
-			id = Database.encrypt(identifier.getId());
-		}
-		System.out.println("!!2");
+		String id = getId(database);
 		//if(updated) {
-			File file = database.getFile(getClass().getSimpleName(), id);
+			File file = database.getFile(getClass(), id);
 			/*
 			if(file.exists()) {
 				throw new DatabaseException("File already exists");
@@ -182,7 +175,8 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {		
 		String id = crop(string).trim();
-		File file = database.getFile(getClass().getSimpleName(), id);
+		this.id = id;
+		File file = database.getFile(getClass(), id);
 		if(file != null) {
 			if(file.exists()) {
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Database.ENCODING));
@@ -204,14 +198,8 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-		Identifiable identifier = getIdentifier();
-		String id = null;
-		if(identifier == null) {
-			id = Integer.toHexString(database.getCount(this.getClass().getSimpleName()));
-		} else {
-			id = Database.encrypt(identifier.getId());
-		}
-		File file = database.getFile(getClass().getSimpleName(), id);
+		String id = getId(database);
+		File file = database.getFile(getClass(), id);
 		System.out.println("!1");
 		if(file.exists()) {
 			if(!overwrite && updated) {System.out.println("!2");
@@ -254,6 +242,18 @@ public abstract class ObjectTemplate extends Template {
 		
 	}
 	
+	private String getId(Database database) {
+		if(identifier == null) {
+			StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
+			while(idBuilder.length() < 16) {
+				idBuilder.insert(0, "0");
+			}
+			return idBuilder.toString();
+		} else {
+			return Database.encrypt(identifier.getId());
+		}
+	}
+
 	private Field[] getFields() {
 		Class <?> c = getClass();
 		LinkedList <Field> output = getFields(c);

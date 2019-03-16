@@ -1,12 +1,12 @@
 package database.templates;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import database.Database;
 import database.Messages;
@@ -17,25 +17,27 @@ public class ListTemplate <T extends Template> extends Template implements List 
 	private static final char LIST_END = ']';
 	
 	ArrayList <T> list;
+	Supplier <T> supplier;
 	private transient boolean notNull;
 	private transient Integer maximumSize;
 	private transient Integer minimumSize;
 	
-	public ListTemplate(String name, Integer minimumSize, Integer maximumSize, boolean notNull) {
+	public ListTemplate(String name, Integer minimumSize, Integer maximumSize, boolean notNull, Supplier <T> supplier) {
 		super(name);
 		this.notNull = notNull;
+		this.supplier = supplier;
 	}
 	
-	public ListTemplate(String name, Integer minimumSize, Integer maximumSize) {
-		this(name, minimumSize, maximumSize, true);
+	public ListTemplate(String name, Integer minimumSize, Integer maximumSize, Supplier <T> supplier) {
+		this(name, minimumSize, maximumSize, true, supplier);
 	}
 	
-	public ListTemplate(String name) {
-		this(name, null, null);
+	public ListTemplate(String name, Supplier <T> supplier) {
+		this(name, null, null, supplier);
 	}
 	
-	public ListTemplate() {
-		this(null);
+	public ListTemplate(Supplier <T> supplier) {
+		this(null, supplier);
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class ListTemplate <T extends Template> extends Template implements List 
 		StringBuilder content = new StringBuilder(trimmed.substring(1, trimmed.length() - 1));
 		while(content.length() > 0) {
 			
-			T element = createInstance();
+			T element = supplier.get();
 			element.parse(database, string, initialized);
 			list.add(element);
 			
@@ -70,16 +72,6 @@ public class ListTemplate <T extends Template> extends Template implements List 
 				string.deleteCharAt(0);
 			}
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private T createInstance() {
-		try {
-			return (T) ((Class <?>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.getCause();
-		}
-		return null;
 	}
 
 	@Override
