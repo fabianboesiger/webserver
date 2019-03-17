@@ -17,7 +17,7 @@ public class EachCommand extends CommandBlock {
 	public Object run(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws IOException, InterpreterException {
 		String key = (String) Renderer.next(code, languages, variables, printer, folder);
 		List <Object> list = (List <Object>) Renderer.next(code, languages, variables, printer, folder);		
-				
+
 		if(list.size() == 0) {
 			skip(code);
 		} else {

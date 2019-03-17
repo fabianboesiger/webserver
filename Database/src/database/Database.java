@@ -76,30 +76,31 @@ public class Database {
 			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
-			Arrays.sort(files);
-			LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
-			int ignoreCount = 0;
-			for(int i = 0; i < files.length; i++) {
-				String fullName = files[i].getName();
-				String name = fullName.substring(0, fullName.lastIndexOf("."));
-				ObjectTemplate element = null; 
-				if((element = loadId(target, name)) == null) {
-					return null;
-				} else {
-					if(predicate != null && !predicate.test(element)) {
-						ignoreCount++;
+			if(files != null) {
+				Arrays.sort(files);
+				LinkedList <ObjectTemplate> output = new LinkedList <ObjectTemplate> ();
+				int ignoreCount = 0;
+				for(int i = 0; i < files.length; i++) {
+					String fullName = files[i].getName();
+					String name = fullName.substring(0, fullName.lastIndexOf("."));
+					ObjectTemplate element = null; 
+					if((element = loadId(target, name)) == null) {
+						return null;
 					} else {
-						if(i - ignoreCount >= from) {
-							output.add(element);
-							if(range != null && output.size() == range) {
-								break;
+						if(predicate != null && !predicate.test(element)) {
+							ignoreCount++;
+						} else {
+							if(i - ignoreCount >= from) {
+								output.add(element);
+								if(range != null && output.size() == range) {
+									break;
+								}
 							}
 						}
 					}
 				}
+				return output;
 			}
-			
-			return output;
 		} catch (IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
 		}
