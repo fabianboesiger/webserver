@@ -35,7 +35,7 @@ public class Responder {
 	
 	public Response error(int code, String message, LinkedList <String> languages, String error) throws IOException {
 		HashMap <String, Object> variables = new HashMap <String, Object>();
-		variables.put("code", new String("" + code));
+		variables.put("code", code);
 		variables.put("message", new String(message));
 		if(error != null) {
 			variables.put("error", error);

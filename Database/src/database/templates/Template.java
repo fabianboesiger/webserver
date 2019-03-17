@@ -27,14 +27,16 @@ public abstract class Template {
 	public void setField(Database database, Field field, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated) throws IllegalArgumentException, IllegalAccessException, Exception {
 		Object object = field.get(this);
 		if(object instanceof Template) {
-			if(object instanceof ObjectTemplate && database != null && initialized != null) {
+			if(object instanceof ObjectTemplateReference && database != null && initialized != null) {
 				if(initialized.containsKey(value)) {
-					field.set(this, initialized.get(value));
+					ObjectTemplateReference <?> reference = ((ObjectTemplateReference <?>) field.get(this));
+					reference.set(initialized.get(value));
+					field.set(this, reference);
 					return;
 				} else {
 					((Template) object).parse(database, value, initialized);
 					((Template) object).updated = wasUpdated;
-					initialized.put(value, (ObjectTemplate) object);
+					initialized.put(value, (ObjectTemplate) ((ObjectTemplateReference <?>) object).get());
 				}
 			} else {
 				((Template) object).parse(database, value, initialized);

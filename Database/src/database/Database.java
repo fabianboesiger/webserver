@@ -98,10 +98,12 @@ public class Database {
 					}
 				}
 			}
+			
 			return output;
 		} catch (IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 	
@@ -151,7 +153,10 @@ public class Database {
 	public int getNext(Class <?> target) {
 		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 		folder.getParentFile().mkdirs();
-		File[] files = folder.listFiles();
+		File[] files = folder.listFiles();System.out.println(files);
+		if(files == null || files.length == 0) {
+			return 0;
+		}
 		Arrays.sort(files);
 		String name = files[files.length - 1].getName();
 		return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), 16).intValue() + 1;

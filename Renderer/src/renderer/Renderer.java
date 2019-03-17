@@ -21,10 +21,12 @@ import renderer.commands.GetCommand;
 import renderer.commands.HTMLEncodeCommand;
 import renderer.commands.IfCommand;
 import renderer.commands.IncludeCommand;
+import renderer.commands.MarkdownCommand;
 import renderer.commands.NotCommand;
 import renderer.commands.NullCommand;
 import renderer.commands.OrCommand;
 import renderer.commands.PrintCommand;
+import renderer.commands.SizeCommand;
 import renderer.commands.TranslateCommand;
 import renderer.commands.VariablesCommand;
 
@@ -54,6 +56,8 @@ public abstract class Renderer {
 		commands.put("htmlencode", new HTMLEncodeCommand());
 		commands.put("or", new OrCommand());
 		commands.put("and", new AndCommand());
+		commands.put("markdown", new MarkdownCommand());
+		commands.put("size", new SizeCommand());
 	}
 	
 

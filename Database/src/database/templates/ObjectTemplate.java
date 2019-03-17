@@ -28,6 +28,7 @@ public abstract class ObjectTemplate extends Template {
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
 		timestamp.set(new Long(0));
+		id = null;
 	}
 		
 	public void setIdentifier(Identifiable identifier) {
@@ -158,7 +159,6 @@ public abstract class ObjectTemplate extends Template {
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
 			HashMap <String, Object> map = renderToMap(database);
 			int counter = 0;
-			System.out.println("!!3");
 			for(Map.Entry <String, Object> entry : map.entrySet()) {
 				bufferedWriter.write(entry.getKey() + "=" + ((Template) entry.getValue()).render(database));
 				if(counter != map.size() - 1) {
@@ -200,16 +200,15 @@ public abstract class ObjectTemplate extends Template {
 	public boolean check(Database database, boolean overwrite) {
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
-		System.out.println("!1");
 		if(file.exists()) {
-			if(!overwrite && updated) {System.out.println("!2");
+			if(!overwrite && updated) {
 				return false;
 			} else {
 				ObjectTemplate clone;
 				try {
 					clone = getClass().getConstructor().newInstance();
 					clone.parse(database, id, null);
-					if((Long) clone.timestamp.get() > (Long) timestamp.get()) {System.out.println("!3");
+					if((Long) clone.timestamp.get() > (Long) timestamp.get()) {
 						return false;
 					}
 				} catch (Exception e) {
@@ -242,15 +241,19 @@ public abstract class ObjectTemplate extends Template {
 		
 	}
 	
-	private String getId(Database database) {
-		if(identifier == null) {
-			StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
-			while(idBuilder.length() < 16) {
-				idBuilder.insert(0, "0");
+	public String getId(Database database) {
+		if(id == null) {
+			if(identifier == null) {
+				StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
+				while(idBuilder.length() < 16) {
+					idBuilder.insert(0, "0");
+				}
+				return idBuilder.toString();
+			} else {
+				return Database.encrypt(identifier.getId());
 			}
-			return idBuilder.toString();
 		} else {
-			return Database.encrypt(identifier.getId());
+			return id;
 		}
 	}
 
@@ -289,6 +292,16 @@ public abstract class ObjectTemplate extends Template {
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ObjectTemplate) {
+			if(id.equals(((ObjectTemplate) object).id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
