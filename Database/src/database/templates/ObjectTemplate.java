@@ -146,9 +146,11 @@ public abstract class ObjectTemplate extends Template {
 	
 	@Override
 	public String render(Database database) throws Exception {
-		timestamp.set(System.currentTimeMillis());
-		String id = getId(database);
-		//if(updated) {
+				
+		if(updated) {
+			timestamp.set(System.currentTimeMillis());
+			String id = getId(database);
+			
 			File file = database.getFile(getClass(), id);
 			/*
 			if(file.exists()) {
@@ -167,9 +169,27 @@ public abstract class ObjectTemplate extends Template {
 				counter++;
 			}
 			bufferedWriter.close();
-		//}
+		}
 		
 		return id;
+	}
+
+	private void checkIfUpdated() {
+		Field[] fields = getFields();
+		for(Field field : fields) {
+			try {
+				field.setAccessible(true);
+				Object object = field.get(this);
+				if(object instanceof Template) {
+					if(((Template) object).updated) {
+						update();
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -198,6 +218,8 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
+		checkIfUpdated();
+		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
