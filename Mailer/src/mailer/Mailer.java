@@ -43,7 +43,9 @@ public class Mailer {
 		send(email, subject, name, languages, new HashMap <String, Object> ());
     }
 	
-	public void send(String email, String subject, String name, List <String> languages, Map <String, Object> variables) {
+	public void send(String email, String subject, String name, List <String> languages, Map <String, Object> variablesPassed) {
+		HashMap <String, Object> variables = new HashMap <String, Object> (variablesPassed);
+		
 		if(predefined != null) {
 			HashMap <String, Object> copy = new HashMap <String, Object> (predefined);
 			copy.keySet().removeAll(variables.keySet());

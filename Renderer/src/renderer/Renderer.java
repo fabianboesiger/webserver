@@ -14,6 +14,7 @@ import java.util.Map;
 
 import renderer.commands.AndCommand;
 import renderer.commands.Command;
+import renderer.commands.ConsoleCommand;
 import renderer.commands.EachCommand;
 import renderer.commands.EqualsCommand;
 import renderer.commands.ExistsCommand;
@@ -58,6 +59,7 @@ public abstract class Renderer {
 		commands.put("and", new AndCommand());
 		commands.put("markdown", new MarkdownCommand());
 		commands.put("size", new SizeCommand());
+		commands.put("console", new ConsoleCommand());
 	}
 	
 
@@ -189,6 +191,7 @@ public abstract class Renderer {
 	public static Object next(StringBuilder code, List <String> languages, Map <String, Object> variables, StringBuilder printer, File folder) throws InterpreterException, IOException {
 		String command = nextCommand(code);
 		Object output = parse(command);
+
 		if(output == null) {
 			return run(command, code, languages, variables, printer, folder);
 		} else {

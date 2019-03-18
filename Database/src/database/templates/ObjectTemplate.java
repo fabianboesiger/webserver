@@ -263,8 +263,12 @@ public abstract class ObjectTemplate extends Template {
 		
 	}
 	
+	public String getId() {
+		return getId(null);
+	}
+	
 	public String getId(Database database) {
-		if(id == null) {
+		if(id == null && database != null) {
 			if(identifier == null) {
 				StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
 				while(idBuilder.length() < 16) {

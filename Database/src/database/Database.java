@@ -108,6 +108,37 @@ public class Database {
 		return null;
 	}
 	
+	public synchronized boolean deleteAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
+		return deleteAll(target, 0, null, predicate);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target) {
+		return deleteAll(target, 0, null, null);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Integer from) {
+		return deleteAll(target, from, null, null);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate) {
+		return deleteAll(target, from, null, predicate);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Integer from, Integer range) {
+		return deleteAll(target, from, range, null);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate) {
+		boolean output = true;
+		LinkedList <ObjectTemplate> objectTemplates = loadAll(target, from, range, predicate);
+		for(ObjectTemplate objectTemplate : objectTemplates) {
+			if(!deleteId(target, objectTemplate.getId())) {
+				output = false;
+			}
+		}
+		return output;
+	}
+	
 	public synchronized ObjectTemplate load(Class <?> target, String id) {
 		if(id != null) {
 			return loadId(target, encrypt(id));
