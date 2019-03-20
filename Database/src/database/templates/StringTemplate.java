@@ -61,25 +61,36 @@ public class StringTemplate extends PrimitiveTemplate {
 		if(updated) {
 			if(value == null) {
 				if(notNull) {
-					messages.add(name, "not-initialized");
+					if(messages != null) {
+						messages.add(name, "not-initialized");
+					}
 					valid = false;
 				}
 			} else {
 				if(minimumLength != null) {
 					if(value.length() < minimumLength) {
-						messages.add(name, "minimum-length-exceeded");
+						if(messages != null) {
+							messages.add(name, "minimum-length-exceeded");
+						}
 						valid = false;
 					}
 				}
 				if(maximumLength != null) {
 					if(value.length() > maximumLength) {
-						messages.add(name, "maximum-length-exceeded");
+						if(messages != null) {
+							messages.add(name, "maximum-length-exceeded");
+						}
 						valid = false;
 					}
 				}
 			}
 		}
 		return valid;
+	}
+	
+	@Override
+	public boolean validate() {
+		return validate(null);
 	}
 
 	@Override

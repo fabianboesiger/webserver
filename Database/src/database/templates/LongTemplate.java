@@ -38,24 +38,35 @@ public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 			if(value == null) {
 				if(notNull) {
 					valid = false;
-					messages.add(name, "not-initialized");
+					if(messages != null) {
+						messages.add(name, "not-initialized");
+					}
 				}
 			} else {
 				if(minimum != null) {
 					if(value < minimum) {
 						valid = false;
-						messages.add(name, "minimum-exceeded");
+						if(messages != null) {
+							messages.add(name, "minimum-exceeded");
+						}
 					}
 				}
 				if(maximum != null) {
 					if(value > maximum) {
 						valid = false;
-						messages.add(name, "maximum-exceeded");
+						if(messages != null) {
+							messages.add(name, "maximum-exceeded");
+						}
 					}
 				}
 			}
 		}
 		return valid;
+	}
+	
+	@Override
+	public boolean validate() {
+		return validate(null);
 	}
 
 	@Override

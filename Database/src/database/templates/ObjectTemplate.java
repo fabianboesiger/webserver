@@ -100,6 +100,11 @@ public abstract class ObjectTemplate extends Template {
 		return valid;
 	}
 	
+	@Override
+	public boolean validate() {
+		return validate(null);
+	}
+	
 	public HashMap <String, Object> renderToMap(Database database) {
 		HashMap <String, Object> map = new HashMap <String, Object> ();
 		Field[] fields = getFields();
@@ -147,7 +152,7 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public String render(Database database) throws Exception {
 				
-		if(updated) {
+		//if(updated) {
 			timestamp.set(System.currentTimeMillis());
 			String id = getId(database);
 			
@@ -169,11 +174,11 @@ public abstract class ObjectTemplate extends Template {
 				counter++;
 			}
 			bufferedWriter.close();
-		}
+		//}
 		
 		return id;
 	}
-
+	/*
 	private void checkIfUpdated() {
 		Field[] fields = getFields();
 		for(Field field : fields) {
@@ -191,7 +196,7 @@ public abstract class ObjectTemplate extends Template {
 			}
 		}
 	}
-
+	*/
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {		
 		String id = crop(string).trim();
@@ -218,12 +223,12 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-		checkIfUpdated();
+		//checkIfUpdated();
 		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
-			if(!overwrite && updated) {
+			if(!overwrite) {
 				return false;
 			} else {
 				ObjectTemplate clone;

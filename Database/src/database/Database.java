@@ -145,7 +145,7 @@ public class Database {
 		}
 		return null;
 	}
-	
+
 	public synchronized boolean delete(Class <?> target, String id) {
 		if(id != null) {
 			return deleteId(target, encrypt(id));

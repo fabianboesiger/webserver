@@ -46,6 +46,7 @@ public abstract class Template {
 	}
 	
 	public abstract boolean validate(Messages messages);
+	public abstract boolean validate();
 	public abstract String render(Database database) throws Exception;
 	public abstract void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initalized) throws Exception;
 	public abstract void update();
@@ -66,5 +67,7 @@ public abstract class Template {
 		}
 		return output;
 	}
+
+	
 	
 }

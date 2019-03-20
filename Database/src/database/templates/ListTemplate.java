@@ -81,24 +81,35 @@ public class ListTemplate <T extends Template> extends Template implements List 
 			if(list == null) {
 				if(notNull) {
 					valid = false;
-					messages.add(name, "not-initialized");
+					if(messages != null) {
+						messages.add(name, "not-initialized");
+					}
 				}
 			} else {
 				if(minimumSize != null) {
 					if(list.size() < minimumSize) {
 						valid = false;
-						messages.add(name, "minimum-elements-exceeded");
+						if(messages != null) {
+							messages.add(name, "minimum-elements-exceeded");
+						}
 					}
 				}
 				if(maximumSize != null) {
 					if(list.size() > maximumSize) {
 						valid = false;
-						messages.add(name, "maximum-elements-exceeded");
+						if(messages != null) {
+							messages.add(name, "maximum-elements-exceeded");
+						}
 					}
 				}
 			}
 		}
 		return valid;
+	}
+	
+	@Override
+	public boolean validate() {
+		return validate(null);
 	}
 	
 	@Override

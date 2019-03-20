@@ -32,6 +32,11 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends Primitiv
 	public boolean validate(Messages messages) {
 		return value.validate(messages);
 	}
+	
+	@Override
+	public boolean validate() {
+		return validate(null);
+	}
 
 	@Override
 	public String render(Database database) throws Exception {

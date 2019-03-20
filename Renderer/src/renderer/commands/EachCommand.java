@@ -33,7 +33,7 @@ public class EachCommand extends CommandBlock {
 				variables.put(key, value);
 				
 				String next;			
-				while(!(next = Renderer.nextCommand(codeCopy)).toLowerCase().equals(END)) {
+				while(!(next = Renderer.nextCommand(codeCopy)).equals(END)) {
 					Renderer.run(next, codeCopy, languages, variables, printer, folder);
 				}
 			}

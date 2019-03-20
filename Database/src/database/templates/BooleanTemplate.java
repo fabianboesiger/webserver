@@ -30,11 +30,18 @@ public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
 			if(value == null) {
 				if(notNull) {
 					valid = false;
-					messages.add(name, "not-initialized");
+					if(messages != null) {
+						messages.add(name, "not-initialized");
+					}
 				}
 			}
 		}
 		return valid;
+	}
+	
+	@Override
+	public boolean validate() {
+		return validate(null);
 	}
 
 	@Override

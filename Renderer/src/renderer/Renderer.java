@@ -27,6 +27,7 @@ import renderer.commands.NotCommand;
 import renderer.commands.NullCommand;
 import renderer.commands.OrCommand;
 import renderer.commands.PrintCommand;
+import renderer.commands.SetCommand;
 import renderer.commands.SizeCommand;
 import renderer.commands.TranslateCommand;
 import renderer.commands.VariablesCommand;
@@ -60,6 +61,7 @@ public abstract class Renderer {
 		commands.put("markdown", new MarkdownCommand());
 		commands.put("size", new SizeCommand());
 		commands.put("console", new ConsoleCommand());
+		commands.put("set", new SetCommand());
 	}
 	
 
