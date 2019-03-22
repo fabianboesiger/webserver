@@ -152,7 +152,7 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public String render(Database database) throws Exception {
 				
-		//if(updated) {
+		if(updated) {
 			timestamp.set(System.currentTimeMillis());
 			String id = getId(database);
 			
@@ -174,7 +174,7 @@ public abstract class ObjectTemplate extends Template {
 				counter++;
 			}
 			bufferedWriter.close();
-		//}
+		}
 		
 		return id;
 	}
