@@ -178,7 +178,7 @@ public abstract class ObjectTemplate extends Template {
 		
 		return id;
 	}
-	/*
+	
 	private void checkIfUpdated() {
 		Field[] fields = getFields();
 		for(Field field : fields) {
@@ -196,7 +196,7 @@ public abstract class ObjectTemplate extends Template {
 			}
 		}
 	}
-	*/
+	
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {		
 		String id = crop(string).trim();
@@ -223,7 +223,7 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-		//checkIfUpdated();
+		checkIfUpdated();
 		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
@@ -308,6 +308,7 @@ public abstract class ObjectTemplate extends Template {
 	@Override
 	public void update() {
 		updated = true;
+		/*
 		try {
 			Field[] fields = getFields();
 			for(int i = 0; i < fields.length; i++) {
@@ -323,6 +324,7 @@ public abstract class ObjectTemplate extends Template {
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	@Override
