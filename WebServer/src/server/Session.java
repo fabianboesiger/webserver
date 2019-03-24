@@ -1,6 +1,7 @@
 package server;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Session {
 	
@@ -11,6 +12,7 @@ public class Session {
 	private long lastConnect;
 	private HashMap <String, Object> flashes;
 	private String username;
+	private LinkedList <String> languages;
 	
 	public Session(String id) {
 		this.id = id;
@@ -58,6 +60,14 @@ public class Session {
 	
 	public String getUsername() {
 		return username;
+	}
+	
+	public void setLanguages(LinkedList <String> languages) {
+		this.languages = languages;
+	}
+	
+	public LinkedList <String> getLanguages() {
+		return languages;
 	}
 	
 }

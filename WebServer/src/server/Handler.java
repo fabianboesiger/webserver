@@ -47,6 +47,7 @@ public class Handler implements HttpHandler {
  		    	languages = getOrderedValue(languageString);
  		    }
  		}
+    	session.setLanguages(languages);
     	    	
     	HashMap <String, String> parameters = new HashMap <String, String> ();
     	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
@@ -68,7 +69,7 @@ public class Handler implements HttpHandler {
     	if(listeners != null) {
     		for(Listener listener : listeners) {
     			if(listener.matches(uri)) {
-    				response = listener.listenerAction.act(new Request(session, listener.getGroups(uri), parameters, languages));
+    				response = listener.listenerAction.act(new Request(session, listener.getGroups(uri), parameters));
     				if(response.next) {
     					response = null;
     				} else {
