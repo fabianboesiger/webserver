@@ -276,7 +276,7 @@ public abstract class ObjectTemplate extends Template {
 		if(id == null && database != null) {
 			if(identifier == null) {
 				StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
-				while(idBuilder.length() < 16) {
+				while(idBuilder.length() < Database.COUNTER_LENGTH) {
 					idBuilder.insert(0, "0");
 				}
 				return idBuilder.toString();

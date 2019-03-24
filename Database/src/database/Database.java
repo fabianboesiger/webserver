@@ -15,6 +15,7 @@ public class Database {
 	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final File DATA_FOLDER = new File("data");
 	private static final String ENDING = "txt";
+	public static final int COUNTER_LENGTH = 16;
 	
 	public Database() {
 		System.out.println("Starting database with directory " + DATA_FOLDER.getAbsolutePath());
@@ -191,7 +192,7 @@ public class Database {
 		}
 		Arrays.sort(files);
 		String name = files[files.length - 1].getName();
-		return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), 16).intValue() + 1;
+		return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), COUNTER_LENGTH).intValue() + 1;
 	}
 	
 	public File getFile(Class <?> target, String id) {
