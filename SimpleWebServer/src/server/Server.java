@@ -9,17 +9,16 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 	
-	public static final int PORT = 8000;
 	public static final int HANDLER_THREADS = 4;
 	public static final int SESSION_MAX_AGE = 60*60*24;
 	public static final File PUBLIC_FOLDER = new File("public");
 		
 	private HttpServer server;
 	
-	public Server() throws IOException {
-		System.out.println("Server started on port "+PORT);
+	public Server(int port) throws IOException {
+		System.out.println("Server started on port " + port);
 						
-		server = HttpServer.create(new InetSocketAddress(PORT), 0);
+		server = HttpServer.create(new InetSocketAddress(port), 0);
 	    server.setExecutor(Executors.newFixedThreadPool(HANDLER_THREADS));
 	    findFiles(PUBLIC_FOLDER);
 	    server.start();
