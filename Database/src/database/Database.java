@@ -155,6 +155,7 @@ public class Database {
 	}
 	
 	public synchronized boolean save(ObjectTemplate objectTemplate) {
+		objectTemplate.checkIfUpdated();
 		if(objectTemplate.check(this, false)) {
 			try {
 				objectTemplate.render(this);
@@ -186,7 +187,7 @@ public class Database {
 	public int getNext(Class <?> target) {
 		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
 		folder.getParentFile().mkdirs();
-		File[] files = folder.listFiles();System.out.println(files);
+		File[] files = folder.listFiles();
 		if(files == null || files.length == 0) {
 			return 0;
 		}

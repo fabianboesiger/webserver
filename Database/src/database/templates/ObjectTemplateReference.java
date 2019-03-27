@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import database.Database;
 import database.Messages;
 
-public class ObjectTemplateReference <T extends ObjectTemplate> extends PrimitiveTemplate {
+public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexTemplate {
 	
 	private T value;
 	
@@ -17,13 +17,11 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends Primitiv
 	
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public void set(Object object) {
 		update();
 		value = (T) object;
 	}
 
-	@Override
 	public Object get() {
 		return value;
 	}
@@ -35,7 +33,7 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends Primitiv
 	
 	@Override
 	public boolean validate() {
-		return validate(null);
+		return value.validate(null);
 	}
 
 	@Override
@@ -51,6 +49,18 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends Primitiv
 	@Override
 	public void update() {
 		updated = true;
+	}
+
+
+	@Override
+	public void checkIfUpdated() {
+		value.checkIfUpdated();
+	}
+
+
+	@Override
+	public boolean check(Database database, boolean overwrite) {
+		return value.check(database, overwrite);
 	}
 
 }

@@ -21,7 +21,7 @@ public abstract class Template {
 	public Template(String name, UpdateAction updateAction) {
 		this.name = name;
 		this.updateAction = updateAction;
-		this.updated = false;
+		this.updated = true;
 	}
 	
 	public void setField(Database database, Field field, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated) throws IllegalArgumentException, IllegalAccessException, Exception {

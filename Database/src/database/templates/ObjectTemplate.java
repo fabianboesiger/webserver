@@ -17,7 +17,7 @@ import java.util.Map;
 import database.Database;
 import database.Messages;
 
-public abstract class ObjectTemplate extends Template {
+public abstract class ObjectTemplate extends ComplexTemplate {
 		
 	private transient Identifiable identifier;
 	protected LongTemplate timestamp;
@@ -151,10 +151,10 @@ public abstract class ObjectTemplate extends Template {
 	
 	@Override
 	public String render(Database database) throws Exception {
-				
+		String id = null;		
 		if(updated) {
 			timestamp.set(System.currentTimeMillis());
-			String id = getId(database);
+			id = getId(database);
 			
 			File file = database.getFile(getClass(), id);
 			/*
@@ -162,6 +162,7 @@ public abstract class ObjectTemplate extends Template {
 				throw new DatabaseException("File already exists");
 			}
 			*/
+			
 	
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
 			HashMap <String, Object> map = renderToMap(database);
@@ -175,17 +176,20 @@ public abstract class ObjectTemplate extends Template {
 			}
 			bufferedWriter.close();
 		}
-		
+
 		return id;
 	}
 	
-	private void checkIfUpdated() {
+	public void checkIfUpdated() {
 		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof Template) {
+					if(object instanceof ComplexTemplate) {
+						((ComplexTemplate) object).checkIfUpdated();
+					}
 					if(((Template) object).updated) {
 						update();
 						break;
@@ -198,7 +202,7 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	@Override
-	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {		
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		String id = crop(string).trim();
 		this.id = id;
 		File file = database.getFile(getClass(), id);
@@ -223,7 +227,6 @@ public abstract class ObjectTemplate extends Template {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-		checkIfUpdated();
 		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
@@ -252,8 +255,8 @@ public abstract class ObjectTemplate extends Template {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-					if(object instanceof ObjectTemplate) {
-						if(!((ObjectTemplate) object).check(database, overwrite)) {
+					if(object instanceof ComplexTemplate) {
+						if(!((ComplexTemplate) object).check(database, overwrite)) {
 							return false;
 						}
 					}

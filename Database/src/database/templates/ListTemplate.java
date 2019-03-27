@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import database.Database;
 import database.Messages;
 
-public class ListTemplate <T extends Template> extends Template implements List <T> {
+public class ListTemplate <T extends Template> extends ComplexTemplate implements List <T> {
 	
 	private static final char LIST_START = '[';
 	private static final char LIST_END = ']';
@@ -26,6 +26,7 @@ public class ListTemplate <T extends Template> extends Template implements List 
 		super(name);
 		this.notNull = notNull;
 		this.supplier = supplier;
+		list = new ArrayList <T> ();
 	}
 	
 	public ListTemplate(String name, Integer minimumSize, Integer maximumSize, Supplier <T> supplier) {
@@ -51,25 +52,25 @@ public class ListTemplate <T extends Template> extends Template implements List 
 			stringBuilder.append(list.get(i).render(database));
 		}
 		stringBuilder.append(LIST_END);
-		return null;
+		return stringBuilder.toString();
 	}
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		String trimmed = string.toString().trim();
+		string.setLength(0);
 		StringBuilder content = new StringBuilder(trimmed.substring(1, trimmed.length() - 1));
 		while(content.length() > 0) {
-			
 			T element = supplier.get();
 			element.parse(database, string, initialized);
 			list.add(element);
 			
-			while(string.length() > 0) {
-				if(string.charAt(0) == SEPARATION_CHARACTER) {
-					string.deleteCharAt(0);
+			while(content.length() > 0) {
+				if(content.charAt(0) == SEPARATION_CHARACTER) {
+					content.deleteCharAt(0);
 					break;
 				}
-				string.deleteCharAt(0);
+				content.deleteCharAt(0);
 			}
 		}
 	}
@@ -100,6 +101,11 @@ public class ListTemplate <T extends Template> extends Template implements List 
 						if(messages != null) {
 							messages.add(name, "maximum-elements-exceeded");
 						}
+					}
+				}
+				for(T element : list) {
+					if(!((Template) element).validate(messages)) {
+						valid = false;
 					}
 				}
 			}
@@ -244,6 +250,27 @@ public class ListTemplate <T extends Template> extends Template implements List 
 	@Override
 	public <T> T[] toArray(T[] arg0) {
 		return list.toArray(arg0);
+	}
+
+	@Override
+	public void checkIfUpdated() {
+		for(T element : list) {
+			if(element instanceof ComplexTemplate) {
+				((ComplexTemplate) element).checkIfUpdated();
+			}
+		}
+	}
+
+	@Override
+	public boolean check(Database database, boolean overwrite) {
+		for(T element : list) {
+			if(element instanceof ComplexTemplate) {
+				if(!((ComplexTemplate) element).check(database, overwrite)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 
