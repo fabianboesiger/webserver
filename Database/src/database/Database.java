@@ -74,7 +74,7 @@ public class Database {
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate) {
 		try {
-			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
+			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
 			folder.getParentFile().mkdirs();
 			File[] files = folder.listFiles();
 			if(files != null) {
@@ -102,7 +102,7 @@ public class Database {
 				}
 				return output;
 			}
-		} catch (IllegalArgumentException | SecurityException e) {
+		} catch (IllegalArgumentException | SecurityException | IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 		
@@ -168,6 +168,7 @@ public class Database {
 	}
 	
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
+		objectTemplate.checkIfUpdated();
 		if(objectTemplate.check(this, true)) {
 			try {
 				objectTemplate.render(this);
@@ -180,25 +181,42 @@ public class Database {
 	}
 	
 	public int getCount(Class <?> target) {
-		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
-		return folder.listFiles().length;
+		File folder;
+		try {
+			folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
+			return folder.listFiles().length;
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public int getNext(Class <?> target) {
-		File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName());
-		folder.getParentFile().mkdirs();
-		File[] files = folder.listFiles();
-		if(files == null || files.length == 0) {
-			return 0;
+		File folder;
+		try {
+			folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
+			folder.getParentFile().mkdirs();
+			File[] files = folder.listFiles();
+			if(files == null || files.length == 0) {
+				return 0;
+			}
+			Arrays.sort(files);
+			String name = files[files.length - 1].getName();
+			return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), COUNTER_LENGTH).intValue() + 1;
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
 		}
-		Arrays.sort(files);
-		String name = files[files.length - 1].getName();
-		return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), COUNTER_LENGTH).intValue() + 1;
+		return 0;
 	}
 	
 	public File getFile(Class <?> target, String id) {
-		File file = new File(DATA_FOLDER.getPath() + File.separator + target.getSimpleName() + File.separator + id + "." + ENDING);
-		file.getParentFile().mkdirs();
+		File file = null;
+		try {
+			file = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null) + File.separator + id + "." + ENDING);
+			file.getParentFile().mkdirs();
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
 		return file;
 	}
 	
