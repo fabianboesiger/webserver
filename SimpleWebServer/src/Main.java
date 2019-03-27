@@ -5,7 +5,7 @@ import server.Server;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		new Server();
+		new Server(Integer.parseInt(args[0]));
 	}
 
 }
