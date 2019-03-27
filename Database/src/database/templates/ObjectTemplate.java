@@ -162,7 +162,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				throw new DatabaseException("File already exists");
 			}
 			*/
-			
 	
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
 			HashMap <String, Object> map = renderToMap(database);
