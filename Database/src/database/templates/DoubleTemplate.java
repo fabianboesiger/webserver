@@ -71,7 +71,7 @@ public class DoubleTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void set(Object object) {
-		update();
+		updated();
 		value = (Double) object;
 	}
 
@@ -87,12 +87,9 @@ public class DoubleTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) {
+		parsed();
 		value = Double.parseDouble(crop(string));
 	}
 	
-	@Override
-	public void update() {
-		updated = true;
-	}
-	
+
 }

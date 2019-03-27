@@ -95,7 +95,7 @@ public class StringTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void set(Object object) {
-		update();
+		updated();
 		value = (String) object;
 	}
 
@@ -132,6 +132,7 @@ public class StringTemplate extends PrimitiveTemplate {
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		parsed();
 		
 		StringBuilder builder = new StringBuilder();
 	
@@ -172,11 +173,6 @@ public class StringTemplate extends PrimitiveTemplate {
 			string.deleteCharAt(0);
 		}
 		value = builder.toString();
-	}
-
-	@Override
-	public void update() {
-		updated = true;
 	}
 	
 }

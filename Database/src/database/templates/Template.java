@@ -49,7 +49,15 @@ public abstract class Template {
 	public abstract boolean validate();
 	public abstract String render(Database database) throws Exception;
 	public abstract void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initalized) throws Exception;
-	public abstract void update();
+	
+	public void updated() {
+		updated = true;
+	}
+	
+	public void parsed() {
+		updated = false;
+	}
+	
 	
 	public void parse(Database database, String string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parse(database, new StringBuilder(string), initialized);
@@ -60,14 +68,12 @@ public abstract class Template {
 		String output = "";
 		if(index >= 0) {
 			output = string.substring(0, index);
-			string.delete(0, index);
+			string.delete(0, index + 1);
 		} else {
 			output = string.toString();
 			string.setLength(0);
 		}
 		return output;
 	}
-
-	
 	
 }

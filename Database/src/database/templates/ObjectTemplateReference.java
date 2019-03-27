@@ -18,7 +18,7 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@SuppressWarnings("unchecked")
 	public void set(Object object) {
-		update();
+		updated();
 		value = (T) object;
 	}
 
@@ -43,14 +43,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map<String, ObjectTemplate> initialized) throws Exception {
+		parsed();
 		value.parse(database, string, initialized);
 	}
-
-	@Override
-	public void update() {
-		updated = true;
-	}
-
 
 	@Override
 	public void checkIfUpdated() {

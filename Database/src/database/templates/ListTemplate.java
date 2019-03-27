@@ -57,21 +57,15 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		parsed();
+		list.clear();
 		String trimmed = string.toString().trim();
 		string.setLength(0);
 		StringBuilder content = new StringBuilder(trimmed.substring(1, trimmed.length() - 1));
 		while(content.length() > 0) {
 			T element = supplier.get();
-			element.parse(database, string, initialized);
+			element.parse(database, content, initialized);
 			list.add(element);
-			
-			while(content.length() > 0) {
-				if(content.charAt(0) == SEPARATION_CHARACTER) {
-					content.deleteCharAt(0);
-					break;
-				}
-				content.deleteCharAt(0);
-			}
 		}
 	}
 
@@ -119,40 +113,32 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 	
 	@Override
-	public void update() {
-		updated = true;
-		for(int i = 0; i < list.size(); i++) {
-			list.get(i).update();
-		}
-	}
-
-	@Override
 	public boolean add(T arg0) {
-		update();
+		updated();
 		return list.add(arg0);
 	}
 
 	@Override
 	public void add(int arg0, T arg1) {
-		update();
+		updated();
 		list.add(arg0, arg1);
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends T> arg0) {
-		update();
+		updated();
 		return addAll(arg0);
 	}
 
 	@Override
 	public boolean addAll(int arg0, Collection<? extends T> arg1) {
-		update();
+		updated();
 		return addAll(arg0, arg1);
 	}
 
 	@Override
 	public void clear() {
-		update();
+		updated();
 		list.clear();
 	}
 
@@ -203,31 +189,31 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 
 	@Override
 	public boolean remove(Object arg0) {
-		update();
+		updated();
 		return list.remove(arg0);
 	}
 
 	@Override
 	public T remove(int arg0) {
-		update();
+		updated();
 		return list.remove(arg0);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> arg0) {
-		update();
+		updated();
 		return list.removeAll(arg0);
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> arg0) {
-		update();
+		updated();
 		return list.retainAll(arg0);
 	}
 
 	@Override
 	public T set(int arg0, T arg1) {
-		update();
+		updated();
 		return list.set(arg0, arg1);
 	}
 

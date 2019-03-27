@@ -71,7 +71,7 @@ public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void set(Object object) {
-		update();
+		updated();
 		value = (Long) object;
 	}
 
@@ -92,12 +92,8 @@ public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) {
+		parsed();
 		value = Long.parseLong(crop(string));
-	}
-	
-	@Override
-	public void update() {
-		updated = true;
 	}
 	
 }

@@ -126,7 +126,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public void parseFromParameters(Map <String, String> input) {
-		update();
+		updated();
 		parseFromMap(null, input, null, true);
 	}
 	
@@ -190,7 +190,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 						((ComplexTemplate) object).checkIfUpdated();
 					}
 					if(((Template) object).updated) {
-						update();
+						updated();
 						break;
 					}
 				}
@@ -202,6 +202,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		parsed();
 		String id = crop(string).trim();
 		this.id = id;
 		File file = database.getFile(getClass(), id);
@@ -305,28 +306,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			output.addAll(getFields(c.getSuperclass()));
 		}
 		return output;
-	}
-	
-	@Override
-	public void update() {
-		updated = true;
-		/*
-		try {
-			Field[] fields = getFields();
-			for(int i = 0; i < fields.length; i++) {
-				Field field = fields[i];
-				field.setAccessible(true);
-				Object object = field.get(this);
-				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-					if(object instanceof Template) {
-						((Template) object).update();
-					}
-				}
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		*/
 	}
 	
 	@Override

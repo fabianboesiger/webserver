@@ -46,7 +46,7 @@ public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void set(Object object) {
-		update();
+		updated();
 		value = (Boolean) object;
 	}
 
@@ -67,12 +67,8 @@ public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) {
+		parsed();
 		value = Boolean.parseBoolean(crop(string));
-	}
-	
-	@Override
-	public void update() {
-		updated = true;
 	}
 	
 }
