@@ -156,6 +156,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			timestamp.set(System.currentTimeMillis());
 			id = getId(database);
 			
+			System.out.println(getClass());
 			File file = database.getFile(getClass(), id);
 			/*
 			if(file.exists()) {

@@ -15,6 +15,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		value = supplier.get();
 	}
 	
+	public ObjectTemplateReference(Supplier <T> supplier) {
+		this(null, supplier);
+	}
 
 	@SuppressWarnings("unchecked")
 	public void set(Object object) {
