@@ -34,9 +34,11 @@ public abstract class Template {
 					field.set(this, reference);
 					return;
 				} else {
-					((Template) object).parse(database, value, initialized);
-					((Template) object).updated = wasUpdated;
-					initialized.put(value, (ObjectTemplate) ((ObjectTemplateReference <?>) object).get());
+					if(!value.equals("null")) {
+						((Template) object).parse(database, value, initialized);
+						((Template) object).updated = wasUpdated;
+						initialized.put(value, (ObjectTemplate) ((ObjectTemplateReference <?>) object).get());
+					}
 				}
 			} else {
 				((Template) object).parse(database, value, initialized);

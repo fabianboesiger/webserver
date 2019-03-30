@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,7 +19,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 public class Handler implements HttpHandler {
 	
-	private static final String SESSION_ID_COOKIE_NAME = "session-id";
 	private static final int BUFFER_SIZE = 4096;
 	
 	Server server;
@@ -29,6 +27,7 @@ public class Handler implements HttpHandler {
 		this.server = server;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handle(HttpExchange httpExchange) throws IOException {
 				
@@ -37,8 +36,8 @@ public class Handler implements HttpHandler {
 
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
-    	Session session = getSession(requestHeaders, responseHeaders);
-    	String method = httpExchange.getRequestMethod().toUpperCase();
+		Session <?> session = server.sessionManager.getSession(requestHeaders, responseHeaders);
+		String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
     	LinkedList <String> languages = new LinkedList <String> ();
     	List <String> languageList = requestHeaders.get("Accept-Language");
@@ -47,8 +46,7 @@ public class Handler implements HttpHandler {
  		    	languages = getOrderedValue(languageString);
  		    }
  		}
-    	session.setLanguages(languages);
-    	    	
+    	
     	HashMap <String, String> parameters = new HashMap <String, String> ();
     	HashMap <String, String> urlParameters = getParameters(uri.getQuery());
     	if(urlParameters != null) {
@@ -64,12 +62,13 @@ public class Handler implements HttpHandler {
     	}
     	    	
     	Response response = null;
-    	
+
     	LinkedList <Listener> listeners = server.listeners.get(method);
     	if(listeners != null) {
     		for(Listener listener : listeners) {
     			if(listener.matches(uri)) {
-    				response = listener.listenerAction.act(new Request(session, listener.getGroups(uri), parameters));
+    				Request request = new Request((Session <Object>) session, listener.getGroups(uri), parameters, languages);
+    				response = listener.listenerAction.act(request);
     				if(response.next) {
     					response = null;
     				} else {
@@ -119,39 +118,8 @@ public class Handler implements HttpHandler {
 		System.out.println(method + " " + uri.toString() + " " + response.statusCode + " " + time + "ms");
 		
 	}
-	
-	Session getSession(Headers requestHeaders, Headers responseHeaders) {
-
-		List <String> requestCookies = requestHeaders.get("Cookie");
- 		ArrayList <String> responseCookies = new ArrayList <String> ();
- 		String sessionId = null;
-
- 		if(requestCookies != null) {
- 		    for(String cookie : requestCookies) {
- 		    	String sessionIdValue = getValue(SESSION_ID_COOKIE_NAME, cookie);
- 		    	if(sessionIdValue != null) {
- 		    		sessionId = sessionIdValue;
- 		    	}
- 		    }
- 		}
-
- 		Session session = null;
- 		if(sessionId != null) {
- 			session = server.getSession(sessionId);
- 			if(session == null) {
- 				session = server.createSession();
- 			}
- 		}else {
- 			session = server.createSession();
- 		}
- 				
- 		responseHeaders.put("Set-Cookie", responseCookies);
- 		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getId() + "; path=/; Max-Age=" + Session.MAX_AGE);
- 		
- 		return session;
-    }
     
-    private static String getValue(String key, String content) {
+    protected static String getValue(String key, String content) {
     	String[] pairs = content.split(";");
     	for(String pair : pairs) {
     		String[] splittedPair = pair.split("=");

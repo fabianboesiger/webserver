@@ -9,10 +9,12 @@ import database.Messages;
 public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexTemplate {
 	
 	private T value;
+	private Supplier <T> supplier;
 	
 	public ObjectTemplateReference(String name, Supplier <T> supplier) {
 		super(name);
-		value = supplier.get();
+		this.supplier = supplier;
+		value = null;
 	}
 	
 	public ObjectTemplateReference(Supplier <T> supplier) {
@@ -31,7 +33,12 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@Override
 	public boolean validate(Messages messages) {
-		return value.validate(messages);
+		if(value != null) {
+			return value.validate(messages);
+		} else {
+			messages.add(name, "does-not-exist");
+			return false;
+		}
 	}
 	
 	@Override
@@ -41,24 +48,35 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@Override
 	public String render(Database database) throws Exception {
-		return value.render(database);
+		if(value != null) {
+			return value.render(database);
+		} else {
+			return "null";
+		}
 	}
 
 	@Override
 	public void parse(Database database, StringBuilder string, Map<String, ObjectTemplate> initialized) throws Exception {
 		parsed();
+		value = supplier.get();
 		value.parse(database, string, initialized);
 	}
 
 	@Override
 	public void checkIfUpdated() {
-		value.checkIfUpdated();
+		if(value != null) {
+			value.checkIfUpdated();
+		}
 	}
 
 
 	@Override
 	public boolean check(Database database, boolean overwrite) {
-		return value.check(database, overwrite);
+		if(value != null) {
+			return value.check(database, overwrite);
+		} else {
+			return true;
+		}
 	}
 
 }

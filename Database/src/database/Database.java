@@ -34,7 +34,7 @@ public class Database {
 		return false;
 	}
 	
-	public synchronized ObjectTemplate loadId(Class <?> target, String id) {
+	public synchronized ObjectTemplate loadId(Class <?> target, String id, Object caller) {
 		if(id != null) {
 			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
 			try {
@@ -42,7 +42,12 @@ public class Database {
 				if(file == null || !file.exists()) {
 					return null;
 				}
-				ObjectTemplate objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
+				ObjectTemplate objectTemplate = null;
+				if(caller != null) {
+					objectTemplate = (ObjectTemplate) target.getConstructor(caller.getClass()).newInstance(caller);
+				} else {
+					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
+				}
 				objectTemplate.parse(this, id, initialized);
 				return objectTemplate;
 			} catch (Exception e) {
@@ -50,6 +55,10 @@ public class Database {
 			}
 		}
 		return null;
+	}
+	
+	public synchronized ObjectTemplate loadId(Class <?> target, String id) {
+		return loadId(target, id, null);
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
@@ -106,7 +115,7 @@ public class Database {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return new LinkedList <ObjectTemplate> ();
 	}
 	
 	public synchronized boolean deleteAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
@@ -142,7 +151,14 @@ public class Database {
 	
 	public synchronized ObjectTemplate load(Class <?> target, String id) {
 		if(id != null) {
-			return loadId(target, encrypt(id));
+			return loadId(target, encrypt(id), null);
+		}
+		return null;
+	}
+	
+	public synchronized ObjectTemplate load(Class <?> target, String id, Object caller) {
+		if(id != null) {
+			return loadId(target, encrypt(id), caller);
 		}
 		return null;
 	}

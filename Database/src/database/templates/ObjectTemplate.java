@@ -151,12 +151,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public String render(Database database) throws Exception {
-		String id = null;		
+		String id = getId(database);		
 		if(updated) {
 			timestamp.set(System.currentTimeMillis());
-			id = getId(database);
 			
-			System.out.println(getClass());
 			File file = database.getFile(getClass(), id);
 			/*
 			if(file.exists()) {
@@ -228,7 +226,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public boolean check(Database database, boolean overwrite) {
-		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
