@@ -208,7 +208,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		String id = crop(string).trim();
 		this.id = id;
 		
-		
 		File file = database.getFile(getClass(), id);
 		if(file != null) {
 			if(file.exists()) {
