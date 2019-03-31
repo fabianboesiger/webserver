@@ -4,13 +4,13 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public abstract class Template {
 	
 	protected static final char SEPARATION_CHARACTER = ',';
 	
-	protected transient String name;
+	protected transient String templateName;
 	protected transient UpdateAction updateAction;
 	protected transient boolean updated;
 	
@@ -19,7 +19,7 @@ public abstract class Template {
 	}
 	
 	public Template(String name, UpdateAction updateAction) {
-		this.name = name;
+		this.templateName = name;
 		this.updateAction = updateAction;
 		this.updated = true;
 	}
@@ -40,14 +40,14 @@ public abstract class Template {
 						initialized.put(value, (ObjectTemplate) ((ObjectTemplateReference <?>) object).get());
 					}
 				}
-			} else {
+			} else { 
 				((Template) object).parse(database, value, initialized);
 				((Template) object).updated = wasUpdated;
 			}
 		}
 	}
 	
-	public abstract boolean validate(Messages messages);
+	public abstract boolean validate(Validator validator);
 	public abstract boolean validate();
 	public abstract String render(Database database) throws Exception;
 	public abstract void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initalized) throws Exception;

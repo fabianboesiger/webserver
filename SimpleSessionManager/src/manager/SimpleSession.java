@@ -1,7 +1,8 @@
 package manager;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 
+import database.validator.Validator;
 import server.Session;
 
 public class SimpleSession implements Session <String> {
@@ -10,19 +11,18 @@ public class SimpleSession implements Session <String> {
 	
 	private String id;
 	private long lastConnect;
-	private HashMap <String, Object> flashes;
 	private String object;
 	private SimpleSessionManager simpleSessionManager;
+	private LinkedList <Validator> flashes;
 	
 	public SimpleSession(String id, SimpleSessionManager simpleSessionManager) {
 		this.id = id;
 		this.simpleSessionManager = simpleSessionManager;
-		flashes = new HashMap <String, Object> ();
 		update();
 	}
 	
 	@Override
-	public String getId() {
+	public String getSessionId() {
 		return id;
 	}
 	
@@ -48,16 +48,6 @@ public class SimpleSession implements Session <String> {
 	}
 	
 	@Override
-	public void addFlash(String key, Object value) {
-		flashes.put(key, value);
-	}
-	
-	@Override
-	public Object getFlash(String key) {
-		return flashes.remove(key);
-	}
-	
-	@Override
 	public void save(String object) {
 		this.object = object;
 	}
@@ -70,6 +60,22 @@ public class SimpleSession implements Session <String> {
 	@Override
 	public String load() {
 		return object;
+	}
+	
+	@Override
+	public void addFlash(Object value) {
+		flashes.add((Validator) value);
+	}
+	
+	@Override
+	public Object getFlash(String key) {
+		for(Validator flash : flashes) {
+			if(flash.getName().equals(key)) {
+				flashes.remove(flash);
+				return flash;
+			}
+		}
+		return null;
 	}
 	
 }

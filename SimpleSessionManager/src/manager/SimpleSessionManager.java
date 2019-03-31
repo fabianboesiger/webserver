@@ -19,7 +19,6 @@ public class SimpleSessionManager implements SessionManager <String> {
 		this.maxSessionAge = maxSessionAge;
 	    sessions = new ConcurrentHashMap <String, SimpleSession> ();
 	    
-	    // Remove expired sessions and remove expired handle logs
 	    Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -76,5 +75,6 @@ public class SimpleSessionManager implements SessionManager <String> {
 	public int getMaxSessionAge() {
 		return maxSessionAge;
 	}
+
 
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public class ListTemplate <T extends Template> extends ComplexTemplate implements List <T> {
 	
@@ -70,35 +70,35 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		boolean valid = true;
 		if(updated) {
 			if(list == null) {
 				if(notNull) {
 					valid = false;
-					if(messages != null) {
-						messages.add(name, "not-initialized");
+					if(validator != null) {
+						validator.addMessage(templateName, "not-initialized");
 					}
 				}
 			} else {
 				if(minimumSize != null) {
 					if(list.size() < minimumSize) {
 						valid = false;
-						if(messages != null) {
-							messages.add(name, "minimum-elements-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "minimum-elements-exceeded");
 						}
 					}
 				}
 				if(maximumSize != null) {
 					if(list.size() > maximumSize) {
 						valid = false;
-						if(messages != null) {
-							messages.add(name, "maximum-elements-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "maximum-elements-exceeded");
 						}
 					}
 				}
 				for(T element : list) {
-					if(!((Template) element).validate(messages)) {
+					if(!((Template) element).validate(validator)) {
 						valid = false;
 					}
 				}

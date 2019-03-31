@@ -44,7 +44,7 @@ public class Database {
 				}
 				ObjectTemplate objectTemplate = null;
 				if(caller != null) {
-					objectTemplate = (ObjectTemplate) target.getConstructor(caller.getClass()).newInstance(caller);
+					objectTemplate = (ObjectTemplate) target.getConstructors()[0].newInstance(caller);
 				} else {
 					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
 				}
@@ -62,7 +62,11 @@ public class Database {
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
-		return loadAll(target, 0, null, predicate);
+		return loadAll(target, 0, null, predicate, null);
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Predicate <ObjectTemplate> predicate, Object caller) {
+		return loadAll(target, 0, null, predicate, caller);
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target) {
@@ -74,14 +78,18 @@ public class Database {
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate) {
-		return loadAll(target, from, null, predicate);
+		return loadAll(target, from, null, predicate, null);
+	}
+	
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate, Object caller) {
+		return loadAll(target, from, null, predicate, caller);
 	}
 	
 	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range) {
-		return loadAll(target, from, range, null);
+		return loadAll(target, from, range, null, null);
 	}
 	
-	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate) {
+	public synchronized LinkedList <ObjectTemplate> loadAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate, Object caller) {
 		try {
 			File folder = new File(DATA_FOLDER.getPath() + File.separator + target.getField("NAME").get(null));
 			folder.getParentFile().mkdirs();
@@ -94,7 +102,7 @@ public class Database {
 					String fullName = files[i].getName();
 					String name = fullName.substring(0, fullName.lastIndexOf("."));
 					ObjectTemplate element = null; 
-					if((element = loadId(target, name)) == null) {
+					if((element = loadId(target, name, caller)) == null) {
 						return null;
 					} else {
 						if(predicate != null && !predicate.test(element)) {
@@ -119,7 +127,11 @@ public class Database {
 	}
 	
 	public synchronized boolean deleteAll(Class <?> target, Predicate <ObjectTemplate> predicate) {
-		return deleteAll(target, 0, null, predicate);
+		return deleteAll(target, 0, null, predicate, null);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Predicate <ObjectTemplate> predicate, Object caller) {
+		return deleteAll(target, 0, null, predicate, caller);
 	}
 	
 	public synchronized boolean deleteAll(Class <?> target) {
@@ -131,16 +143,20 @@ public class Database {
 	}
 	
 	public synchronized boolean deleteAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate) {
-		return deleteAll(target, from, null, predicate);
+		return deleteAll(target, from, null, predicate, null);
+	}
+	
+	public synchronized boolean deleteAll(Class <?> target, Integer from, Predicate <ObjectTemplate> predicate, Object caller) {
+		return deleteAll(target, from, null, predicate, caller);
 	}
 	
 	public synchronized boolean deleteAll(Class <?> target, Integer from, Integer range) {
-		return deleteAll(target, from, range, null);
+		return deleteAll(target, from, range, null, null);
 	}
 	
-	public synchronized boolean deleteAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate) {
+	public synchronized boolean deleteAll(Class <?> target, Integer from, Integer range, Predicate <ObjectTemplate> predicate, Object caller) {
 		boolean output = true;
-		LinkedList <ObjectTemplate> objectTemplates = loadAll(target, from, range, predicate);
+		LinkedList <ObjectTemplate> objectTemplates = loadAll(target, from, range, predicate, caller);
 		for(ObjectTemplate objectTemplate : objectTemplates) {
 			if(!deleteId(target, objectTemplate.getId())) {
 				output = false;

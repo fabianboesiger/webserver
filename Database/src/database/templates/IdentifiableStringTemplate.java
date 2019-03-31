@@ -1,6 +1,6 @@
 package database.templates;
 
-import database.Messages;
+import database.validator.Validator;
 
 public class IdentifiableStringTemplate extends StringTemplate implements Identifiable {
 	
@@ -25,37 +25,37 @@ public class IdentifiableStringTemplate extends StringTemplate implements Identi
 	}
 	
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {
-				messages.add(name, "not-initialized");
+				validator.addMessage(templateName, "not-initialized");
 				valid = false;
 			} else {
 				for(int i = 0; i < value.length(); i++) {
 					char c = value.charAt(i);
 					if(((int) c) >= 256 || Character.isISOControl(c)) {
-						messages.add(name, "invalid-characters");
+						validator.addMessage(templateName, "invalid-characters");
 						valid = false;
 					}
 				}
 				if(value.length() < 1) {
-					messages.add(name, "minimum-length-exceeded");
+					validator.addMessage(templateName, "minimum-length-exceeded");
 					valid = false;
 				} else
 				if(minimumLength != null) {
 					if(value.length() < minimumLength) {
-						messages.add(name, "minimum-length-exceeded");
+						validator.addMessage(templateName, "minimum-length-exceeded");
 						valid = false;
 					}
 				}
 				if(value.length() >= 128) {
-					messages.add(name, "maximum-length-exceeded");
+					validator.addMessage(templateName, "maximum-length-exceeded");
 					valid = false;
 				} else
 				if(maximumLength != null) {
 					if(value.length() > maximumLength) {
-						messages.add(name, "maximum-length-exceeded");
+						validator.addMessage(templateName, "maximum-length-exceeded");
 						valid = false;
 					}
 				}

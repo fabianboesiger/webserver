@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexTemplate {
 	
@@ -32,11 +32,11 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 	}
 
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		if(value != null) {
-			return value.validate(messages);
+			return value.validate(validator);
 		} else {
-			messages.add(name, "does-not-exist");
+			validator.addMessage(templateName, "does-not-exist");
 			return false;
 		}
 	}

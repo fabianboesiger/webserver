@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public abstract class ObjectTemplate extends ComplexTemplate {
 		
@@ -48,9 +48,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			try {
 				field.setAccessible(true);
 				if(field.get(this) instanceof PrimitiveTemplate) {
-					String name = ((PrimitiveTemplate) field.get(this)).name;
-					if(input.containsKey(name)) {
-						((Template) field.get(this)).set(input.get(name));
+					String templateName = ((PrimitiveTemplate) field.get(this)).name;
+					if(input.containsKey(templateName)) {
+						((Template) field.get(this)).set(input.get(templateName));
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -79,7 +79,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	*/
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		boolean valid = true;
 		Field[] fields = getFields();
 		for(Field field : fields) {
@@ -87,7 +87,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			try {
 				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 					if(field.get(this) instanceof Template) {
-						if(!((Template) field.get(this)).validate(messages)) {
+						if(!((Template) field.get(this)).validate(validator)) {
 							valid = false;
 						}
 					}
@@ -105,7 +105,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		return validate(null);
 	}
 	
-	public HashMap <String, Object> renderToMap(Database database) {
+	public HashMap <String, Object> renderToMap() {
 		HashMap <String, Object> map = new HashMap <String, Object> ();
 		Field[] fields = getFields();
 		for(int i = 0; i < fields.length; i++) {
@@ -115,7 +115,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				Object object = field.get(this);
 				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 					if(object instanceof Template) {
-						map.put(((Template) object).name, object);
+						map.put(((Template) object).templateName, object);
 					}
 				}
 			} catch (Exception e) {
@@ -138,7 +138,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof Template) {
-					String name = ((Template) object).name;
+					String name = ((Template) object).templateName;
+					//System.out.println(name + "=" + input.get(name));
+
 					if(input.containsKey(name)) {
 						setField(database, field, input.get(name), initialized, wasUpdated);
 					}
@@ -163,7 +165,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			*/
 	
 			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Database.ENCODING));
-			HashMap <String, Object> map = renderToMap(database);
+			HashMap <String, Object> map = renderToMap();
 			int counter = 0;
 			for(Map.Entry <String, Object> entry : map.entrySet()) {
 				bufferedWriter.write(entry.getKey() + "=" + ((Template) entry.getValue()).render(database));
@@ -201,9 +203,12 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
+		
+		
 		File file = database.getFile(getClass(), id);
 		if(file != null) {
 			if(file.exists()) {

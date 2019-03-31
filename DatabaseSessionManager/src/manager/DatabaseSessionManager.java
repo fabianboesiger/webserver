@@ -20,8 +20,9 @@ public class DatabaseSessionManager <T extends ObjectTemplate> implements Sessio
 		this.database = database;
 		this.supplier = supplier;
 		this.maxSessionAge = maxSessionAge;
-			    
-	    // Remove expired sessions and remove expired handle logs
+		
+		DatabaseSessionManager <T> self = this;
+		
 	    Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@SuppressWarnings("unchecked")
@@ -29,10 +30,9 @@ public class DatabaseSessionManager <T extends ObjectTemplate> implements Sessio
 			public void run() {
 				database.deleteAll(DatabaseSession.class, (ObjectTemplate session) -> {
 					return ((DatabaseSession <T>) session).expired();
-				});
+				}, self);
 			}
 		}, 0, 10000);
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -59,7 +59,7 @@ public class DatabaseSessionManager <T extends ObjectTemplate> implements Sessio
 			key = generateKey(64);
 		} while (getSession(key) != null);
 		DatabaseSession <T> session = new DatabaseSession <T> (this);
-		session.setId(key);
+		session.setSessionId(key);
 		database.save(session);
 		return session;
 	}

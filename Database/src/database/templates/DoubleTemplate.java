@@ -3,7 +3,7 @@ package database.templates;
 import java.util.Map;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public class DoubleTemplate extends PrimitiveTemplate {
 	
@@ -32,30 +32,30 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	}
 	
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {
 				if(notNull) {
 					valid = false;
-					if(messages != null) {
-						messages.add(name, "not-initialized");
+					if(validator != null) {
+						validator.addMessage(templateName, "not-initialized");
 					}
 				}
 			} else {
 				if(minimum != null) {
 					if(value < minimum) {
 						valid = false;
-						if(messages != null) {
-							messages.add(name, "minimum-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "minimum-exceeded");
 						}
 					}
 				}
 				if(maximum != null) {
 					if(value > maximum) {
 						valid = false;
-						if(messages != null) {
-							messages.add(name, "maximum-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "maximum-exceeded");
 						}
 					}
 				}

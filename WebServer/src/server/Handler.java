@@ -36,7 +36,10 @@ public class Handler implements HttpHandler {
 
 		Headers requestHeaders = httpExchange.getRequestHeaders();	
 		Headers responseHeaders = httpExchange.getResponseHeaders();
-		Session <?> session = server.sessionManager.getSession(requestHeaders, responseHeaders);
+		Session <?> session = null;
+		if(server.sessionManager != null) {
+			session = server.sessionManager.getSession(requestHeaders, responseHeaders);
+		}
 		String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();
     	LinkedList <String> languages = new LinkedList <String> ();

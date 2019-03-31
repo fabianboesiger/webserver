@@ -1,11 +1,11 @@
 package manager;
 
-import java.util.HashMap;
-
 import database.templates.IdentifiableStringTemplate;
+import database.templates.ListTemplate;
 import database.templates.LongTemplate;
 import database.templates.ObjectTemplate;
 import database.templates.ObjectTemplateReference;
+import database.validator.Validator;
 import server.Session;
 
 public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate implements Session <T> {
@@ -17,18 +17,18 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 	private IdentifiableStringTemplate id;
 	private LongTemplate lastConnect;
 	private ObjectTemplateReference <T> object;
+	private ListTemplate <Validator> flashes;
 	
-	private HashMap <String, Object> flashes;
 	private DatabaseSessionManager <T> databaseSessionManager;
 	
 	public DatabaseSession(DatabaseSessionManager <T> databaseSessionManager) {
 		this.databaseSessionManager = databaseSessionManager;
 		id = new IdentifiableStringTemplate("id");
 		lastConnect = new LongTemplate("connect");
+		flashes = new ListTemplate <Validator> ("flashes", Validator::new);
 		if(databaseSessionManager != null) {
 			object = new ObjectTemplateReference <T> ("object", databaseSessionManager.supplier);
 		}
-		flashes = new HashMap <String, Object> ();
 		setIdentifier(this.id);
 		update();
 	}
@@ -37,12 +37,12 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 		this(null);
 	}
 	
-	protected void setId(String id) {
+	protected void setSessionId(String id) {
 		this.id.set(id);
 	}
 
 	@Override
-	public String getId() {
+	public String getSessionId() {
 		return (String) id.get();
 	}
 	
@@ -68,16 +68,6 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 	public void update() {
 		lastConnect.set(System.currentTimeMillis());
 	}
-	
-	@Override
-	public void addFlash(String key, Object value) {
-		flashes.put(key, value);
-	}
-	
-	@Override
-	public Object getFlash(String key) {
-		return flashes.remove(key);
-	}
 
 	@Override
 	public void save(T object) {
@@ -100,4 +90,24 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 			return null;
 		}
 	}
+
+	@Override
+	public void addFlash(Object value) {
+		flashes.add((Validator) value);
+		databaseSessionManager.database.update(this);
+	}
+
+	@Override
+	public Object getFlash(String name) {
+		for(Validator flash : flashes) {
+			if(flash.getName().equals(name)) {
+				flashes.remove(flash);
+				flash.delete(databaseSessionManager.database);
+				databaseSessionManager.database.update(this);
+				return flash;
+			}
+		}
+		return null;
+	}
+
 }

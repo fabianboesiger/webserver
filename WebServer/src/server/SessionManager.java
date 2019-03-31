@@ -60,9 +60,10 @@ public interface SessionManager <T> {
  		}
 
  		responseHeaders.put("Set-Cookie", responseCookies);
- 		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getId() + "; path=/; Max-Age=" + getMaxSessionAge());
+ 		responseCookies.add(SESSION_ID_COOKIE_NAME + "=" + session.getSessionId() + "; path=/; Max-Age=" + getMaxSessionAge());
  		
  		return session;
     }
+
 	
 }

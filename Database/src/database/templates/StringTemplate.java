@@ -3,7 +3,7 @@ package database.templates;
 import java.util.Map;
 
 import database.Database;
-import database.Messages;
+import database.validator.Validator;
 
 public class StringTemplate extends PrimitiveTemplate {
 		
@@ -56,29 +56,29 @@ public class StringTemplate extends PrimitiveTemplate {
 	}
 	
 	@Override
-	public boolean validate(Messages messages) {
+	public boolean validate(Validator validator) {
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {
 				if(notNull) {
-					if(messages != null) {
-						messages.add(name, "not-initialized");
+					if(validator != null) {
+						validator.addMessage(templateName, "not-initialized");
 					}
 					valid = false;
 				}
 			} else {
 				if(minimumLength != null) {
 					if(value.length() < minimumLength) {
-						if(messages != null) {
-							messages.add(name, "minimum-length-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "minimum-length-exceeded");
 						}
 						valid = false;
 					}
 				}
 				if(maximumLength != null) {
 					if(value.length() > maximumLength) {
-						if(messages != null) {
-							messages.add(name, "maximum-length-exceeded");
+						if(validator != null) {
+							validator.addMessage(templateName, "maximum-length-exceeded");
 						}
 						valid = false;
 					}
@@ -149,6 +149,16 @@ public class StringTemplate extends PrimitiveTemplate {
 				if(!escaped) {
 					if(string.charAt(0) == STRING_CHARACTER) {
 						string.deleteCharAt(0);
+						
+						while(string.length() > 0) {
+							if(string.charAt(0) == SEPARATION_CHARACTER){
+								string.deleteCharAt(0);
+								break;
+							} else {
+								string.deleteCharAt(0);
+							}
+						}
+						
 						break;
 					}
 					if(string.charAt(0) == ESCAPE_CHARACTER) {

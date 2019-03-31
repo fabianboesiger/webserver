@@ -99,11 +99,20 @@ public class Server {
 	}
 
 	public int sessionsCount() {
-		return sessionManager.sessionsCount();
+		if(sessionManager != null) {
+			return sessionManager.sessionsCount();
+		} else {
+			return 0;
+		}
 	}
 	
 	public int activeCount() {
-		return sessionManager.activeCount();
+		if(sessionManager != null) {
+			return sessionManager.activeCount();
+		} else {
+			return 0;
+		}
 	}
+	
 
 }
