@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -85,11 +84,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
-				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-					if(field.get(this) instanceof Template) {
-						if(!((Template) field.get(this)).validate(validator)) {
-							valid = false;
-						}
+				if(field.get(this) instanceof Template) {
+					if(!((Template) field.get(this)).validate(validator)) {
+						valid = false;
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -106,6 +103,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public HashMap <String, Object> renderToMap() {
+		return renderToMap(null);
+	}
+	
+	public HashMap <String, Object> renderToMap(String[] names) {
 		HashMap <String, Object> map = new HashMap <String, Object> ();
 		Field[] fields = getFields();
 		for(int i = 0; i < fields.length; i++) {
@@ -113,9 +114,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			field.setAccessible(true);
 			try {
 				Object object = field.get(this);
-				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-					if(object instanceof Template) {
-						map.put(((Template) object).templateName, object);
+				if(object instanceof Template) {
+					String name = ((Template) object).templateName;
+					if(names == null || Arrays.asList(names).contains(name)) {
+						map.put(name, object);
 					}
 				}
 			} catch (Exception e) {
@@ -258,11 +260,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				Field field = fields[i];
 				field.setAccessible(true);
 				Object object = field.get(this);
-				if(!Modifier.isTransient(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
-					if(object instanceof ComplexTemplate) {
-						if(!((ComplexTemplate) object).check(database, overwrite)) {
-							return false;
-						}
+				if(object instanceof ComplexTemplate) {
+					if(!((ComplexTemplate) object).check(database, overwrite)) {
+						return false;
 					}
 				}
 			}
