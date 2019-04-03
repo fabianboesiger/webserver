@@ -27,7 +27,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		super(null);
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
-		timestamp.set(new Long(0));
+		timestamp.set(Long.valueOf(0));
 		id = null;
 	}
 		
