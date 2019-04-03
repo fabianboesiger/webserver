@@ -175,6 +175,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				counter++;
 			}
 			bufferedWriter.close();
+
+			this.id = id;
 		}
 
 		return id;
@@ -319,5 +321,11 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return "[" + id + "]";
+	}
+	
 	
 }

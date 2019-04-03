@@ -44,7 +44,7 @@ public class Database {
 				}
 				ObjectTemplate objectTemplate = null;
 				if(caller != null) {
-					objectTemplate = (ObjectTemplate) target.getConstructors()[0].newInstance(caller);
+					objectTemplate = (ObjectTemplate) target.getConstructor(caller.getClass()).newInstance(caller);
 				} else {
 					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
 				}
