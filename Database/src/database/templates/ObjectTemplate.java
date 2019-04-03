@@ -103,10 +103,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public HashMap <String, Object> renderToMap() {
-		return renderToMap(null);
-	}
-	
-	public HashMap <String, Object> renderToMap(String[] names) {
 		HashMap <String, Object> map = new HashMap <String, Object> ();
 		Field[] fields = getFields();
 		for(int i = 0; i < fields.length; i++) {
@@ -116,8 +112,27 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				Object object = field.get(this);
 				if(object instanceof Template) {
 					String name = ((Template) object).templateName;
-					if(names == null || Arrays.asList(names).contains(name)) {
-						map.put(name, object);
+					map.put(name, object);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return map;
+	}
+	
+	public HashMap <String, Object> renderPrimitivesToMap(String[] names) {
+		HashMap <String, Object> map = new HashMap <String, Object> ();
+		Field[] fields = getFields();
+		for(int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			field.setAccessible(true);
+			try {
+				Object object = field.get(this);
+				if(object instanceof PrimitiveTemplate) {
+					PrimitiveTemplate template = ((PrimitiveTemplate) object);
+					if(names == null || Arrays.asList(names).contains(template.templateName)) {
+						map.put(template.templateName, template.get());
 					}
 				}
 			} catch (Exception e) {
