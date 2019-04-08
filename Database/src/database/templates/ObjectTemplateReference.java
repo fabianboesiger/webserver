@@ -79,4 +79,8 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		}
 	}
 
+	public Supplier <T> getSupplier() {
+		return supplier;
+	}
+
 }

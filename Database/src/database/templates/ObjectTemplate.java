@@ -159,7 +159,19 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 					//System.out.println(name + "=" + input.get(name));
 
 					if(input.containsKey(name)) {
-						setField(database, field, input.get(name), initialized, wasUpdated);
+						String value = input.get(name);
+						if(object instanceof Template) {
+							if(object instanceof ObjectTemplateReference && database != null && initialized != null) {
+
+								ObjectTemplateReference <?> reference = ((ObjectTemplateReference <?>) object);
+								ObjectTemplate objectTemplate = (ObjectTemplate) reference.get();
+								reference.set(checkIfInitialized(objectTemplate, database, value, initialized, wasUpdated, reference.getSupplier()));
+								
+							} else { 
+								((Template) object).parse(database, value, initialized);
+								((Template) object).updated = wasUpdated;
+							}
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -330,7 +342,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	@Override
 	public boolean equals(Object object) {
 		if(object instanceof ObjectTemplate) {
-			if(id.equals(((ObjectTemplate) object).id)) {
+			if(id.equals(((ObjectTemplate) object).id) && getClass() == object.getClass()) {
 				return true;
 			}
 		}

@@ -55,6 +55,7 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		return stringBuilder.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
@@ -64,7 +65,11 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		StringBuilder content = new StringBuilder(trimmed.substring(1, trimmed.length() - 1));
 		while(content.length() > 0) {
 			T element = supplier.get();
-			element.parse(database, content, initialized);
+			if(element instanceof ObjectTemplate && database != null && initialized != null) {
+				element = (T) checkIfInitialized((ObjectTemplate) element, database, crop(content), initialized, false, null);
+			} else {
+				element.parse(database, content, initialized);
+			}
 			list.add(element);
 		}
 	}

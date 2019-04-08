@@ -1,7 +1,7 @@
 package database.templates;
 
-import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import database.Database;
 import database.validator.Validator;
@@ -23,8 +23,8 @@ public abstract class Template {
 		this.updateAction = updateAction;
 		this.updated = true;
 	}
-	
-	public void setField(Database database, Field field, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated) throws IllegalArgumentException, IllegalAccessException, Exception {
+	/*
+	public void setField(Database database, Field field, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated) throws Exception {
 		Object object = field.get(this);
 		if(object instanceof Template) {
 			if(object instanceof ObjectTemplateReference && database != null && initialized != null) {
@@ -43,6 +43,24 @@ public abstract class Template {
 			} else { 
 				((Template) object).parse(database, value, initialized);
 				((Template) object).updated = wasUpdated;
+			}
+		}
+	}
+	*/
+	public ObjectTemplate checkIfInitialized(ObjectTemplate input, Database database, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated, Supplier <?> supplier) throws Exception {
+		if(initialized.containsKey(value) && ((supplier != null && initialized.get(value).getClass() == supplier.get().getClass()) || (input != null && initialized.get(value).getClass() == input.getClass()))) {
+			return initialized.get(value);
+		} else {
+			if(!value.equals("null")) {
+				if(input == null && supplier != null) {
+					input = (ObjectTemplate) supplier.get();
+				}
+				input.parse(database, value, initialized);
+				input.updated = wasUpdated;
+				initialized.put(value, input);
+				return input;
+			} else {
+				return null;
 			}
 		}
 	}
