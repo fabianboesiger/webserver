@@ -201,6 +201,7 @@ public class Database {
 	
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
 		objectTemplate.checkIfUpdated();
+		
 		if(objectTemplate.check(this, true)) {
 			try {
 				objectTemplate.render(this);

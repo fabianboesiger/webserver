@@ -10,9 +10,9 @@ public abstract class Template {
 	
 	protected static final char SEPARATION_CHARACTER = ',';
 	
-	protected transient String templateName;
-	protected transient UpdateAction updateAction;
-	protected transient boolean updated;
+	protected String templateName;
+	protected UpdateAction updateAction;
+	protected boolean updated;
 	
 	public Template(String name) {
 		this(name, null);
@@ -94,6 +94,11 @@ public abstract class Template {
 			string.setLength(0);
 		}
 		return output;
+	}
+	
+
+	public boolean wasUpdated() {
+		return updated;
 	}
 	
 }

@@ -8,7 +8,7 @@ import database.validator.Validator;
 public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
 	
 	private Boolean value;
-	private transient boolean notNull;
+	private boolean notNull;
 	
 	public BooleanTemplate(String name, boolean notNull) {
 		super(name);

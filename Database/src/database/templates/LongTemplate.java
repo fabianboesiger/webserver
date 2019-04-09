@@ -8,9 +8,9 @@ import database.validator.Validator;
 public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 	
 	private Long value;
-	private transient Long minimum;
-	private transient Long maximum;
-	private transient boolean notNull;
+	private Long minimum;
+	private Long maximum;
+	private boolean notNull;
 	
 	public LongTemplate(String name, Long minimum, Long maximum, boolean notNull) {
 		super(name);

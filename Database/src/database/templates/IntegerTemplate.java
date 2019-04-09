@@ -8,9 +8,9 @@ import database.validator.Validator;
 public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	
 	private Integer value;
-	private transient Integer minimum;
-	private transient Integer maximum;
-	private transient boolean notNull;
+	private Integer minimum;
+	private Integer maximum;
+	private boolean notNull;
 	
 	public IntegerTemplate(String name, Integer minimum, Integer maximum, boolean notNull) {
 		super(name);

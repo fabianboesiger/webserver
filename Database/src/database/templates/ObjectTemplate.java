@@ -18,9 +18,9 @@ import database.validator.Validator;
 
 public abstract class ObjectTemplate extends ComplexTemplate {
 		
-	private transient Identifiable identifier;
+	private Identifiable identifier;
 	protected LongTemplate timestamp;
-	protected transient String id;
+	protected String id;
 	
 	public ObjectTemplate() {
 		super(null);
@@ -230,6 +230,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				e.printStackTrace();
 			}
 		}
+
 	}
 	
 	@Override

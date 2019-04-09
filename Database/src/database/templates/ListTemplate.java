@@ -16,11 +16,11 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	private static final char LIST_START = '[';
 	private static final char LIST_END = ']';
 	
-	ArrayList <T> list;
-	Supplier <T> supplier;
-	private transient boolean notNull;
-	private transient Integer maximumSize;
-	private transient Integer minimumSize;
+	private ArrayList <T> list;
+	private Supplier <T> supplier;
+	private boolean notNull;
+	private Integer maximumSize;
+	private Integer minimumSize;
 	
 	public ListTemplate(String name, Integer minimumSize, Integer maximumSize, boolean notNull, Supplier <T> supplier) {
 		super(name);
@@ -248,6 +248,9 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		for(T element : list) {
 			if(element instanceof ComplexTemplate) {
 				((ComplexTemplate) element).checkIfUpdated();
+			}
+			if(((Template) element).updated) {
+				updated();
 			}
 		}
 	}

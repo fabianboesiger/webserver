@@ -8,9 +8,9 @@ import database.validator.Validator;
 public class StringTemplate extends PrimitiveTemplate {
 		
 	protected String value;
-	protected transient Integer minimumLength;
-	protected transient Integer maximumLength;
-	protected transient boolean notNull;
+	protected Integer minimumLength;
+	protected Integer maximumLength;
+	protected boolean notNull;
 	private static final char STRING_CHARACTER = '"';
 	private static final char ESCAPE_CHARACTER = '\\';
 	private static final char[] RAW = {'\t', '\b', '\n', '\r', '\f', '"', '\\'};
