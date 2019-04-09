@@ -342,7 +342,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	@Override
 	public boolean equals(Object object) {
 		if(object instanceof ObjectTemplate) {
-			if(id.equals(((ObjectTemplate) object).id) && getClass() == object.getClass()) {
+			if(id != null && ((ObjectTemplate) object).id != null && id.equals(((ObjectTemplate) object).id) && getClass() == object.getClass()) {
 				return true;
 			}
 		}
