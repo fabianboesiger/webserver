@@ -5,21 +5,16 @@ import java.util.Map;
 import database.Database;
 import database.validator.Validator;
 
-public class DoubleTemplate extends PrimitiveTemplate {
+public class DoubleTemplate extends NumberTemplate <Double> {
 	
-	private Double value;
-	private Integer minimum;
-	private Integer maximum;
-	private boolean notNull;
-	
-	public DoubleTemplate(String name, Integer minimum, Integer maximum, boolean notNull) {
+	public DoubleTemplate(String name, Double minimum, Double maximum, boolean notNull) {
 		super(name);
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.notNull = notNull;
 	}
 	
-	public DoubleTemplate(String name, Integer minimum, Integer maximum) {
+	public DoubleTemplate(String name, Double minimum, Double maximum) {
 		this(name, minimum, maximum, true);
 	}
 		
@@ -70,13 +65,13 @@ public class DoubleTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public void set(Object object) {
+	public void set(Double object) {
 		updated();
-		value = (Double) object;
+		value = object;
 	}
 
 	@Override
-	public Object get() {
+	public Double get() {
 		return value;
 	}
 

@@ -66,7 +66,7 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		while(content.length() > 0) {
 			T element = supplier.get();
 			if(element instanceof ObjectTemplate && database != null && initialized != null) {
-				element = (T) checkIfInitialized((ObjectTemplate) element, database, crop(content), initialized, false, null);
+				element = (T) checkIfInitialized((ObjectTemplate) element, database, crop(content), initialized, null);
 			} else {
 				element.parse(database, content, initialized);
 			}
@@ -245,6 +245,11 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 
 	@Override
 	public void checkIfUpdated() {
+		if(!checkedIfUpdated) {
+			return;
+		}
+		checkedIfUpdated = true;
+		
 		for(T element : list) {
 			if(element instanceof ComplexTemplate) {
 				((ComplexTemplate) element).checkIfUpdated();
@@ -256,10 +261,15 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 
 	@Override
-	public boolean check(Database database, boolean overwrite) {
+	public boolean checkVersion(Database database, boolean overwrite) {
+		if(checkedVersion) {
+			return true;
+		}
+		checkedVersion = true;
+		
 		for(T element : list) {
 			if(element instanceof ComplexTemplate) {
-				if(!((ComplexTemplate) element).check(database, overwrite)) {
+				if(!((ComplexTemplate) element).checkVersion(database, overwrite)) {
 					return false;
 				}
 			}

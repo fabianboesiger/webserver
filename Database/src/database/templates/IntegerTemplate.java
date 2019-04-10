@@ -5,12 +5,7 @@ import java.util.Map;
 import database.Database;
 import database.validator.Validator;
 
-public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
-	
-	private Integer value;
-	private Integer minimum;
-	private Integer maximum;
-	private boolean notNull;
+public class IntegerTemplate extends NumberTemplate <Integer> implements Identifiable {
 	
 	public IntegerTemplate(String name, Integer minimum, Integer maximum, boolean notNull) {
 		super(name);
@@ -70,13 +65,13 @@ public class IntegerTemplate extends PrimitiveTemplate implements Identifiable {
 	}
 
 	@Override
-	public void set(Object object) {
+	public void set(Integer object) {
 		updated();
-		value = (Integer) object;
+		value = object;
 	}
 
 	@Override
-	public Object get() {
+	public Integer get() {
 		return value;
 	}
 

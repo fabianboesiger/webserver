@@ -130,7 +130,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			try {
 				Object object = field.get(this);
 				if(object instanceof PrimitiveTemplate) {
-					PrimitiveTemplate template = ((PrimitiveTemplate) object);
+					PrimitiveTemplate <?> template = ((PrimitiveTemplate <?>) object);
 					if(names == null || Arrays.asList(names).contains(template.templateName)) {
 						map.put(template.templateName, template.get());
 					}
@@ -161,16 +161,17 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 					if(input.containsKey(name)) {
 						String value = input.get(name);
 						if(object instanceof Template) {
+							/*
 							if(object instanceof ObjectTemplateReference && database != null && initialized != null) {
 
 								ObjectTemplateReference <?> reference = ((ObjectTemplateReference <?>) object);
 								ObjectTemplate objectTemplate = (ObjectTemplate) reference.get();
 								reference.set(checkIfInitialized(objectTemplate, database, value, initialized, wasUpdated, reference.getSupplier()));
 								
-							} else { 
+							} else { */
 								((Template) object).parse(database, value, initialized);
 								((Template) object).updated = wasUpdated;
-							}
+							//}
 						}
 					}
 				}
@@ -212,6 +213,11 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public void checkIfUpdated() {
+		if(!checkedIfUpdated) {
+			return;
+		}
+		checkedIfUpdated = true;
+		
 		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
@@ -261,7 +267,12 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 	}
 	
-	public boolean check(Database database, boolean overwrite) {
+	public boolean checkVersion(Database database, boolean overwrite) {
+		if(checkedVersion) {
+			return true;
+		}
+		checkedVersion = true;
+		
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
@@ -289,7 +300,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof ComplexTemplate) {
-					if(!((ComplexTemplate) object).check(database, overwrite)) {
+					if(!((ComplexTemplate) object).checkVersion(database, overwrite)) {
 						return false;
 					}
 				}

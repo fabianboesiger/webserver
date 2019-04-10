@@ -5,13 +5,8 @@ import java.util.Map;
 import database.Database;
 import database.validator.Validator;
 
-public class LongTemplate extends PrimitiveTemplate implements Identifiable {
-	
-	private Long value;
-	private Long minimum;
-	private Long maximum;
-	private boolean notNull;
-	
+public class LongTemplate extends NumberTemplate <Long> implements Identifiable {
+
 	public LongTemplate(String name, Long minimum, Long maximum, boolean notNull) {
 		super(name);
 		this.minimum = minimum;
@@ -70,13 +65,13 @@ public class LongTemplate extends PrimitiveTemplate implements Identifiable {
 	}
 
 	@Override
-	public void set(Object object) {
+	public void set(Long object) {
 		updated();
-		value = (Long) object;
+		value = object;
 	}
 
 	@Override
-	public Object get() {
+	public Long get() {
 		return value;
 	}
 

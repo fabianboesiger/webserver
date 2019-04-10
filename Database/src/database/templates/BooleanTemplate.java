@@ -5,7 +5,7 @@ import java.util.Map;
 import database.Database;
 import database.validator.Validator;
 
-public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
+public class BooleanTemplate extends PrimitiveTemplate <Boolean> implements Identifiable {
 	
 	private Boolean value;
 	private boolean notNull;
@@ -45,13 +45,13 @@ public class BooleanTemplate extends PrimitiveTemplate implements Identifiable {
 	}
 
 	@Override
-	public void set(Object object) {
+	public void set(Boolean object) {
 		updated();
-		value = (Boolean) object;
+		value = object;
 	}
 
 	@Override
-	public Object get() {
+	public Boolean get() {
 		return value;
 	}
 

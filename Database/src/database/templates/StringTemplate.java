@@ -5,7 +5,7 @@ import java.util.Map;
 import database.Database;
 import database.validator.Validator;
 
-public class StringTemplate extends PrimitiveTemplate {
+public class StringTemplate extends PrimitiveTemplate <String> {
 		
 	protected String value;
 	protected Integer minimumLength;
@@ -94,13 +94,13 @@ public class StringTemplate extends PrimitiveTemplate {
 	}
 
 	@Override
-	public void set(Object object) {
+	public void set(String object) {
 		updated();
-		value = (String) object;
+		value = object;
 	}
 
 	@Override
-	public Object get() {
+	public String get() {
 		return value;
 	}
 

@@ -21,13 +21,12 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		this(null, supplier);
 	}
 
-	@SuppressWarnings("unchecked")
-	public void set(Object object) {
+	public void set(T object) {
 		updated();
-		value = (T) object;
+		value = object;
 	}
 
-	public Object get() {
+	public T get() {
 		return value;
 	}
 
@@ -55,11 +54,16 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void parse(Database database, StringBuilder string, Map<String, ObjectTemplate> initialized) throws Exception {
 		parsed();
-		value = supplier.get();
-		value.parse(database, string, initialized);
+		if(database != null && initialized != null) {
+			set((T) checkIfInitialized((ObjectTemplate) get(), database, crop(string), initialized, getSupplier()));
+		} else {
+			value = supplier.get();
+			value.parse(database, string, initialized);
+		}
 	}
 
 	@Override
@@ -71,9 +75,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 
 	@Override
-	public boolean check(Database database, boolean overwrite) {
+	public boolean checkVersion(Database database, boolean overwrite) {
 		if(value != null) {
-			return value.check(database, overwrite);
+			return value.checkVersion(database, overwrite);
 		} else {
 			return true;
 		}

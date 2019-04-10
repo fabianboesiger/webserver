@@ -1,6 +1,6 @@
 package database.templates;
 
-public abstract class PrimitiveTemplate extends Template {
+public abstract class PrimitiveTemplate <T> extends Template {
 	
 	
 	public PrimitiveTemplate(String name, UpdateAction updateAction) {
@@ -11,7 +11,7 @@ public abstract class PrimitiveTemplate extends Template {
 		super(name);
 	}
 	
-	public abstract void set(Object object);
-	public abstract Object get();
+	public abstract void set(T object);
+	public abstract T get();
 	
 }

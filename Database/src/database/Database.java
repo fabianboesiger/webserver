@@ -188,7 +188,7 @@ public class Database {
 	
 	public synchronized boolean save(ObjectTemplate objectTemplate) {
 		objectTemplate.checkIfUpdated();
-		if(objectTemplate.check(this, false)) {
+		if(objectTemplate.checkVersion(this, false)) {
 			try {
 				objectTemplate.render(this);
 				return true;
@@ -202,7 +202,7 @@ public class Database {
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
 		objectTemplate.checkIfUpdated();
 		
-		if(objectTemplate.check(this, true)) {
+		if(objectTemplate.checkVersion(this, true)) {
 			try {
 				objectTemplate.render(this);
 				return true;

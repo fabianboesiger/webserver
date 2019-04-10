@@ -47,7 +47,7 @@ public abstract class Template {
 		}
 	}
 	*/
-	public ObjectTemplate checkIfInitialized(ObjectTemplate input, Database database, String value, Map <String, ObjectTemplate> initialized, boolean wasUpdated, Supplier <?> supplier) throws Exception {
+	public ObjectTemplate checkIfInitialized(ObjectTemplate input, Database database, String value, Map <String, ObjectTemplate> initialized, Supplier <?> supplier) throws Exception {
 		if(initialized.containsKey(value) && ((supplier != null && initialized.get(value).getClass() == supplier.get().getClass()) || (input != null && initialized.get(value).getClass() == input.getClass()))) {
 			return initialized.get(value);
 		} else {
@@ -56,7 +56,7 @@ public abstract class Template {
 					input = (ObjectTemplate) supplier.get();
 				}
 				input.parse(database, value, initialized);
-				input.updated = wasUpdated;
+				updated = false;
 				initialized.put(value, input);
 				return input;
 			} else {
