@@ -22,12 +22,20 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	protected LongTemplate timestamp;
 	protected String id;
 	
+	private boolean validated;
+	private boolean rendered;
+	private boolean parsed;
+	
 	public ObjectTemplate() {
 		super(null);
 		identifier = null;
 		timestamp = new LongTemplate("timestamp");
 		timestamp.set(Long.valueOf(0));
 		id = null;
+		
+		validated = false;
+		rendered = false;
+		parsed = false;
 	}
 		
 	public void setIdentifier(Identifiable identifier) {
@@ -79,6 +87,11 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	*/
 	@Override
 	public boolean validate(Validator validator) {
+		if(validated) {
+			return true;
+		}
+		validated = true;
+		
 		boolean valid = true;
 		Field[] fields = getFields();
 		for(Field field : fields) {
@@ -184,7 +197,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	@Override
 	public String render(Database database) throws Exception {
 		String id = getId(database);		
-		if(updated) {
+		if(updated && !rendered) {
+			rendered = true;
+			
 			timestamp.set(System.currentTimeMillis());
 			
 			File file = database.getFile(getClass(), id);
@@ -241,10 +256,18 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		if(parsed) {
+			return;
+		}
+		parsed = true;
 		
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
+		
+		
+		System.out.println(id+" "+getClass());
+
 		
 		File file = database.getFile(getClass(), id);
 		if(file != null) {
@@ -359,11 +382,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			}
 		}
 		return false;
-	}
-	
-	@Override
-	public String toString() {
-		return "[" + id + "]";
 	}
 	
 	

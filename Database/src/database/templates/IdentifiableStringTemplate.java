@@ -26,6 +26,7 @@ public class IdentifiableStringTemplate extends StringTemplate implements Identi
 	
 	@Override
 	public boolean validate(Validator validator) {
+		
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {

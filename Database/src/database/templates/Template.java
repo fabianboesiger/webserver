@@ -9,7 +9,7 @@ import database.validator.Validator;
 public abstract class Template {
 	
 	protected static final char SEPARATION_CHARACTER = ',';
-	
+		
 	protected String templateName;
 	protected UpdateAction updateAction;
 	protected boolean updated;
@@ -55,9 +55,9 @@ public abstract class Template {
 				if(input == null && supplier != null) {
 					input = (ObjectTemplate) supplier.get();
 				}
+				initialized.put(value, input);
 				input.parse(database, value, initialized);
 				updated = false;
-				initialized.put(value, input);
 				return input;
 			} else {
 				return null;

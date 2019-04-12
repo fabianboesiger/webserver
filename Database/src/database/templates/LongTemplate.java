@@ -28,6 +28,7 @@ public class LongTemplate extends NumberTemplate <Long> implements Identifiable 
 
 	@Override
 	public boolean validate(Validator validator) {
+
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {

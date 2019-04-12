@@ -28,6 +28,7 @@ public class DoubleTemplate extends NumberTemplate <Double> {
 	
 	@Override
 	public boolean validate(Validator validator) {
+
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {

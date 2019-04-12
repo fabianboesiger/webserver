@@ -76,6 +76,7 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 
 	@Override
 	public boolean validate(Validator validator) {
+		
 		boolean valid = true;
 		if(updated) {
 			if(list == null) {

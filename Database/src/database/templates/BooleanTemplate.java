@@ -25,6 +25,7 @@ public class BooleanTemplate extends PrimitiveTemplate <Boolean> implements Iden
 
 	@Override
 	public boolean validate(Validator validator) {
+		
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {

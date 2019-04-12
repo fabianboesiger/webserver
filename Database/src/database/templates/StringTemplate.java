@@ -57,6 +57,7 @@ public class StringTemplate extends PrimitiveTemplate <String> {
 	
 	@Override
 	public boolean validate(Validator validator) {
+		
 		boolean valid = true;
 		if(updated) {
 			if(value == null) {

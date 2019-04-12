@@ -32,6 +32,7 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@Override
 	public boolean validate(Validator validator) {
+		
 		if(value != null) {
 			return value.validate(validator);
 		} else {
@@ -56,7 +57,7 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void parse(Database database, StringBuilder string, Map<String, ObjectTemplate> initialized) throws Exception {
+	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
 		if(database != null && initialized != null) {
 			set((T) checkIfInitialized((ObjectTemplate) get(), database, crop(string), initialized, getSupplier()));
