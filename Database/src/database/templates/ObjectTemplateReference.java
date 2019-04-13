@@ -59,12 +59,13 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
-		if(database != null && initialized != null) {
+		//if(database != null && initialized != null) {
 			set((T) checkIfInitialized((ObjectTemplate) get(), database, crop(string), initialized, getSupplier()));
-		} else {
+		/*} else {
 			value = supplier.get();
+			System.out.println("!4 "+this);
 			value.parse(database, string, initialized);
-		}
+		}*/
 	}
 
 	@Override

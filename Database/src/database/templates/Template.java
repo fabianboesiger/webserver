@@ -48,14 +48,25 @@ public abstract class Template {
 	}
 	*/
 	public ObjectTemplate checkIfInitialized(ObjectTemplate input, Database database, String value, Map <String, ObjectTemplate> initialized, Supplier <?> supplier) throws Exception {
-		if(initialized.containsKey(value) && ((supplier != null && initialized.get(value).getClass() == supplier.get().getClass()) || (input != null && initialized.get(value).getClass() == input.getClass()))) {
-			return initialized.get(value);
+		String name = null;
+		if(input != null) {
+			name = (String) input.getClass().getField("NAME").get(null);
+		} else {
+			name = (String) supplier.get().getClass().getField("NAME").get(null);
+		}
+		
+		String key = name + "-" + value;
+		
+		if(initialized != null && initialized.containsKey(key)) {
+			return initialized.get(key);
 		} else {
 			if(!value.equals("null")) {
 				if(input == null && supplier != null) {
 					input = (ObjectTemplate) supplier.get();
 				}
-				initialized.put(value, input);
+				if(initialized != null) {
+					initialized.put(key, input);
+				}
 				input.parse(database, value, initialized);
 				updated = false;
 				return input;

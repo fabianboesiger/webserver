@@ -49,6 +49,7 @@ public class Database {
 					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
 				}
 				objectTemplate.parse(this, id, initialized);
+				objectTemplate.resetLoad();
 				return objectTemplate;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -57,6 +58,7 @@ public class Database {
 		return null;
 	}
 	
+
 	public synchronized ObjectTemplate loadId(Class <?> target, String id) {
 		return loadId(target, id, null);
 	}
@@ -191,6 +193,7 @@ public class Database {
 		if(objectTemplate.checkVersion(this, false)) {
 			try {
 				objectTemplate.render(this);
+				objectTemplate.resetSave();
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -201,10 +204,10 @@ public class Database {
 	
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
 		objectTemplate.checkIfUpdated();
-		
 		if(objectTemplate.checkVersion(this, true)) {
 			try {
 				objectTemplate.render(this);
+				objectTemplate.resetSave();
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();

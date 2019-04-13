@@ -25,6 +25,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	private boolean validated;
 	private boolean rendered;
 	private boolean parsed;
+	private boolean checkedIfUpdated;
+	private boolean checkedVersion;
 	
 	public ObjectTemplate() {
 		super(null);
@@ -33,11 +35,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		timestamp.set(Long.valueOf(0));
 		id = null;
 		
-		validated = false;
-		rendered = false;
-		parsed = false;
+		resetLoad();
+		resetSave();
 	}
-		
+
 	public void setIdentifier(Identifiable identifier) {
 		this.identifier = identifier;
 	}
@@ -182,8 +183,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 								reference.set(checkIfInitialized(objectTemplate, database, value, initialized, wasUpdated, reference.getSupplier()));
 								
 							} else { */
+							if(object instanceof PrimitiveTemplate || initialized != null) {
 								((Template) object).parse(database, value, initialized);
 								((Template) object).updated = wasUpdated;
+							}
 							//}
 						}
 					}
@@ -196,10 +199,12 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public String render(Database database) throws Exception {
-		String id = getId(database);		
+		String id = getId(database);
+		this.id = id;
+
 		if(updated && !rendered) {
 			rendered = true;
-			
+						
 			timestamp.set(System.currentTimeMillis());
 			
 			File file = database.getFile(getClass(), id);
@@ -221,18 +226,17 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			}
 			bufferedWriter.close();
 
-			this.id = id;
 		}
 
 		return id;
 	}
 	
 	public void checkIfUpdated() {
-		if(!checkedIfUpdated) {
+		if(checkedIfUpdated) {
 			return;
 		}
 		checkedIfUpdated = true;
-		
+
 		Field[] fields = getFields();
 		for(Field field : fields) {
 			try {
@@ -251,7 +255,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				e.printStackTrace();
 			}
 		}
-
 	}
 	
 	@Override
@@ -260,15 +263,11 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			return;
 		}
 		parsed = true;
-		
+				
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
-		
-		
-		System.out.println(id+" "+getClass());
-
-		
+				
 		File file = database.getFile(getClass(), id);
 		if(file != null) {
 			if(file.exists()) {
@@ -284,6 +283,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 						map.put(key, value);
 					}
 				}
+				
 				bufferedReader.close();
 				parseFromMap(database, map, initialized, false);
 			}
@@ -383,6 +383,16 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 		return false;
 	}
+
+	public void resetLoad() {
+		parsed = false;
+	}
 	
+	public void resetSave() {
+		validated = false;
+		rendered = false;
+		checkedIfUpdated = false;
+		checkedVersion = false;
+	}
 	
 }

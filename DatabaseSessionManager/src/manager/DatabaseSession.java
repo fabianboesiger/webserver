@@ -81,7 +81,6 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 		databaseSessionManager.database.update(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public T load() {
 		if(object != null) {
