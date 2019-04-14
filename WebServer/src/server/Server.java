@@ -25,7 +25,7 @@ public class Server {
 	protected SessionManager <?> sessionManager;
 	
 	public Server(int port, File publicFolder, Responder responder, SessionManager <?> sessionManager) throws IOException {
-		System.out.println("Starting server on port " + port);
+		System.out.println("Starting Server on Port " + port);
 				
 		startingMillis = System.currentTimeMillis();
 		

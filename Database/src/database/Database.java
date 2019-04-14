@@ -15,10 +15,10 @@ public class Database {
 	public static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final File DATA_FOLDER = new File("data");
 	private static final String ENDING = "txt";
-	public static final int COUNTER_LENGTH = 16;
+	public static final int COUNTER_LENGTH = 32;
 	
 	public Database() {
-		System.out.println("Starting database with directory " + DATA_FOLDER.getAbsolutePath());
+		System.out.println("Starting Database with Directory " + DATA_FOLDER.getAbsolutePath());
 		DATA_FOLDER.mkdirs();
 	}
 	

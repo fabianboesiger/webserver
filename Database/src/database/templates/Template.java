@@ -13,6 +13,7 @@ public abstract class Template {
 	protected String templateName;
 	protected UpdateAction updateAction;
 	protected boolean updated;
+	protected Database database;
 	
 	public Template(String name) {
 		this(name, null);

@@ -29,6 +29,8 @@ public class Mailer {
 	public Mailer(Map <String, Object> predefined, File viewsFolder) {
 		this.predefined = predefined;
 		this.viewsFolder = viewsFolder;
+		
+		System.out.println("Starting Mailer");
 	}
 	
 	public void send(String email, String subject, String name) {

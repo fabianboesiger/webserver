@@ -267,6 +267,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
+		this.database = database;
 				
 		File file = database.getFile(getClass(), id);
 		if(file != null) {

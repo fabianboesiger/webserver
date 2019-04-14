@@ -22,6 +22,7 @@ import renderer.commands.GetCommand;
 import renderer.commands.HTMLEncodeCommand;
 import renderer.commands.IfCommand;
 import renderer.commands.IncludeCommand;
+import renderer.commands.IndexCommand;
 import renderer.commands.MarkdownCommand;
 import renderer.commands.NotCommand;
 import renderer.commands.NullCommand;
@@ -30,6 +31,7 @@ import renderer.commands.PrintCommand;
 import renderer.commands.SetCommand;
 import renderer.commands.SizeCommand;
 import renderer.commands.TranslateCommand;
+import renderer.commands.URLEncodeCommand;
 import renderer.commands.VariablesCommand;
 
 public abstract class Renderer {
@@ -62,6 +64,8 @@ public abstract class Renderer {
 		commands.put("size", new SizeCommand());
 		commands.put("console", new ConsoleCommand());
 		commands.put("set", new SetCommand());
+		commands.put("index", new IndexCommand());
+		commands.put("urlencode", new URLEncodeCommand());
 	}
 	
 

@@ -29,6 +29,8 @@ public class RenderResponder implements Responder {
 	public RenderResponder(Map <String, Object> predefined, File viewsFolder) {
 		this.predefined = predefined;
 		this.viewsFolder = viewsFolder;
+		
+		System.out.println("Starting Responder");
 	}
 	
 	public Response error(int code, String message, LinkedList <String> languages) throws IOException {
