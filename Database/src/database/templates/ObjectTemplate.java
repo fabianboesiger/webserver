@@ -300,7 +300,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		String id = getId(database);
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
-			if(!overwrite && updated) {
+			if(!overwrite && updated) { 
 				return false;
 			} else {
 				ObjectTemplate clone;
