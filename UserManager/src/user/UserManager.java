@@ -11,6 +11,56 @@ import server.Server;
 
 public class UserManager {
 	
+	public static final String ERRORS_NAME = "errors";
+	public static final String USERNAME_NAME = "username";
+	public static final String ENCRYPTED_USERNAME_NAME = "encrypted-username";
+	public static final String KEY_NAME = "key";
+	public static final String ACTIVATED_NAME = "activated";
+	public static final String NOTIFICATIONS_NAME = "notifications";
+	public static final String EMAIL_NAME = "email";
+	public static final String USER_NAME = "user";
+	public static final String PASSWORD_NAME = "password";
+	public static final String ID_NAME = "id";
+	
+	public static final String SIGNIN_FILE = "/profile/signin.html";
+	public static final String SIGNUP_FILE = "/profile/signup.html";
+	public static final String ACTIVATE_FILE = "/profile/activate-error.html";
+	public static final String PROFILE_FILE = "/profile/profile.html";
+	public static final String RECOVER_FILE = "/profile/recover.html";
+	public static final String RECOVER_CONFIRM_FILE = "/profile/recover-confirm.html";
+	public static final String UNLOCK_FILE = "/profile/unlock-error.html";
+	public static final String EMAIL_FILE = "/profile/change-email.html";
+	public static final String PASSWORD_FILE = "/profile/change-password.html";
+	public static final String DELETE_FILE = "/profile/delete-confirm.html";
+	
+	public static final String SIGNIN_PATH = "/signin";
+	public static final String SIGNUP_PATH = "/signup";
+	public static final String SIGNOUT_PATH = "/signout";
+	public static final String ACTIVATE_PATH = "/activate";
+	public static final String PROFILE_PATH = "/profile";
+	public static final String RECOVER_PATH = "/recover";
+	public static final String RECOVER_CONFIRM_PATH = "/recover/confirm";
+	public static final String UNLOCK_PATH = "/unlock";
+	public static final String EMAIL_PATH = "/profile/email";
+	public static final String PASSWORD_PATH = "/profile/password";
+	public static final String NOTIFICATION_PATH = "/profile/notifications";
+	public static final String DELETE_PATH = "/profile/delete";
+	public static final String DELETE_CONFIRM_PATH = "/profile/delete/confirm";
+	
+	public static final String LOGIN_REDIRECT = "/";
+	public static final String LOGOUT_REDIRECT = "/";
+	
+	public static final String ACTIVATE_MAIL = "/profile/activate.html";
+	public static final String RECOVER_MAIL = "/profile/recover.html";
+	
+	public static final String DOES_NOT_MATCH_KEY = "does-not-match";
+	public static final String DOES_NOT_EXIST_KEY = "does-not-exist";
+	public static final String IN_USE_KEY = "in-use";
+	public static final String NOT_ACTIVATED_KEY = "not-activated";
+	public static final String DELETION_ERROR_KEY = "deletion-error";
+	public static final String ACTIVATE_ACCOUNT_KEY = "activate-account";
+	public static final String RECOVER_ACCOUNT_KEY = "recover-account";
+	
 	Server server;
 	RenderResponder responder;
 	Database database;
@@ -21,53 +71,50 @@ public class UserManager {
 		this.responder = responder;
 		this.database = database;
 		this.mailer = mailer;
-	}
-	
-
-	public void addSignInRoutes(String path, String file, String successRedirect, String userDoesNotExistError, String passwordDoesNotMatchError) {
 		
-		server.on("GET", path, (Request request) -> {
+		initializeRoutes();
+	}
+
+	public void initializeRoutes() {
+		
+		server.on("GET", SIGNIN_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render(file, request.languages, variables);
+			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+			return responder.render(SIGNIN_FILE, request.languages, variables);
 		});
 		
-		server.on("POST", path, (Request request) -> {
-			Validator validator = new Validator("errors");
+		server.on("POST", SIGNIN_PATH, (Request request) -> {
+			Validator validator = new Validator(ERRORS_NAME);
 			User user = null;
-			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
-				if(user.authenticate(request.parameters.get("password"))) {
+			if((user = (User) database.load(User.class, request.parameters.get(USERNAME_NAME))) != null) {
+				if(user.authenticate(request.parameters.get(PASSWORD_NAME))) {
 					user.setLanguages(request.languages);
 					database.update(user);					
 					request.session.save(user);
-					return responder.redirect(successRedirect);
+					return responder.redirect(LOGIN_REDIRECT);
 				} else {
-					validator.addMessage("password", passwordDoesNotMatchError);
+					validator.addMessage(PASSWORD_NAME, DOES_NOT_MATCH_KEY);
 				}
 			} else {
-				validator.addMessage("user", userDoesNotExistError);
+				validator.addMessage(USER_NAME, DOES_NOT_EXIST_KEY);
 			}
 			request.session.addFlash(validator);
-			return responder.redirect(path);
+			return responder.redirect(SIGNIN_PATH);
 		});
 		
-	}
-	
-	public void addSignUpRoutes(String path, String file, String successRedirect, String usernameInUseError) {
-		
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", SIGNUP_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render(file, request.languages, variables);
+			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+			return responder.render(SIGNUP_FILE, request.languages, variables);
 		});
 		
-		server.on("POST", path, (Request request) -> {
+		server.on("POST", SIGNUP_PATH, (Request request) -> {
 
 			User user = new User();
 			user.parseFromParameters(request.parameters);
 			user.setLanguages(request.languages);
 
-			Validator validator = new Validator("errors");
+			Validator validator = new Validator(ERRORS_NAME);
 			
 			if(user.validate(validator)) {
 				if(database.save(user)) {
@@ -75,178 +122,141 @@ public class UserManager {
 					
 					sendActivationMail(user);
 					
-					return responder.redirect(successRedirect); 
+					return responder.redirect(LOGIN_REDIRECT); 
 				} else {
-					validator.addMessage("username", usernameInUseError);
+					validator.addMessage(USERNAME_NAME, IN_USE_KEY);
 				}
 			}
 
 			request.session.addFlash(validator);
-			return responder.redirect(path);
+			return responder.redirect(SIGNUP_PATH);
 		});
 		
-	}
-	
-	
-	public void addSignOutRoutes(String path, String successRedirect) {
-		
-		server.on("GET", "/signout", (Request request) -> {
+		server.on("GET", SIGNOUT_PATH, (Request request) -> {
 			request.session.delete();
-			return responder.redirect(successRedirect);
+			return responder.redirect(LOGOUT_REDIRECT);
 		});
-		
-	}
-
-	public void addActivationRoutes(String path, String file, String successRedirect) {
 	
-		server.on("GET", path, (Request request) -> {	
+		server.on("GET", ACTIVATE_PATH, (Request request) -> {	
 			User user = null;
-			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
-				if(user.keyEquals(request.parameters.get("key"))) {
+			if((user = (User) database.loadId(User.class, request.parameters.get(ID_NAME))) != null) {
+				if(user.keyEquals(request.parameters.get(KEY_NAME))) {
 					request.session.save(user);
 					user.setActivated(true);
 					database.update(user);
-					return responder.redirect(successRedirect);
+					return responder.redirect(PROFILE_PATH);
 				}
 			}
-			return responder.render(file, request.languages);
+			return responder.render(ACTIVATE_FILE, request.languages);
 		});
-		
-	}
-		
-	public void addRecoveryRoutes(String path, String file, String successRedirect, String userDoesNotExistError, String notActivatedError) {
 	
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", RECOVER_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render(file, request.languages, variables);
+			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+			return responder.render(RECOVER_FILE, request.languages, variables);
 		});
 		
-		server.on("POST", path, (Request request) -> {
-			Validator validator = new Validator("errors");
+		server.on("POST", RECOVER_PATH, (Request request) -> {
+			Validator validator = new Validator(ERRORS_NAME);
 			User user = null;
-			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
+			if((user = (User) database.load(User.class, request.parameters.get(USERNAME_NAME))) != null) {
 				if(user.isActivated()) {
 					sendRecoverMail(user);
-					return responder.redirect(successRedirect);
+					return responder.redirect(RECOVER_CONFIRM_PATH);
 				} else {
-					validator.addMessage("user", notActivatedError);
+					validator.addMessage(USER_NAME, NOT_ACTIVATED_KEY);
 				}
 			} else {
-				validator.addMessage("user", userDoesNotExistError);
+				validator.addMessage(USER_NAME, DOES_NOT_EXIST_KEY);
 			}
 			
 			request.session.addFlash(validator);
-			return responder.redirect("/recover");
+			return responder.redirect(RECOVER_PATH);
 		});
 		
-	}
-	
-	public void addRecoveryConfirmationRoutes(String path, String file) {
 		
-		server.on("GET", path, (Request request) -> {
-			return responder.render(file, request.languages);
+		server.on("GET", RECOVER_CONFIRM_PATH, (Request request) -> {
+			return responder.render(RECOVER_CONFIRM_FILE, request.languages);
 		});
 		
-	}
-	
-	public void addUnlockingRoutes(String path, String file, String successRedirect) {
-
-		server.on("GET", path, (Request request) -> {	
+		server.on("GET", UNLOCK_PATH, (Request request) -> {	
 			User user = null;
-			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
-				if(user.keyEquals(request.parameters.get("key"))) {
+			if((user = (User) database.loadId(User.class, request.parameters.get(ID_NAME))) != null) {
+				if(user.keyEquals(request.parameters.get(KEY_NAME))) {
 					request.session.save(user);
-					return responder.redirect(successRedirect);
+					return responder.redirect(PASSWORD_PATH);
 				}
 			}
-			return responder.render(file, request.languages);
+			return responder.render(UNLOCK_FILE, request.languages);
 		});
-		
-	}
-
-		
-	public void addProfileRoutes(String path, String file, String notSignedInRedirect) {
 	
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", PROFILE_PATH, (Request request) -> {
 			User user = (User) request.session.load();
 			if(user != null) {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
-				variables.put("activated", user.isActivated());
-				variables.put("notifications", user.notificationsEnabled());
-				return responder.render(file, request.languages, variables);
+				variables.put(ACTIVATED_NAME, user.isActivated());
+				variables.put(NOTIFICATIONS_NAME, user.notificationsEnabled());
+				return responder.render(PROFILE_FILE, request.languages, variables);
 			}
-			return responder.redirect(notSignedInRedirect);
+			return responder.redirect(SIGNIN_PATH);
 		});
 		
-	}
-	
-	public void addChangeMailRoutes(String path, String file, String notSignedInRedirect, String successRedirect) {
-		
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", EMAIL_PATH, (Request request) -> {
 			User user = (User) request.session.load();
 			if(user != null) {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
-				addMessagesFlashToVariables(request, "errors", variables);
-				variables.put("email", user.getMail());
-				return responder.render(file, request.languages, variables);
+				addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+				variables.put(EMAIL_NAME, user.getMail());
+				return responder.render(EMAIL_FILE, request.languages, variables);
 			}
-			return responder.redirect(notSignedInRedirect);
+			return responder.redirect(SIGNIN_PATH);
 		});
 		
-		server.on("POST", path, (Request request) -> {
-			Validator validator = new Validator("errors");
+		server.on("POST", EMAIL_PATH, (Request request) -> {
+			Validator validator = new Validator(ERRORS_NAME);
 			User user = (User) request.session.load();
 			if(user != null) {
-				user.setMail(request.parameters.get("email"));
+				user.setMail(request.parameters.get(EMAIL_NAME));
 				user.setActivated(false);
 				if(user.validate(validator)) {
 					if(database.update(user)) {
 						sendActivationMail(user);
-						return responder.redirect(successRedirect);
+						return responder.redirect(PROFILE_PATH);
 					}
 				}
 			} else {
-				responder.redirect(notSignedInRedirect);
+				responder.redirect(SIGNIN_PATH);
 			}
 			
 			request.session.addFlash(validator);
-			return responder.redirect(path);
+			return responder.redirect(EMAIL_PATH);
 		});
 		
-	}
-	
-	public void addChangePasswordRoutes(String path, String file, String notSignedInRedirect, String successRedirect) {
-		
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", PASSWORD_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render(file, request.languages, variables);
+			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+			return responder.render(PASSWORD_FILE, request.languages, variables);
 		});
 		
-		server.on("POST", path, (Request request) -> {
-			Validator validator = new Validator("errors");
+		server.on("POST", PASSWORD_PATH, (Request request) -> {
+			Validator validator = new Validator(ERRORS_NAME);
 			User user = (User) request.session.load();
 			if(user != null) {
-				user.setPassword(request.parameters.get("password"));
+				user.setPassword(request.parameters.get(PASSWORD_NAME));
 				if(user.validate(validator)) {
 					if(database.update(user)) {
-						return responder.redirect(successRedirect);
+						return responder.redirect(PROFILE_PATH);
 					}
 				}
 			} else {
-				responder.redirect(notSignedInRedirect);
+				responder.redirect(SIGNIN_PATH);
 			}
 			
 			request.session.addFlash(validator);
-			return responder.redirect(path);
+			return responder.redirect(PASSWORD_PATH);
 		});
 		
-	}
-	
-	public void addChangeNotificationsRoutes(String path, String notSignedInRedirect, String successRedirect) {
-
-		server.on("GET", path, (Request request) -> {
+		server.on("GET", NOTIFICATION_PATH, (Request request) -> {
 			User user = (User) request.session.load();
 			if(user != null) {
 				user.toggleNotifications();
@@ -254,51 +264,47 @@ public class UserManager {
 					database.update(user);
 				}
 			} else {
-				return responder.redirect(notSignedInRedirect);
+				return responder.redirect(SIGNIN_PATH);
 			}
 			
-			return responder.redirect(successRedirect);
+			return responder.redirect(PROFILE_PATH);
 		});
-		
-	}
-	
-	public void addDeletionRoutes(String path, String file, String confirmationPath, String successRedirect, String deletionError) {
-		
-		server.on("GET", path, (Request request) -> {
+			
+		server.on("GET", DELETE_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render(file, request.languages, variables);
+			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
+			return responder.render(DELETE_FILE, request.languages, variables);
 		});
 		
-		server.on("GET", confirmationPath, (Request request) -> {
+		server.on("GET", DELETE_CONFIRM_PATH, (Request request) -> {
 			if(request.session.load() != null) {
 				if(database.delete(User.class, ((String) request.session.load()))) {
 					request.session.delete();
-					return responder.redirect(successRedirect);
+					return responder.redirect(LOGOUT_REDIRECT);
 				}
 			}
-			Validator validator = new Validator("errors");
-			validator.addMessage("user", deletionError);
+			Validator validator = new Validator(ERRORS_NAME);
+			validator.addMessage(USER_NAME, DELETION_ERROR_KEY);
 			request.session.addFlash(validator);
-			return responder.redirect(path);
+			return responder.redirect(DELETE_PATH);
 		});
 		
 	}
 	
 	private void sendActivationMail(User user) {
 		HashMap <String, Object> variables = new HashMap <String, Object> ();
-		variables.put("username", user.getUsername());
-		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
-		variables.put("key", user.getKey());
-		mailer.send(user.getMail(), "{{print translate \"activate-account\"}}", "activate.html", user.getLanguages(), variables);
+		variables.put(USERNAME_NAME, user.getUsername());
+		variables.put(ENCRYPTED_USERNAME_NAME, Database.encrypt(user.getUsername()));
+		variables.put(KEY_NAME, user.getKey());
+		mailer.send(user.getMail(), "{{print translate \"" + ACTIVATE_ACCOUNT_KEY + "\"}}", ACTIVATE_MAIL, user.getLanguages(), variables);
 	}
 	
 	private void sendRecoverMail(User user) {
 		HashMap <String, Object> variables = new HashMap <String, Object> ();
-		variables.put("username", user.getUsername());
-		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
-		variables.put("key", user.getKey());
-		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", user.getLanguages(), variables);
+		variables.put(USERNAME_NAME, user.getUsername());
+		variables.put(ENCRYPTED_USERNAME_NAME, Database.encrypt(user.getUsername()));
+		variables.put(KEY_NAME, user.getKey());
+		mailer.send(user.getMail(), "{{print translate \"" + RECOVER_ACCOUNT_KEY + "\"}}", RECOVER_MAIL, user.getLanguages(), variables);
 	}
 
 	private void addMessagesFlashToVariables(Request request, String name, HashMap <String, Object> variables) {
