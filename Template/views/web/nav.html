@@ -1,0 +1,20 @@
+<nav>
+    {{
+        if equals get "username" variables null
+            print "<a href=\"/\">"
+            print translate "home"
+            print "</a>"
+            print "<a href=\"/signin\">"
+            print translate "signin"
+            print "</a>"
+        end
+        if not equals get "username" variables null
+            print "<a href=\"/\">"
+            print translate "home"
+            print "</a>"
+            print "<a href=\"/profile\">"
+            print translate "profile"
+            print "</a>"
+        end
+    }}
+</nav>
