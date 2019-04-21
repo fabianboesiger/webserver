@@ -1,8 +1,39 @@
+/* Basics */
+
 html{
-    background-color: #efefef;
-    color: #1f1f1f;
+    background-color: #1f1f1f;
+    color: #efefef;
+}
+
+body{
+    margin: 0px;
+}
+
+header, main, footer{
+    margin: auto;
+    max-width: 1024px;
+}
+
+nav, header, footer{
+    text-align: center;
+}
+
+a{
+    color: #3f3fef;
 }
 
 .errors{
-    color: #ef1f1f;
+    color: #ef3f3f;
+}
+
+/* Forms */
+
+form{
+    margin: auto;
+    max-width: 512px;
+}
+
+input{
+    box-sizing: border-box;
+    width: 100%;
 }
