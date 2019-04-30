@@ -44,6 +44,9 @@ public class DatabaseSessionManager <T extends ObjectTemplate> implements Sessio
 			database.update(session);
 			return session;
 		}
+		if(session == null) {
+			session = (DatabaseSession <T>) createSession();
+		}
 		return null;
 	}
 	
