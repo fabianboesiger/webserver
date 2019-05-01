@@ -65,12 +65,21 @@ public class UserManager {
 	RenderResponder responder;
 	Database database;
 	Mailer mailer;
-
+	
+	ModificationAction onCreate;
+	ModificationAction onDelete;
+	
 	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer) {
+		this(server, responder, database, mailer, null, null);
+	}
+
+	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer, ModificationAction onCreate, ModificationAction onDelete) {
 		this.server = server;
 		this.responder = responder;
 		this.database = database;
 		this.mailer = mailer;
+		this.onCreate = onCreate;
+		this.onDelete = onDelete;
 		
 		initializeRoutes();
 	}
@@ -119,9 +128,10 @@ public class UserManager {
 			if(user.validate(validator)) {
 				if(database.save(user)) {
 					request.session.save(user);
-					
+					if(onCreate != null) {
+						onCreate.run(user);
+					}
 					sendActivationMail(user);
-					
 					return responder.redirect(LOGIN_REDIRECT); 
 				} else {
 					validator.addMessage(USERNAME_NAME, IN_USE_KEY);
@@ -278,9 +288,15 @@ public class UserManager {
 		
 		server.on("GET", DELETE_CONFIRM_PATH, (Request request) -> {
 			if(request.session.load() != null) {
-				if(database.delete(User.class, ((String) request.session.load()))) {
-					request.session.delete();
-					return responder.redirect(LOGOUT_REDIRECT);
+				User user = (User) request.session.load();
+				if(user != null) {
+					if(database.delete(User.class, user.getUsername())) {
+						if(onDelete != null) {
+							onDelete.run(user);
+						}
+						request.session.delete();
+						return responder.redirect(LOGOUT_REDIRECT);
+					}
 				}
 			}
 			Validator validator = new Validator(ERRORS_NAME);

@@ -39,6 +39,9 @@ public class Handler implements HttpHandler {
 		Session <?> session = null;
 		if(server.sessionManager != null) {
 			session = server.sessionManager.getSession(requestHeaders, responseHeaders);
+			if(session == null) {
+				session = server.sessionManager.createSession();
+			}
 		}
 		String method = httpExchange.getRequestMethod().toUpperCase();
     	URI uri = httpExchange.getRequestURI();

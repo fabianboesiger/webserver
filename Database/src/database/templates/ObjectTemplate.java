@@ -98,7 +98,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		for(Field field : fields) {
 			field.setAccessible(true);
 			try {
-				if(field.get(this) instanceof Template) {
+				if(field.get(this) instanceof Template && !field.getName().equals("identifier")) {
 					if(!((Template) field.get(this)).validate(validator)) {
 						valid = false;
 					}
