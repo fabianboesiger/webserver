@@ -23,10 +23,10 @@ public class RenderResponder implements Responder {
 	private Map <String, Object> predefined;
 	
 	public RenderResponder(File viewsFolder) {
-		this(null, viewsFolder);
+		this(viewsFolder, null);
 	}
 	
-	public RenderResponder(Map <String, Object> predefined, File viewsFolder) {
+	public RenderResponder(File viewsFolder, Map <String, Object> predefined) {
 		this.predefined = predefined;
 		this.viewsFolder = viewsFolder;
 		
