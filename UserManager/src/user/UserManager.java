@@ -101,6 +101,9 @@ public class UserManager {
 		
 		
 		server.on("GET", SIGNIN_PATH, (Request request) -> {
+			if(((User) database.load(User.class, request.parameters.get(USERNAME_NAME))) != null) {
+				return responder.redirect(PROFILE_PATH);
+			}
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
 			return responder.render(SIGNIN_FILE, request.languages, variables);
