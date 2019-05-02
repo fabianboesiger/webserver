@@ -65,19 +65,21 @@ public class UserManager {
 	RenderResponder responder;
 	Database database;
 	Mailer mailer;
+	HashMap <String, Object> predefined;
 	
 	ModificationAction onCreate;
 	ModificationAction onDelete;
 	
-	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer) {
-		this(server, responder, database, mailer, null, null);
+	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer, HashMap <String, Object> predefined) {
+		this(server, responder, database, mailer, predefined, null, null);
 	}
 
-	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer, ModificationAction onCreate, ModificationAction onDelete) {
+	public UserManager(Server server, RenderResponder responder, Database database, Mailer mailer, HashMap <String, Object> predefined, ModificationAction onCreate, ModificationAction onDelete) {
 		this.server = server;
 		this.responder = responder;
 		this.database = database;
 		this.mailer = mailer;
+		this.predefined = predefined;
 		this.onCreate = onCreate;
 		this.onDelete = onDelete;
 		
@@ -85,6 +87,16 @@ public class UserManager {
 	}
 
 	public void initializeRoutes() {
+		
+		server.on("ALL", ".*", (Request request) -> {
+			User user = (User) request.session.load();
+			if(user == null) {
+				predefined.put("username", null);
+			} else {
+				predefined.put("username", user.getUsername());
+			}
+			return responder.next();
+		});
 		
 		server.on("GET", SIGNIN_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
