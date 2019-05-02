@@ -88,16 +88,6 @@ public class UserManager {
 
 	public void initializeRoutes() {
 		
-		server.on("ALL", ".*", (Request request) -> {
-			User user = (User) request.session.load();
-			if(user == null) {
-				predefined.put("username", null);
-			} else {
-				predefined.put("username", user.getUsername());
-			}
-			return responder.next();
-		});
-		
 		server.on("GET", SIGNIN_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
@@ -315,6 +305,16 @@ public class UserManager {
 			validator.addMessage(USER_NAME, DELETION_ERROR_KEY);
 			request.session.addFlash(validator);
 			return responder.redirect(DELETE_PATH);
+		});
+		
+		server.on("ALL", ".*", (Request request) -> {
+			User user = (User) request.session.load();
+			if(user == null) {
+				predefined.put("username", null);
+			} else {
+				predefined.put("username", user.getUsername());
+			}
+			return responder.next();
 		});
 		
 	}
