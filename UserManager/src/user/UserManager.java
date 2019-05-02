@@ -98,9 +98,15 @@ public class UserManager {
 			return responder.next();
 		});
 		
+		server.on("GET", PROFILE_PATH + ".*", (Request request) -> {
+			if(request.session.load() == null) {
+				return responder.redirect(LOGOUT_REDIRECT);
+			}
+			return responder.next();
+		});
 		
 		server.on("GET", SIGNIN_PATH, (Request request) -> {
-			if(((User) database.load(User.class, request.parameters.get(USERNAME_NAME))) != null) {
+			if(request.session.load() != null) {
 				return responder.redirect(PROFILE_PATH);
 			}
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
@@ -129,6 +135,9 @@ public class UserManager {
 		});
 		
 		server.on("GET", SIGNUP_PATH, (Request request) -> {
+			if(request.session.load() != null) {
+				return responder.redirect(PROFILE_PATH);
+			}
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
 			return responder.render(SIGNUP_FILE, request.languages, variables);
@@ -305,9 +314,6 @@ public class UserManager {
 		});
 			
 		server.on("GET", DELETE_PATH, (Request request) -> {
-			if(((User) database.load(User.class, request.parameters.get(USERNAME_NAME))) == null) {
-				return responder.redirect(LOGOUT_REDIRECT);
-			}
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
 			return responder.render(DELETE_FILE, request.languages, variables);
