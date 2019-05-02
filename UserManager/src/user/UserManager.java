@@ -88,6 +88,18 @@ public class UserManager {
 
 	public void initializeRoutes() {
 		
+		server.on("ALL", ".*", (Request request) -> {
+			User user = (User) request.session.load();
+			System.out.println(user);
+			if(user == null) {
+				predefined.put("username", null);
+			} else {
+				predefined.put("username", user.getUsername());
+			}
+			return responder.next();
+		});
+		
+		
 		server.on("GET", SIGNIN_PATH, (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, ERRORS_NAME, variables);
@@ -99,6 +111,7 @@ public class UserManager {
 			User user = null;
 			if((user = (User) database.load(User.class, request.parameters.get(USERNAME_NAME))) != null) {
 				if(user.authenticate(request.parameters.get(PASSWORD_NAME))) {
+					predefined.put("username", user.getUsername());
 					user.setLanguages(request.languages);
 					database.update(user);					
 					request.session.save(user);
@@ -129,6 +142,8 @@ public class UserManager {
 			
 			if(user.validate(validator)) {
 				if(database.save(user)) {
+					predefined.put("username", user.getUsername());
+					user.setLanguages(request.languages);
 					request.session.save(user);
 					if(onCreate != null) {
 						onCreate.run(user);
@@ -146,6 +161,7 @@ public class UserManager {
 		
 		server.on("GET", SIGNOUT_PATH, (Request request) -> {
 			request.session.delete();
+			predefined.put("username", null);
 			return responder.redirect(LOGOUT_REDIRECT);
 		});
 	
@@ -153,6 +169,8 @@ public class UserManager {
 			User user = null;
 			if((user = (User) database.loadId(User.class, request.parameters.get(ID_NAME))) != null) {
 				if(user.keyEquals(request.parameters.get(KEY_NAME))) {
+					predefined.put("username", user.getUsername());
+					user.setLanguages(request.languages);
 					request.session.save(user);
 					user.setActivated(true);
 					database.update(user);
@@ -195,6 +213,8 @@ public class UserManager {
 			User user = null;
 			if((user = (User) database.loadId(User.class, request.parameters.get(ID_NAME))) != null) {
 				if(user.keyEquals(request.parameters.get(KEY_NAME))) {
+					predefined.put("username", user.getUsername());
+					user.setLanguages(request.languages);
 					request.session.save(user);
 					return responder.redirect(PASSWORD_PATH);
 				}
@@ -307,15 +327,6 @@ public class UserManager {
 			return responder.redirect(DELETE_PATH);
 		});
 		
-		server.on("ALL", ".*", (Request request) -> {
-			User user = (User) request.session.load();
-			if(user == null) {
-				predefined.put("username", null);
-			} else {
-				predefined.put("username", user.getUsername());
-			}
-			return responder.next();
-		});
 		
 	}
 	
