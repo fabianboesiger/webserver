@@ -56,7 +56,25 @@ public class RenderResponder implements Responder {
 	}
 	
 	public Response file(File file, int statusCode) throws IOException {
-		return new Response(new FileInputStream(file), file.length(), Files.probeContentType(Paths.get(file.getAbsolutePath())), statusCode, null, false);
+		String contentType = "text/plain";
+		String name = file.getName();
+		int dotIndex = name.indexOf(".");
+		if(dotIndex >= 0) {
+			String ending = name.substring(dotIndex + 1);
+			switch (ending) {
+			case "css":
+				contentType = "text/css";
+				break;
+			case "js":
+				contentType = "application/javascript";
+				break;
+			default:
+				contentType = Files.probeContentType(Paths.get(file.getAbsolutePath()));
+				break;
+			}
+		}
+				
+		return new Response(new FileInputStream(file), file.length(), contentType, statusCode, null, false);
 	}
 	
 	public Response file(String name, int statusCode) throws IOException {

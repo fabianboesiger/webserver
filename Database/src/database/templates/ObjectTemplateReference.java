@@ -74,6 +74,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		this.database = database;
 		if(value != null) {
 			value.checkIfUpdated(database);
+			if(value.updated) {
+				updated();
+			}
 		}
 	}
 

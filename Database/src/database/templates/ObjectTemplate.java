@@ -233,6 +233,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	public void checkIfUpdated(Database database) {
 		this.database = database;
+		
 		if(checkedIfUpdated) {
 			return;
 		}
@@ -244,13 +245,16 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof Template) {
+					
 					if(object instanceof ComplexTemplate) {
 						((ComplexTemplate) object).checkIfUpdated(database);
 					}
+
 					if(((Template) object).updated) {
 						updated();
 						break;
 					}
+					
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
