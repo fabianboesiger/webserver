@@ -328,6 +328,7 @@ public class UserManager {
 							onDelete.run(user);
 						}
 						request.session.delete();
+						predefined.put("username", null);
 						return responder.redirect(LOGOUT_REDIRECT);
 					}
 				}
