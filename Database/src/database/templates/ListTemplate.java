@@ -42,14 +42,14 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 
 	@Override
-	public String render(Database database) throws Exception {
+	public String render() throws Exception {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(LIST_START);
 		for(int i = 0; i < list.size(); i++) {
 			if(i != 0) {
 				stringBuilder.append(SEPARATION_CHARACTER);
 			}
-			stringBuilder.append(list.get(i).render(database));
+			stringBuilder.append(list.get(i).render());
 		}
 		stringBuilder.append(LIST_END);
 		return stringBuilder.toString();
@@ -59,6 +59,7 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
+		this.database = database;
 		list.clear();
 		String trimmed = string.toString().trim();
 		string.setLength(0);
@@ -245,10 +246,11 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 
 	@Override
-	public void checkIfUpdated() {
+	public void checkIfUpdated(Database database) {
+		this.database = database;
 		for(T element : list) {
 			if(element instanceof ComplexTemplate) {
-				((ComplexTemplate) element).checkIfUpdated();
+				((ComplexTemplate) element).checkIfUpdated(database);
 			}
 			if(((Template) element).updated) {
 				updated();
@@ -257,10 +259,10 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 	}
 
 	@Override
-	public boolean checkVersion(Database database, boolean overwrite) {
+	public boolean checkVersion(boolean overwrite) {
 		for(T element : list) {
 			if(element instanceof ComplexTemplate) {
-				if(!((ComplexTemplate) element).checkVersion(database, overwrite)) {
+				if(!((ComplexTemplate) element).checkVersion(overwrite)) {
 					return false;
 				}
 			}

@@ -106,7 +106,7 @@ public class StringTemplate extends PrimitiveTemplate <String> {
 	}
 
 	@Override
-	public String render(Database database) throws Exception {
+	public String render() throws Exception {
 		StringBuilder replaced = new StringBuilder();
 		for(int i = 0; i < value.length(); i++) {
 			boolean found = false;
@@ -134,7 +134,6 @@ public class StringTemplate extends PrimitiveTemplate <String> {
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
-		
 		StringBuilder builder = new StringBuilder();
 	
 		boolean escaped = false;

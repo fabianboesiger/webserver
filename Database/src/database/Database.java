@@ -189,10 +189,10 @@ public class Database {
 	}
 	
 	public synchronized boolean save(ObjectTemplate objectTemplate) {
-		objectTemplate.checkIfUpdated();
-		if(objectTemplate.checkVersion(this, false)) {
+		objectTemplate.checkIfUpdated(this);
+		if(objectTemplate.checkVersion(false)) {
 			try {
-				objectTemplate.render(this);
+				objectTemplate.render();
 				objectTemplate.resetSave();
 				return true;
 			} catch (Exception e) {
@@ -203,10 +203,10 @@ public class Database {
 	}
 	
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
-		objectTemplate.checkIfUpdated();
-		if(objectTemplate.checkVersion(this, true)) {
+		objectTemplate.checkIfUpdated(this);
+		if(objectTemplate.checkVersion(true)) {
 			try {
-				objectTemplate.render(this);
+				objectTemplate.render();
 				objectTemplate.resetSave();
 				return true;
 			} catch (Exception e) {

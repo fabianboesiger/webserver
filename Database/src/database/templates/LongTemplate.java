@@ -82,7 +82,7 @@ public class LongTemplate extends NumberTemplate <Long> implements Identifiable 
 	}
 
 	@Override
-	public String render(Database database) {
+	public String render() {
 		return value.toString();
 	}
 

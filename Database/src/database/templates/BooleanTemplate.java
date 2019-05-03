@@ -62,7 +62,7 @@ public class BooleanTemplate extends PrimitiveTemplate <Boolean> implements Iden
 	}
 
 	@Override
-	public String render(Database database) {
+	public String render() {
 		return value.toString();
 	}
 

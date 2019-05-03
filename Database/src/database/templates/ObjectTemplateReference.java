@@ -47,9 +47,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 	}
 
 	@Override
-	public String render(Database database) throws Exception {
+	public String render() throws Exception {
 		if(value != null) {
-			return value.render(database);
+			return value.render();
 		} else {
 			return "null";
 		}
@@ -59,8 +59,9 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
 		parsed();
+		this.database = database;
 		//if(database != null && initialized != null) {
-			set((T) checkIfInitialized((ObjectTemplate) get(), database, crop(string), initialized, getSupplier()));
+		set((T) checkIfInitialized((ObjectTemplate) get(), database, crop(string), initialized, getSupplier()));
 		/*} else {
 			value = supplier.get();
 			System.out.println("!4 "+this);
@@ -69,17 +70,18 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 	}
 
 	@Override
-	public void checkIfUpdated() {
+	public void checkIfUpdated(Database database) {
+		this.database = database;
 		if(value != null) {
-			value.checkIfUpdated();
+			value.checkIfUpdated(database);
 		}
 	}
 
 
 	@Override
-	public boolean checkVersion(Database database, boolean overwrite) {
+	public boolean checkVersion(boolean overwrite) {
 		if(value != null) {
-			return value.checkVersion(database, overwrite);
+			return value.checkVersion(overwrite);
 		} else {
 			return true;
 		}

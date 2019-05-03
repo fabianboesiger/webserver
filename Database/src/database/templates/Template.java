@@ -13,7 +13,7 @@ public abstract class Template {
 	protected String templateName;
 	protected UpdateAction updateAction;
 	protected boolean updated;
-	protected Database database;
+	
 	
 	public Template(String name) {
 		this(name, null);
@@ -79,7 +79,7 @@ public abstract class Template {
 	
 	public abstract boolean validate(Validator validator);
 	public abstract boolean validate();
-	public abstract String render(Database database) throws Exception;
+	public abstract String render() throws Exception;
 	public abstract void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initalized) throws Exception;
 	
 	public void updated() {

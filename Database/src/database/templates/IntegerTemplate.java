@@ -82,7 +82,7 @@ public class IntegerTemplate extends NumberTemplate <Integer> implements Identif
 	}
 
 	@Override
-	public String render(Database database) {
+	public String render() {
 		return value.toString();
 	}
 

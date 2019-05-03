@@ -198,8 +198,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	@Override
-	public String render(Database database) throws Exception {
-		String id = getId(database);
+	public String render() throws Exception {
+		String id = getId();
 		this.id = id;
 
 		if(updated && !rendered) {
@@ -218,7 +218,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			HashMap <String, Object> map = renderToMap();
 			int counter = 0;
 			for(Map.Entry <String, Object> entry : map.entrySet()) {
-				bufferedWriter.write(entry.getKey() + "=" + ((Template) entry.getValue()).render(database));
+				bufferedWriter.write(entry.getKey() + "=" + ((Template) entry.getValue()).render());
 				if(counter != map.size() - 1) {
 					bufferedWriter.newLine();
 				}
@@ -231,7 +231,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		return id;
 	}
 	
-	public void checkIfUpdated() {
+	public void checkIfUpdated(Database database) {
+		this.database = database;
 		if(checkedIfUpdated) {
 			return;
 		}
@@ -244,7 +245,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				Object object = field.get(this);
 				if(object instanceof Template) {
 					if(object instanceof ComplexTemplate) {
-						((ComplexTemplate) object).checkIfUpdated();
+						((ComplexTemplate) object).checkIfUpdated(database);
 					}
 					if(((Template) object).updated) {
 						updated();
@@ -291,13 +292,14 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 	}
 	
-	public boolean checkVersion(Database database, boolean overwrite) {
+	@Override
+	public boolean checkVersion(boolean overwrite) {
 		if(checkedVersion) {
 			return true;
 		}
 		checkedVersion = true;
 		
-		String id = getId(database);
+		String id = getId();
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
 			if(!overwrite && updated) { 
@@ -324,7 +326,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof ComplexTemplate) {
-					if(!((ComplexTemplate) object).checkVersion(database, overwrite)) {
+					if(!((ComplexTemplate) object).checkVersion(overwrite)) {
 						return false;
 					}
 				}
@@ -339,10 +341,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 	
 	public String getId() {
-		return getId(null);
-	}
-	
-	public String getId(Database database) {
 		if(id == null && database != null) {
 			if(identifier == null) {
 				StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));

@@ -77,7 +77,7 @@ public class DoubleTemplate extends NumberTemplate <Double> {
 	}
 
 	@Override
-	public String render(Database database) {
+	public String render() {
 		return value.toString();
 	}
 
