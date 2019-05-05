@@ -91,9 +91,9 @@ public class DatabaseSession <T extends ObjectTemplate> extends ObjectTemplate i
 	}
 
 	@Override
-	public void addFlash(Object value) {
-		flashes.add((Validator) value);
-		databaseSessionManager.database.update(this);
+	public void addFlash(Object value) {System.out.println("!1");
+		flashes.add((Validator) value);System.out.println("!2 "+databaseSessionManager+" "+databaseSessionManager.database);
+		databaseSessionManager.database.update(this);System.out.println("!3");
 	}
 
 	@Override

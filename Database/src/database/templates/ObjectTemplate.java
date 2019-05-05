@@ -252,7 +252,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 
 					if(((Template) object).updated) {
 						updated();
-						break;
 					}
 					
 				}
@@ -302,7 +301,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			return true;
 		}
 		checkedVersion = true;
-		
 		String id = getId();
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
