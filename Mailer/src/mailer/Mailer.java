@@ -23,10 +23,10 @@ public class Mailer {
 	private Map <String, Object> predefined;
 	
 	public Mailer(File viewsFolder) {
-		this(null, viewsFolder);
+		this(viewsFolder, null);
 	}
 	
-	public Mailer(Map <String, Object> predefined, File viewsFolder) {
+	public Mailer(File viewsFolder, Map <String, Object> predefined) {
 		this.predefined = predefined;
 		this.viewsFolder = viewsFolder;
 		
