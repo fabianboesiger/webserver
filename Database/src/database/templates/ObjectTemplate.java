@@ -28,6 +28,9 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	private boolean checkedIfUpdated;
 	private boolean checkedVersion;
 	
+	private boolean resettedSave;
+	private boolean resettedLoad;
+	
 	public ObjectTemplate() {
 		super(null);
 		identifier = null;
@@ -199,9 +202,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public String render() throws Exception {
+		resettedSave = false;
+		
 		String id = getId();
 		this.id = id;
-
 		if(updated && !rendered) {
 			rendered = true;
 						
@@ -233,7 +237,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	public void checkIfUpdated(Database database) {
 		this.database = database;
-		
+
 		if(checkedIfUpdated) {
 			return;
 		}
@@ -263,6 +267,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public void parse(Database database, StringBuilder string, Map <String, ObjectTemplate> initialized) throws Exception {
+		resettedLoad = false;
+		
 		if(parsed) {
 			return;
 		}
@@ -386,14 +392,48 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	}
 
 	public void resetLoad() {
-		parsed = false;
+		if(!resettedLoad) {
+			resettedSave = true;
+			
+			parsed = false;
+			try {
+				Field[] fields = getFields();
+				for(int i = 0; i < fields.length; i++) {
+					Field field = fields[i];
+					field.setAccessible(true);
+					Object object = field.get(this);
+					if(object instanceof ComplexTemplate) {
+						((ComplexTemplate) object).resetLoad();
+					}
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void resetSave() {
-		validated = false;
-		rendered = false;
-		checkedIfUpdated = false;
-		checkedVersion = false;
+		if(!resettedSave) {
+			resettedSave = true;
+			
+			validated = false;
+			rendered = false;
+			checkedIfUpdated = false;
+			checkedVersion = false;
+			try {
+				Field[] fields = getFields();
+				for(int i = 0; i < fields.length; i++) {
+					Field field = fields[i];
+					field.setAccessible(true);
+					Object object = field.get(this);
+					if(object instanceof ComplexTemplate) {
+						((ComplexTemplate) object).resetSave();
+					}
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

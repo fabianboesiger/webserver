@@ -94,4 +94,14 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		return supplier;
 	}
 
+	@Override
+	protected void resetSave() {
+		value.resetSave();
+	}
+
+	@Override
+	protected void resetLoad() {
+		value.resetLoad();
+	}
+
 }

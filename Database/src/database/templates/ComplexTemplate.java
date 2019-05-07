@@ -12,5 +12,9 @@ public abstract class ComplexTemplate extends Template {
 	
 	public abstract void checkIfUpdated(Database database);
 	public abstract boolean checkVersion(boolean overwrite);
+
+	protected abstract void resetSave();
+
+	protected abstract void resetLoad();
 	
 }

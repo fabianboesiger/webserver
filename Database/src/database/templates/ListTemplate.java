@@ -270,5 +270,23 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		return true;
 	}
 
+	@Override
+	protected void resetSave() {
+		for(T element : list) {
+			if(element instanceof ComplexTemplate) {
+				((ComplexTemplate) element).resetSave();
+			}
+		}
+	}
+
+	@Override
+	protected void resetLoad() {
+		for(T element : list) {
+			if(element instanceof ComplexTemplate) {
+				((ComplexTemplate) element).resetLoad();
+			}
+		}
+	}
+
 
 }

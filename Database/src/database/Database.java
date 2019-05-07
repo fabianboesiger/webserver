@@ -203,7 +203,6 @@ public class Database {
 	}
 	
 	public synchronized boolean update(ObjectTemplate objectTemplate) {
-		
 		objectTemplate.checkIfUpdated(this);
 		if(objectTemplate.checkVersion(true)) {
 			try {
