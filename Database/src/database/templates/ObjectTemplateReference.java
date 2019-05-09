@@ -96,12 +96,16 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 
 	@Override
 	protected void resetSave() {
-		value.resetSave();
+		if(value != null) {
+			value.resetSave();
+		}
 	}
 
 	@Override
 	protected void resetLoad() {
-		value.resetLoad();
+		if(value != null) {
+			value.resetLoad();
+		}
 	}
 
 }
