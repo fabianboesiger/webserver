@@ -203,9 +203,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	@Override
 	public String render() throws Exception {
 		resettedSave = false;
-		
+
 		String id = getId();
 		this.id = id;
+				
 		if(updated && !rendered) {
 			rendered = true;
 						
@@ -273,7 +274,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			return;
 		}
 		parsed = true;
-				
+
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
@@ -308,9 +309,10 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 		checkedVersion = true;
 		String id = getId();
+
 		File file = database.getFile(getClass(), id);
 		if(file.exists()) {
-			if(!overwrite && updated) { 
+			if(!overwrite && updated) {
 				return false;
 			} else {
 				ObjectTemplate clone;
@@ -327,6 +329,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 
 			}
 		}
+
 		try {
 			Field[] fields = getFields();
 			for(int i = 0; i < fields.length; i++) {
@@ -334,7 +337,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 				field.setAccessible(true);
 				Object object = field.get(this);
 				if(object instanceof ComplexTemplate) {
-					if(!((ComplexTemplate) object).checkVersion(overwrite)) {
+					if(!((ComplexTemplate) object).checkVersion(true)) {
 						return false;
 					}
 				}
