@@ -62,13 +62,19 @@ volatile
 while
 with
 yield
-#P5 METHODS
+# ADDITIONAL JAVASCRIPT KEYWORDS
+onreadystatechange
+round
+# P5 METHODS
 setup
 draw
 preload
 keyPressed
 mousePressed
-#SCOREBOARD VARIABLES
+keyReleased
+mouseReleased
+color
+# SCOREBOARD VARIABLES
 x
 y
 z

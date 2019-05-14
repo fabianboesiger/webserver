@@ -46,11 +46,11 @@ public abstract class Obfuscator {
 	}
 	
 	private static void generateGarbage(StringBuilder out, HashMap <String, String> names, ArrayList <String> variables, ArrayList <String> functions) {
-		while(random.nextInt(10) < 0) {
+		while(random.nextInt(10) < 4) {
 			switch(random.nextInt(3)) {
 			case 0:
 				String variable = randomVariableName(names);
-				switch(random.nextInt(6)) {
+				switch(random.nextInt(7)) {
 				case 0:
 					out.append("var " + variable + "=" + random.nextInt() + ";\n");
 					variables.add(variable);
@@ -80,6 +80,10 @@ public abstract class Obfuscator {
 						out.append(variables.get(random.nextInt(variables.size())) + "=" + variables.get(random.nextInt(variables.size())) + "+" + variables.get(random.nextInt(variables.size())) + ";\n");
 					}
 					break;
+				case 6:
+					out.append("var " + variable + "=" + random.nextInt(512) + ";\n");
+					variables.add(variable);
+					break;
 				}
 			case 1:
 				String function = randomVariableName(names);
@@ -98,7 +102,6 @@ public abstract class Obfuscator {
 					out.setLength(out.length() - 1);
 				}
 				out.append("){\n");
-
 				generateGarbage(out, names, params, new ArrayList <String> (functions));
 				out.append("}\n");
 				
