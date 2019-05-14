@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var IZTw;
 var dy0G;
 function Un4A(){
@@ -11,12 +12,21 @@ function DAKD(){
 var r6RK;
 var LesF;
 var Tiso;
+=======
+var X1Fz;
+var lpwR;
+var WuRv;
+var ea4w;
+var BuXI;
+var gAay;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 function setup(){
 if(screen.width<400){
 createCanvas(screen.width,screen.width*3/2);
 }else{
 createCanvas(400,600);
 }
+<<<<<<< HEAD
 LesF=false;
 Tiso=false;
 function tPZt(d1Be,FOd3,fBh1){
@@ -25,10 +35,23 @@ r6RK=0;
 dy0G=new Zne0();
 WX1x=new Array();
 DRKm=Date.now();
+=======
+BuXI=false;
+gAay=false;
+ea4w=0;
+lpwR=new rbFS();
+WuRv=new Array();
+EwTc=Date.now();
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 function draw(){
+<<<<<<< HEAD
 if(!Tiso){
+=======
+if(!gAay){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 background(color("#b9e2f5"));
+<<<<<<< HEAD
 for(let gKj8=WX1x.length-1;
 gKj8>=0;
 gKj8--){
@@ -42,16 +65,46 @@ GlAO();
 if(WX1x[gKj8].lOMd()){
 WX1x.splice(gKj8,1);
 r6RK+=1;
+=======
+for(let KaYU=WuRv.length-1;
+KaYU>=0;
+KaYU--){
+WuRv[KaYU].vB4X();
+if(BuXI){
+WuRv[KaYU].sP1K();
+}
+if(WuRv[KaYU].Bm79(lpwR)){
+RptZ();
+}
+if(WuRv[KaYU].jiJk()){
+WuRv.splice(KaYU,1);
+ea4w+=1;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
+<<<<<<< HEAD
 if(dy0G.xcjK()){
 Tiso=true;
+=======
+if(lpwR.o2Kr()){
+gAay=true;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 if(LesF){
 dy0G.d6vr();
+=======
+if(BuXI){
+lpwR.sP1K();
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 dy0G.uUQk();
+=======
+lpwR.vB4X();
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 textAlign(CENTER);
+<<<<<<< HEAD
 function Uw5G(NaMv){
 var W6Kr=NaMv+NaMv;
 function DjoL(){
@@ -66,6 +119,8 @@ function oAIh(){
 var UAgQ=-1542203892;
 function rLrm(vu5r){
 }
+=======
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 fill(color("#50b8e7"));
 function HRNz(){
 var G00d=0.063682795;
@@ -87,6 +142,7 @@ function uPBF(){
 }
 strokeWeight(0);
 textSize(100);
+<<<<<<< HEAD
 function CyMW(){
 }
 text(r6RK,width*0.5,height*0.2);
@@ -94,12 +150,20 @@ function aJcb(){
 }
 if(frameCount%100==0&&LesF){
 WX1x.push(new RJZG());
+=======
+text(ea4w,width*0.5,height*0.2);
+if(frameCount%100==0&&BuXI){
+WuRv.push(new hECx());
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
 else{
 background(color("#dcf0fa"));
+<<<<<<< HEAD
 function uJwA(){
 }
+=======
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 fill(color("#50b8e7"));
 textAlign(CENTER);
 strokeWeight(0);
@@ -111,6 +175,7 @@ function PhC0(){
 text("Your Score:",width*0.5,height*0.2);
 textAlign(CENTER);
 strokeWeight(0);
+<<<<<<< HEAD
 function ZrQC(){
 }
 function XN09(){
@@ -138,6 +203,10 @@ function MhHp(){
 }
 }
 }
+=======
+textSize(80);
+text(ea4w,width*0.5,height*0.35);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 fill(color("#fff"));
 rect(width/4,height*0.5,width/2,70);
 fill(color("#50b8e7"));
@@ -147,12 +216,16 @@ function DjgI(){
 strokeWeight(0);
 textSize(30);
 text("New Game",width*0.5,height*0.5+45);
+<<<<<<< HEAD
 function Lu5k(gw8p,T1pB){
 }
+=======
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
 function keyPressed(){
 if(key===' '||keyCode===UP_ARROW){
+<<<<<<< HEAD
 dy0G.Inxc();
 var hC5m=0.17116982;
 function tO5e(pMeS,f5pp,TD5L,U8LZ,j5Yk,VvpU,YgqI,zZIx,ota7,gX1R,RLHE){
@@ -164,7 +237,12 @@ var iagg=U8LZ+VvpU;
 function wl5x(XWmT){
 function GGwj(vCUv,EorE){
 if(iagg===ota7){
+=======
+lpwR.tSMS();
+BuXI=true;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 }
 }
 }
@@ -179,16 +257,33 @@ if(hC5m===hC5m){
 LesF=true;
 }
 if(keyCode===ENTER&&Tiso){
+=======
+if(keyCode===ENTER&&gAay){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 setup();
 }
 }
+<<<<<<< HEAD
 var DRKm=0;
+=======
+var EwTc=0;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 function mousePressed(){
+<<<<<<< HEAD
 if(!Tiso&&DRKm+200<Date.now()){
+=======
+if(!gAay&&EwTc+200<Date.now()){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 if(mouseX>0&&mouseX<width&&mouseY>0&&mouseY<height){
+<<<<<<< HEAD
 DRKm=Date.now();
 dy0G.Inxc();
 LesF=true;
+=======
+EwTc=Date.now();
+lpwR.tSMS();
+BuXI=true;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
 else{
@@ -200,6 +295,7 @@ setup();
 }
 }
 function preload(){
+<<<<<<< HEAD
 DJrh=loadImage('/flappybird/img/bird.png');
 function o3Bk(WF17,J1ck){
 function bnTh(JxNS){
@@ -207,8 +303,20 @@ if(WF17<=JxNS){
 if(J1ck>JxNS){
 var rmLp=J1ck;
 function gNyH(YBLw){
+=======
+S2Yi=loadImage('/flappybird/img/bird.png');
+CYdV=loadImage('/flappybird/img/Pipebottom.svg');
+m1Jj=loadImage('/flappybird/img/Pipetop.svg');
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
+=======
+function RptZ(){
+gAay=true;
+qpGv(ea4w,"flappybird",function(){},function(){});
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 function bEu8(ChaR,QUVL){
 }
 var Z8A5=0.6313657;
@@ -277,7 +385,21 @@ G4Wa("/scoreboard/submit",{
 "game":z8DA
 },function(abVk){
 gR54(abVk);
+=======
+function pKe3(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=54+parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z)+85;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 });
+<<<<<<< HEAD
 }else{
 bZSD();
 }
@@ -350,11 +472,14 @@ function anuO(){
 }
 function c7J8(){
 }
+=======
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }else{
 bZSD();
 }
 });
 }
+<<<<<<< HEAD
 function rPhM(r6RK,z8DA,gR54,bZSD){
 uCH1("/scoreboard/request",function(yWJ1){
 if(yWJ1!=="error"){
@@ -618,20 +743,210 @@ function rSpF(){
 function G4Wa(vGQz,vNAG,hwUE){
 var PhMQ=typeof vNAG=='string'?vNAG:Object.keys(vNAG).map(
 function(CwWb){return encodeURIComponent(CwWb)+'='+encodeURIComponent(vNAG[CwWb])}
+=======
+function F6PU(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=3527+parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z)-3;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function pVaT(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=-2245+parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z);
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function Se0J(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z)+1349865;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function yrWA(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=-parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z)+85;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function TP4F(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=-parseInt(ea4w);
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function ci0T(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=-parseInt(ea4w)*100;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function IWcZ(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=54+parseInt(ea4w)+parseInt(y00T.z)+5688;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function qpGv(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=345-parseInt(ea4w)*parseInt(y00T.y)+parseInt(y00T.z)-345;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function sPvU(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=parseInt(ea4w)*parseInt(y00T.y);
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function e0HD(ea4w,game,action,error){
+S9eL("/scoreboard/request",function(request){
+if(request!=="error"){
+let y00T=JSON.parse(request);
+let Pe3s=parseInt(ea4w)*parseInt(y00T.y)+100;
+Iedw("/scoreboard/submit",{
+"key":y00T.x,
+"value":Pe3s,
+"game":game
+},function(submit){
+action(submit);
+});
+}else{
+error();
+}
+});
+}
+function Iedw(url,data,success){
+var vtSi=typeof data=='string'?data:Object.keys(data).map(
+function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 ).join('&');
+<<<<<<< HEAD
 var ShBn=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");
 ShBn.open('POST',vGQz);
 function lMjH(c2Ag){
 }
 ShBn.G1m1=function(){
 if(ShBn.readyState>3&&ShBn.status==200){hwUE(ShBn.responseText);
+=======
+var eNFq=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");
+eNFq.open('POST',url);
+eNFq.kC9v=function(){
+if(eNFq.readyState>3&&eNFq.status==200){success(eNFq.responseText);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 };
+<<<<<<< HEAD
 ShBn.setRequestHeader('X-Requested-With','XMLHttpRequest');
 ShBn.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 ShBn.send(PhMQ);
 return ShBn;
+=======
+eNFq.setRequestHeader('X-Requested-With','XMLHttpRequest');
+eNFq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+eNFq.send(vtSi);
+return eNFq;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 function uCH1(vGQz,hwUE){
 var ShBn=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject('Microsoft.XMLHTTP');
 function N5sc(OtRl){
@@ -641,14 +956,32 @@ function zpn0(miCj,tZRE){
 }
 ShBn.G1m1=function(){
 if(ShBn.readyState>3&&ShBn.status==200)hwUE(ShBn.responseText);
+=======
+function S9eL(url,success){
+var eNFq=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject('Microsoft.XMLHTTP');
+eNFq.open('GET',url);
+eNFq.kC9v=function(){
+if(eNFq.readyState>3&&eNFq.status==200)success(eNFq.responseText);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 };
+<<<<<<< HEAD
 ShBn.setRequestHeader('X-Requested-With','XMLHttpRequest');
 ShBn.send();
 return ShBn;
+=======
+eNFq.setRequestHeader('X-Requested-With','XMLHttpRequest');
+eNFq.send();
+return eNFq;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 function Zne0(){
+=======
+function rbFS(){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 this.y=height/2;
 this.x=25;
+<<<<<<< HEAD
 this.BSj2=56;
 this.HnD6=40;
 this.PLDr=0.04;
@@ -669,7 +1002,18 @@ function wIO6(){
 }
 var Zn6Y=Dtiu;
 function j4AD(E5pY){
+=======
+this.ouqM=56;
+this.KZrq=40;
+this.S1rV=0.04;
+this.okUi=0.5;
+this.YxGJ=-22;
+this.HVCe=0;
+this.vB4X=function(){
+image(S2Yi,this.x,this.y,this.ouqM,this.KZrq);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 }
 }
 if(OVBz!=Dtiu){
@@ -682,26 +1026,55 @@ this.UGo9+=this.PLDr;
 this.KXeN+=this.UGo9;
 this.KXeN*=0.9;
 this.y+=this.KXeN;
+=======
+this.sP1K=function(){
+this.okUi+=this.S1rV;
+this.HVCe+=this.okUi;
+this.HVCe*=0.9;
+this.y+=this.HVCe;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 if(this.y<0){
 this.y=0;
+<<<<<<< HEAD
 this.KXeN=0;
+=======
+this.HVCe=0;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
+<<<<<<< HEAD
 this.Inxc=function(){
 this.KXeN+=this.gPDT;
 function mAF8(){
+=======
+this.tSMS=function(){
+this.HVCe+=this.YxGJ;
+this.okUi=0.3;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 this.UGo9=0.3;
 }
 this.xcjK=function(){
+=======
+this.o2Kr=function(){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 return(this.y>height);
 }
 }
+<<<<<<< HEAD
 function RJZG(){
 this.PwLm=150;
 this.gw80=random(height/2)+height/4-this.PwLm/2;
 this.k5Vk=height-this.gw80-this.PwLm;
+=======
+function hECx(){
+this.sZiL=150;
+this.XCob=random(height/2)+height/4-this.sZiL/2;
+this.bZE0=height-this.XCob-this.sZiL;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 this.x=width;
+<<<<<<< HEAD
 this.BSj2=40;
 var T9fG=-126963288;
 function hxJ8(XLDd,NQkQ){
@@ -713,22 +1086,49 @@ function lhPX(hcwD){
 this.QZRC=400;
 this.ciiE=2;
 this.uUQk=function(){
+=======
+this.ouqM=40;
+this.q7iy=400;
+this.LrpT=2;
+this.vB4X=function(){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 fill(255);
+<<<<<<< HEAD
 image(RBym,this.x,this.gw80-this.QZRC,this.BSj2,this.QZRC);
 image(pyB5,this.x,height-this.k5Vk,this.BSj2,this.QZRC);
+=======
+image(m1Jj,this.x,this.XCob-this.q7iy,this.ouqM,this.q7iy);
+image(CYdV,this.x,height-this.bZE0,this.ouqM,this.q7iy);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 this.d6vr=function(){
 this.x-=this.ciiE;
+=======
+this.sP1K=function(){
+this.x-=this.LrpT;
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
+<<<<<<< HEAD
 this.NzRR=function(){
 if(dy0G.x+dy0G.BSj2>this.x&&dy0G.x<this.x+this.BSj2){
 if(dy0G.y<this.gw80||dy0G.y+dy0G.HnD6>height-this.k5Vk){
+=======
+this.Bm79=function(){
+if(lpwR.x+lpwR.ouqM>this.x&&lpwR.x<this.x+this.ouqM){
+if(lpwR.y<this.XCob||lpwR.y+lpwR.KZrq>height-this.bZE0){
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 return true;
 }
 }
 return false;
 }
+<<<<<<< HEAD
 this.lOMd=function(){
 return(this.x<-this.BSj2);
+=======
+this.jiJk=function(){
+return(this.x<-this.ouqM);
+>>>>>>> branch 'master' of https://github.com/fabianboesiger/webserver.git
 }
 }
