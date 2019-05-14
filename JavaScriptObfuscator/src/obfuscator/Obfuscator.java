@@ -51,7 +51,7 @@ public abstract class Obfuscator {
 			case 0:
 				String variable = randomVariableName(names);
 				variables.add(variable);
-				switch(random.nextInt(6)) {
+				switch(random.nextInt(5)) {
 				case 0:
 					out.append("var " + variable + "=" + random.nextInt() + ";\n");
 					break;
@@ -69,19 +69,16 @@ public abstract class Obfuscator {
 					if(variables.size() > 0) {
 						out.append("var " + variable + "=" + variables.get(random.nextInt(variables.size())) + "+" + variables.get(random.nextInt(variables.size())) + ";\n");
 					}
-				case 5:
-					if(variables.size() > 0) {
-						out.append(variables.get(random.nextInt(variables.size())) + "=" + variables.get(random.nextInt(variables.size())) + "+" + variables.get(random.nextInt(variables.size())) + ";\n");
-					}
 				}
 			case 1:
 				String function = randomVariableName(names);
 				functions.add(function);
 				out.append("function " + function + "(");
 				boolean inputs = false;
+				ArrayList <String> newVariables = new ArrayList <String> (variables);
 				while(random.nextInt(10) < 5) {
 					String arg = randomVariableName(names);
-					variables.add(arg);
+					newVariables.add(arg);
 					out.append(arg + ",");
 					inputs = true;
 				}
@@ -89,7 +86,7 @@ public abstract class Obfuscator {
 					out.setLength(out.length() - 1);
 				}
 				out.append("){\n");
-				generateGarbage(out, names, new ArrayList <String> (variables), new ArrayList <String> (functions));
+				generateGarbage(out, names, newVariables, new ArrayList <String> (functions));
 				out.append("}");
 				break;
 			case 2:
