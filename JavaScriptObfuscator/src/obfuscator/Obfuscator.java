@@ -50,38 +50,47 @@ public abstract class Obfuscator {
 			switch(random.nextInt(3)) {
 			case 0:
 				String variable = randomVariableName(names);
-				variables.add(variable);
 				switch(random.nextInt(6)) {
 				case 0:
 					out.append("var " + variable + "=" + random.nextInt() + ";\n");
+					variables.add(variable);
 					break;
 				case 1:
 					out.append("var " + variable + "=" + random.nextFloat() + ";\n");
+					variables.add(variable);
 					break;
 				case 2:
 					out.append("var " + variable + "=" + random.nextBoolean() + ";\n");
+					variables.add(variable);
 					break;
 				case 3:
 					if(variables.size() > 0) {
 						out.append("var " + variable + "=" + variables.get(random.nextInt(variables.size())) + ";\n");
+						variables.add(variable);
 					}
+					break;
 				case 4:
 					if(variables.size() > 0) {
 						out.append("var " + variable + "=" + variables.get(random.nextInt(variables.size())) + "+" + variables.get(random.nextInt(variables.size())) + ";\n");
+						variables.add(variable);
 					}
+					break;
 				case 5:
 					if(variables.size() > 0) {
 						out.append(variables.get(random.nextInt(variables.size())) + "=" + variables.get(random.nextInt(variables.size())) + "+" + variables.get(random.nextInt(variables.size())) + ";\n");
 					}
+					break;
 				}
 			case 1:
 				String function = randomVariableName(names);
 				functions.add(function);
 				out.append("function " + function + "(");
 				boolean inputs = false;
+				ArrayList <String> params = new ArrayList <String> ();
+				params.addAll(variables);
 				while(random.nextInt(10) < 5) {
 					String arg = randomVariableName(names);
-					variables.add(arg);
+					params.add(arg);
 					out.append(arg + ",");
 					inputs = true;
 				}
@@ -89,15 +98,15 @@ public abstract class Obfuscator {
 					out.setLength(out.length() - 1);
 				}
 				out.append("){\n");
-				generateGarbage(out, names, new ArrayList <String> (variables), new ArrayList <String> (functions));
-				out.append("}");
+				generateGarbage(out, names, params, new ArrayList <String> (functions));
+				out.append("}\n");
 				break;
 			case 2:
 				if(variables.size() > 0) {
 					String[] operators = {"==", "===", ">", "<", ">=", "<=", "!=", "!=="};
 					out.append("if( " + variables.get(random.nextInt(variables.size())) + operators[random.nextInt(operators.length)] + variables.get(random.nextInt(variables.size())) + "){\n");
 					generateGarbage(out, names, new ArrayList <String> (variables), new ArrayList <String> (functions));
-					out.append("}");
+					out.append("}\n");
 				}
 				break;
 			}
@@ -141,6 +150,51 @@ public abstract class Obfuscator {
 		
 		bufferedReader.close();
 		
+		
+		StringBuilder commentless = new StringBuilder();
+        
+        boolean big = false;
+        boolean small = false;
+        for(int i = 0; i < in.length() - 1; i++) {
+        	String symbol = in.substring(i, i+2);
+        	if(big) {
+        		if(symbol.equals("*/")) {
+        			big = false;
+        			i++;
+        			System.out.print("*/");
+        		} else {
+        			System.out.print(in.charAt(i));
+        		}
+        	} else {
+        		if(small) {
+        			if(in.charAt(i) == '\n') {
+        				small = false;
+        				commentless.append(in.charAt(i));
+        			} else {
+            			System.out.print(in.charAt(i));
+            		}
+        		} else {
+	        		if(symbol.equals("/*")) {
+	        			big = true;
+	        			i++;
+	        			System.out.print("/*");
+	        		} else {
+	        			if(symbol.equals("//")) {
+	        				small = true;
+	        				i++;
+	        				System.out.print("//");
+	        			} else {
+	    	        		commentless.append(in.charAt(i));
+	        			}
+	        		}
+        		}
+        	}
+        }
+        commentless.append(in.charAt(in.length() - 1));
+        
+        in = commentless;
+		
+		
         HashMap <String, String> names = new HashMap <String, String> ();
         
         StringBuilder word = new StringBuilder();
@@ -149,6 +203,8 @@ public abstract class Obfuscator {
         boolean escaped = false;
         boolean string = false;
         char stringChar = 0;
+        boolean function = false;
+        boolean params = false;
         for(int i = 0; i < in.length(); i++) {
         	char c = in.charAt(i);
         	if(!string) {
@@ -163,10 +219,12 @@ public abstract class Obfuscator {
 	        					while(Character.isWhitespace(in.charAt(j))) {
 	        						j++;
 	        					}
-	        					
+	        						        						        					
 	        					if((definers.contains(wordBuffer.get(wordBuffer.size() - 1)) && direct) 
 	        						|| (in.length() > j+1 && in.charAt(j) == '=' && in.charAt(j + 1) != '=')
+	        						|| params
 	        					) {
+	        						
 	        						String key = word.toString();
 	        						if(!names.containsKey(key)) {
 	        							String name = randomVariableName(names);
@@ -175,12 +233,25 @@ public abstract class Obfuscator {
 	        						}
 	        						
 	        					}
+	        					
+	        					
 	        				}
 	        			}
+	        			
+    					if(word.toString().equals("function")) {
+    						function = true;
+    					}
 	        			
 	        			wordBuffer.add(word.toString());
 		        		direct = true;
 		        		word.setLength(0);
+	        		}
+	        		if(c == '(' && function) {
+	        			params = true;
+	        		}
+	        		if(c == ')') {
+	        			params = false;
+	        			function = false;
 	        		}
 	        		if(c == '"' || c == '\'') {
 	        			string = true;
@@ -259,39 +330,7 @@ public abstract class Obfuscator {
         	}
         }
         
-        StringBuilder commentless = new StringBuilder();
         
-        boolean big = false;
-        boolean small = false;
-        for(int i = 0; i < out.length() - 1; i++) {
-        	String symbol = out.substring(i, i+2);
-        	if(big) {
-        		if(symbol.equals("*/")) {
-        			big = false;
-        			i++;
-        		}
-        	} else {
-        		if(small) {
-        			if(out.charAt(i) == '\n') {
-        				small = false;
-        				if(out.charAt(i+1) == '\r'){
-        					i++;
-        				}
-        			}
-        		} else {
-	        		if(symbol.equals("/*")) {
-	        			big = true;
-	        		} else {
-	        			if(symbol.equals("//")) {
-	        				small = true;
-	        			} else {
-	    	        		commentless.append(out.charAt(i));
-	        			}
-	        		}
-        		}
-        	}
-        }
-        commentless.append(out.charAt(out.length() - 1));
         
         StringBuilder minified = new StringBuilder();
         
@@ -299,8 +338,8 @@ public abstract class Obfuscator {
         boolean whitespace = false;
         string = false;
         stringChar = 0;
-        for(int i = 0; i < commentless.length(); i++) {
-        	char c = commentless.charAt(i);
+        for(int i = 0; i < out.length(); i++) {
+        	char c = out.charAt(i);
         	if(!string) {
         		if(Character.isWhitespace(c)) {
             		whitespace = true;

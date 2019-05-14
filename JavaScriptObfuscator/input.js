@@ -98,7 +98,7 @@ function draw(){
 }
 
 function keyPressed(){
-	if (key === ' ') {
+	if (key === ' ' || keyCode === UP_ARROW) {
 		bird.up();
 		started = true;
 	}
@@ -126,9 +126,9 @@ function mousePressed(){
 }
 
 function preload(){
-  	birdimg = loadImage('/img/bird.png');
-  	pipebottom = loadImage('/img/Pipebottom.svg');
-  	pipetop = loadImage('/img/Pipetop.svg');
+  	birdimg = loadImage('/flappybird/img/bird.png');
+  	pipebottom = loadImage('/flappybird/img/Pipebottom.svg');
+  	pipetop = loadImage('/flappybird/img/Pipetop.svg');
 }
 
 function gameOver(){
@@ -139,15 +139,188 @@ function gameOver(){
 
 
 
+// ---- Scoreboard Stuff ----
 
+function t1(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = 54 + parseInt(score) * parseInt(object.y) + parseInt(object.z) + 85;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t2(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = 3527 + parseInt(score) * parseInt(object.y) + parseInt(object.z) - 3;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t3(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value =  - 2245 + parseInt(score) * parseInt(object.y) + parseInt(object.z);
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t4(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = parseInt(score) * parseInt(object.y) + parseInt(object.z) + 1349865;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+// More Trap Functions
+function t5(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = - parseInt(score) * parseInt(object.y) + parseInt(object.z) + 85;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t6(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = - parseInt(score);
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t7(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = - parseInt(score) * 100;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t8(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = 54 + parseInt(score) + parseInt(object.z) + 5688;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
 
-// Scoreboard Stuff
-
+// Submits the score (integer) to the specified game (string), executes
+// action (function) if the submission was successful
 function submitScore(score, game, action, error) {
     getAjax("/scoreboard/request", function(request) {
         if(request !== "error") {
             let object = JSON.parse(request);
-            let value = parseInt(score) * parseInt(object.y) + parseInt(object.z);
+            let value = 345 - parseInt(score) * parseInt(object.y) + parseInt(object.z) - 345;
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+
+function t9(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = parseInt(score) * parseInt(object.y);
+            postAjax("/scoreboard/submit", {
+                "key": object.x,
+                "value": value,
+                "game": game
+            }, function(submit){
+                action(submit);
+            });
+        } else {
+            error();
+        }
+    });
+}
+function t10(score, game, action, error) {
+    getAjax("/scoreboard/request", function(request) {
+        if(request !== "error") {
+            let object = JSON.parse(request);
+            let value = parseInt(score) * parseInt(object.y) + 100;
             postAjax("/scoreboard/submit", {
                 "key": object.x,
                 "value": value,
@@ -189,6 +362,8 @@ function getAjax(url, success) {
     return xhr;
 }
 
+
+
 function Bird(){
 	this.y = height/2;
 	this.x = 25;
@@ -228,7 +403,7 @@ function Bird(){
 
 
 function Pipe(){
-	this.pipespace = 145;
+	this.pipespace = 150;
 	this.top = random(height/2)+height/4-this.pipespace/2;
 	this.bottom = height - this.top - this.pipespace;
 	this.x = width;
