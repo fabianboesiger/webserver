@@ -46,7 +46,7 @@ public abstract class Obfuscator {
 	}
 	
 	private static void generateGarbage(StringBuilder out, HashMap <String, String> names, ArrayList <String> variables, ArrayList <String> functions) {
-		while(random.nextInt(10) < 4) {
+		while(random.nextInt(10) < 0) {
 			switch(random.nextInt(3)) {
 			case 0:
 				String variable = randomVariableName(names);
