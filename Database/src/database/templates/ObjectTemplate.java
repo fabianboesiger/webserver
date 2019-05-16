@@ -311,8 +311,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		String id = getId();
 
 		File file = database.getFile(getClass(), id);
-		if(file.exists()) {
-			if(!overwrite && updated) {
+		if(file.exists() && updated) {
+			if(!overwrite) {
 				return false;
 			} else {
 				ObjectTemplate clone;
@@ -396,7 +396,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 
 	public void resetLoad() {
 		if(!resettedLoad) {
-			resettedSave = true;
+			resettedLoad = true;
 			
 			parsed = false;
 			try {
