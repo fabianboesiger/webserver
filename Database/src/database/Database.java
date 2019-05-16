@@ -17,9 +17,12 @@ public class Database {
 	private static final String ENDING = "txt";
 	public static final int COUNTER_LENGTH = 32;
 	
+	// private HashMap <String, ObjectTemplate> initialized;
+	
 	public Database() {
 		System.out.println("Starting Database with Directory " + DATA_FOLDER.getAbsolutePath());
 		DATA_FOLDER.mkdirs();
+		// initialized = new HashMap <String, ObjectTemplate> ();
 	}
 	
 	public synchronized boolean deleteId(Class <?> target, String id) {
@@ -36,7 +39,6 @@ public class Database {
 	
 	public synchronized ObjectTemplate loadId(Class <?> target, String id, Object caller) {
 		if(id != null) {
-			HashMap <String, ObjectTemplate> initialized = new HashMap <String, ObjectTemplate> ();
 			try {
 				File file = getFile(target, id);
 				if(file == null || !file.exists()) {
@@ -48,7 +50,7 @@ public class Database {
 				} else {
 					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
 				}
-				objectTemplate.parse(this, id, initialized);
+				objectTemplate.parse(this, id, new HashMap <String, ObjectTemplate> ());
 				objectTemplate.resetLoad();
 				return objectTemplate;
 			} catch (Exception e) {

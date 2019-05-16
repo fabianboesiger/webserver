@@ -309,7 +309,8 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		}
 		checkedVersion = true;
 		String id = getId();
-
+		
+		System.out.println(database+" "+getClass() + " " + id);
 		File file = database.getFile(getClass(), id);
 		if(file.exists() && updated) {
 			if(!overwrite) {
@@ -438,5 +439,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			}
 		}
 	}
+
 	
 }

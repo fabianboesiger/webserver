@@ -14,7 +14,6 @@ public abstract class ComplexTemplate extends Template {
 	public abstract boolean checkVersion(boolean overwrite);
 
 	protected abstract void resetSave();
-
 	protected abstract void resetLoad();
 	
 }

@@ -59,8 +59,10 @@ public abstract class Template {
 		String key = name + "-" + value;
 		
 		if(initialized != null && initialized.containsKey(key)) {
+			System.out.println("FOUND " + key);
 			return initialized.get(key);
 		} else {
+			System.out.println("NOT FOUND " + key);
 			if(!value.equals("null")) {
 				if(input == null && supplier != null) {
 					input = (ObjectTemplate) supplier.get();
