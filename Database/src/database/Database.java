@@ -238,7 +238,7 @@ public class Database {
 			}
 			Arrays.sort(files);
 			String name = files[files.length - 1].getName();
-			return Integer.valueOf(name.substring(0, name.lastIndexOf(".")), COUNTER_LENGTH).intValue() + 1;
+			return decrypt(name.substring(0, name.lastIndexOf("."))) + 1;
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}
@@ -269,14 +269,10 @@ public class Database {
 		return output.toString();
 	}
 	
-	/*
-	public static String decrypt(String input) {
-		StringBuilder output = new StringBuilder();
-		for(int i = 0; i < input.length(); i += 2) {
-			output.append((char) Integer.parseInt("" + input.charAt(i) + input.charAt(i + 1), 16));
-		}
-		return output.toString();
+	
+	public static int decrypt(String input) {
+		return (int) Long.parseLong(input, 16);
 	}
-	*/
+	
 	
 }
