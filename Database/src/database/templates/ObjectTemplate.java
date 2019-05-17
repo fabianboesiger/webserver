@@ -278,6 +278,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		parsed();
 		String id = crop(string).trim();
 		this.id = id;
+
 		this.database = database;
 				
 		File file = database.getFile(getClass(), id);
@@ -310,7 +311,6 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		checkedVersion = true;
 		String id = getId();
 		
-		System.out.println(database+" "+getClass() + " " + id);
 		File file = database.getFile(getClass(), id);
 		if(file.exists() && updated) {
 			if(!overwrite) {
@@ -352,13 +352,20 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 		
 	}
 	
+	public void reloadId() {
+		id = null;
+		getId();
+	}
+	
 	public String getId() {
+
 		if(id == null && database != null) {
 			if(identifier == null) {
 				StringBuilder idBuilder = new StringBuilder(Integer.toHexString(database.getNext(this.getClass())));
 				while(idBuilder.length() < Database.COUNTER_LENGTH) {
 					idBuilder.insert(0, "0");
 				}
+				id = idBuilder.toString();
 				return idBuilder.toString();
 			} else {
 				return Database.encrypt(identifier.getId());
@@ -387,6 +394,7 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 	
 	@Override
 	public boolean equals(Object object) {
+		id = getId();
 		if(object instanceof ObjectTemplate) {
 			if(id != null && ((ObjectTemplate) object).id != null && id.equals(((ObjectTemplate) object).id) && getClass() == object.getClass()) {
 				return true;
@@ -439,6 +447,28 @@ public abstract class ObjectTemplate extends ComplexTemplate {
 			}
 		}
 	}
-
 	
+	@Override
+	public void reload() {
+		String id = getId();
+		Class <?> target = getClass();
+		if(id != null) {
+			try {
+				File file = database.getFile(target, id);
+				if(file == null || !file.exists()) {
+					return;
+				}
+				ObjectTemplate objectTemplate = this;
+				objectTemplate.parse(database, id, new HashMap <String, ObjectTemplate> ());
+				objectTemplate.resetLoad();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getName() + "-" + getId();
+	}
 }

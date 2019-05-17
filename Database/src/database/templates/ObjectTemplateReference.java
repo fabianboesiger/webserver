@@ -108,5 +108,10 @@ public class ObjectTemplateReference <T extends ObjectTemplate> extends ComplexT
 		}
 	}
 
+	@Override
+	public void reload() {
+		value.reload();
+	}
+
 
 }

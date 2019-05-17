@@ -240,7 +240,7 @@ public class Database {
 			}
 			Arrays.sort(files);
 			String name = files[files.length - 1].getName();
-			return (int) Long.parseLong((name.substring(0, name.lastIndexOf("."))) + 1, 16);
+			return (int) Long.parseLong((name.substring(0, name.lastIndexOf("."))), 16) + 1;
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 		}

@@ -288,5 +288,31 @@ public class ListTemplate <T extends Template> extends ComplexTemplate implement
 		}
 	}
 
+	@Override
+	public void reload() {
+		T instance = supplier.get();
+		if(instance instanceof ObjectTemplate) {
+			for(int i = 0; i < list.size(); i++) {
+				((ObjectTemplate) list.get(i)).reload();
+			}
+		}
+		
+	}
 
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		output.append("[");
+		boolean first = true;
+		for(T element : list) {
+			if(!first) {
+				output.append(", ");
+			} else {
+				first = false;
+			}
+			output.append(element.toString());
+		}
+		output.append("]");
+		return output.toString();
+	}
 }

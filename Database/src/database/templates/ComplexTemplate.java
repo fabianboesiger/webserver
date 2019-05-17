@@ -12,8 +12,12 @@ public abstract class ComplexTemplate extends Template {
 	
 	public abstract void checkIfUpdated(Database database);
 	public abstract boolean checkVersion(boolean overwrite);
-
+	public abstract void reload();
 	protected abstract void resetSave();
 	protected abstract void resetLoad();
+	
+	public void setDatabase(Database database) {
+		this.database = database;
+	}
 	
 }
