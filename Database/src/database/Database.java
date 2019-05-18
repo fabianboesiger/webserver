@@ -28,6 +28,7 @@ public class Database {
 	public synchronized boolean deleteId(Class <?> target, String id) {
 		if(id != null) {
 			try {
+				//System.out.println("DELETE " + target.getName() + "-" + id);
 				File file = getFile(target, id);
 				return file.delete();
 			} catch (Exception e) {
@@ -38,6 +39,10 @@ public class Database {
 	}
 	
 	public synchronized ObjectTemplate loadId(Class <?> target, String id, Object caller) {
+		return loadId(target, id, caller, new HashMap <String, ObjectTemplate> ());
+	}
+	
+	public synchronized ObjectTemplate loadId(Class <?> target, String id, Object caller, HashMap <String, ObjectTemplate> initialized) {
 		if(id != null) {
 			try {
 				File file = getFile(target, id);
@@ -50,11 +55,12 @@ public class Database {
 				} else {
 					objectTemplate = (ObjectTemplate) target.getConstructor().newInstance();
 				}
-				objectTemplate.parse(this, id, new HashMap <String, ObjectTemplate> ());
+				objectTemplate = objectTemplate.checkIfInitialized(objectTemplate, this, id, initialized, null);
+				//objectTemplate.parse(this, id, initialized);
 				objectTemplate.resetLoad();
 				return objectTemplate;
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace ();
 			}
 		}
 		return null;
@@ -106,7 +112,7 @@ public class Database {
 					String fullName = files[i].getName();
 					String name = fullName.substring(0, fullName.lastIndexOf("."));
 					ObjectTemplate element = null; 
-					if((element = loadId(target, name, caller)) == null) {
+					if((element = loadId(target, name, caller, new HashMap <String, ObjectTemplate> ())) == null) {
 						return null;
 					} else {
 						if(predicate != null && !predicate.test(element)) {
@@ -126,7 +132,6 @@ public class Database {
 		} catch (IllegalArgumentException | SecurityException | IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
-		
 		return new LinkedList <ObjectTemplate> ();
 	}
 	
@@ -194,6 +199,7 @@ public class Database {
 		objectTemplate.checkIfUpdated(this);
 		if(objectTemplate.checkVersion(false)) {
 			try {
+				//System.out.println("SAVE " + objectTemplate);
 				objectTemplate.render();
 				objectTemplate.resetSave();
 				return true;
@@ -208,6 +214,7 @@ public class Database {
 		objectTemplate.checkIfUpdated(this);
 		if(objectTemplate.checkVersion(true)) {
 			try {
+				//System.out.println("UPDATE " + objectTemplate);
 				objectTemplate.render();
 				objectTemplate.resetSave();
 				return true;
