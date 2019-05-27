@@ -32,6 +32,7 @@ public class UserManager {
 	public static final String EMAIL_FILE = "/profile/change-email.html";
 	public static final String PASSWORD_FILE = "/profile/change-password.html";
 	public static final String DELETE_FILE = "/profile/delete-confirm.html";
+	public static final String NOTIFICATIONS_FILE = "/profile/notifications.html";
 	
 	public static final String SIGNIN_PATH = "/signin";
 	public static final String SIGNUP_PATH = "/signup";
@@ -43,7 +44,8 @@ public class UserManager {
 	public static final String UNLOCK_PATH = "/unlock";
 	public static final String EMAIL_PATH = "/profile/email";
 	public static final String PASSWORD_PATH = "/profile/password";
-	public static final String NOTIFICATION_PATH = "/profile/notifications";
+	public static final String NOTIFICATIONS_PATH = "/profile/notifications";
+	public static final String TOGGLE_NOTIFICATIONS_PATH = "/profile/notifications/toggle";
 	public static final String DELETE_PATH = "/profile/delete";
 	public static final String DELETE_CONFIRM_PATH = "/profile/delete/confirm";
 	
@@ -238,7 +240,6 @@ public class UserManager {
 			if(user != null) {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
 				variables.put(ACTIVATED_NAME, user.isActivated());
-				variables.put(NOTIFICATIONS_NAME, user.notificationsEnabled());
 				return responder.render(PROFILE_FILE, request.languages, variables);
 			}
 			return responder.redirect(SIGNIN_PATH);
@@ -299,7 +300,18 @@ public class UserManager {
 			return responder.redirect(PASSWORD_PATH);
 		});
 		
-		server.on("GET", NOTIFICATION_PATH, (Request request) -> {
+		server.on("GET", NOTIFICATIONS_PATH, (Request request) -> {
+			User user = (User) request.session.load();
+			if(user != null) {
+				HashMap <String, Object> variables = new HashMap <String, Object> ();
+				variables.put(NOTIFICATIONS_NAME, user.notificationsEnabled());
+				return responder.render(NOTIFICATIONS_FILE, request.languages, variables);
+			}
+			return responder.redirect(SIGNIN_PATH);
+			
+		});
+		
+		server.on("GET", TOGGLE_NOTIFICATIONS_PATH, (Request request) -> {
 			User user = (User) request.session.load();
 			if(user != null) {
 				user.toggleNotifications();
@@ -310,7 +322,7 @@ public class UserManager {
 				return responder.redirect(SIGNIN_PATH);
 			}
 			
-			return responder.redirect(PROFILE_PATH);
+			return responder.redirect(NOTIFICATIONS_PATH);
 		});
 			
 		server.on("GET", DELETE_PATH, (Request request) -> {

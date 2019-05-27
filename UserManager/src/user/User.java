@@ -99,6 +99,7 @@ public class User extends ObjectTemplate {
 	
 	public boolean keyEquals(String key) {
 		boolean output = key.equals((String) this.key.get());
+		System.out.println(key+" "+this.key.get());
 		if(output) {
 			this.key.set(generateKey(64));
 		}
