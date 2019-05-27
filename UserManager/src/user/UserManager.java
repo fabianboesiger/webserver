@@ -300,7 +300,7 @@ public class UserManager {
 			return responder.redirect(PASSWORD_PATH);
 		});
 		
-		server.on("GET", NOTIFICATIONS_PATH, (Request request) -> {
+		server.on("GET", NOTIFICATIONS_PATH, (Request request) -> { 
 			User user = (User) request.session.load();
 			if(user != null) {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
