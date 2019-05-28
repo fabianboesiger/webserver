@@ -5,7 +5,7 @@ public class PreciseIntervalJob extends Thread {
 	private int loopTime;
 	private boolean paused;
 	private long nextLoop;
-	Runnable job;
+	private Runnable job;
 	
 	public PreciseIntervalJob(Runnable job, int loopTime) {
 		this.loopTime = loopTime;
@@ -21,9 +21,13 @@ public class PreciseIntervalJob extends Thread {
 	public void run() {
 		
 		while(!paused) {
+			System.out.println("Running Precise Interval Job");
+			
 			job.run();
 			nextLoop += loopTime;
+			
 			try {
+				System.out.println("Sleeping " + (nextLoop - System.currentTimeMillis()) + " ms");
 				sleep(Math.max(0, nextLoop - System.currentTimeMillis()));
 			} catch (InterruptedException e) {
 				e.printStackTrace();

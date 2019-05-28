@@ -225,7 +225,7 @@ public abstract class Obfuscator {
 	        						j++;
 	        					}
 	        						        						        					
-	        					if((definers.contains(wordBuffer.get(wordBuffer.size() - 1)) && direct) 
+	        					if((wordBuffer.size() > 0 && definers.contains(wordBuffer.get(wordBuffer.size() - 1)) && direct) 
 	        						|| (in.length() > j+1 && in.charAt(j) == '=' && in.charAt(j + 1) != '=')
 	        						|| params
 	        					) {

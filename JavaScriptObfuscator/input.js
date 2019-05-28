@@ -1,146 +1,188 @@
+window.addEventListener("load", function() {
+    
+    let score = 0;
+    let health = 10;
+    let fields = [];
+    let pause = true;
 
-var can;
-var bird;
-var pipes;
-var score;
-var started;
-var gameover;
+    function Field(id) {
+        this.id = id;
+        let self = this;
+        this.chicken = document.getElementById("chicken-" + this.id);
+        this.chicken.addEventListener("mousedown", function() {
+            self.killedChicken(self);
+        });
+        this.gnome = document.getElementById("gnome-" + this.id);
+        this.gnome.addEventListener("mousedown", function() {
+            self.killedGnome(self);
+        });
+        this.mode = 0;
+        this.counter = 0;
+    }
 
-function setup(){
-	if (screen.width < 400) {
-		createCanvas(screen.width, screen.width * 3/2);
-	}else{
-		createCanvas(400, 600);
-	}
-	
-	started = false;
-	gameover = false;
-	score = 0;
-	bird = new Bird();
-	pipes = new Array();
-	lastclick = Date.now();
-}
+    Field.prototype.update = function() {
+        switch(this.mode) {
+            case 0:
+                this.chicken.classList.remove("active");
+                this.gnome.classList.remove("active");
+                break;
+            case 1:
+                this.chicken.classList.add("active");
+                this.gnome.classList.remove("active");
+                break;
+            case 2:
+                this.chicken.classList.remove("active");
+                this.gnome.classList.add("active");
+                break;
+        }
+    }
 
-function draw(){
+    Field.prototype.killedChicken = function(self) {
+        if(self.mode === 1) {
+            self.mode = 0;
+            self.update();
+            self.counter = 0;
+            score++;
+        }
+    }
 
-	if (!gameover) {
-		background(color("#b9e2f5"));
-		
-		// Pipe checks
-		for (let i = pipes.length - 1; i >= 0; i--) {
-			pipes[i].show();
-			if (started) {
-				pipes[i].update();
-			}
+    Field.prototype.killedGnome = function(self) {
+        if(self.mode === 2) {
+            self.mode = 0;
+            self.update();
+            self.counter = 0;
+            health--;
+            if(health === 0) {
+                end();
+            }
+        }
+    }
+
+    Field.prototype.run = function() {
+        if(this.mode === 0) {
+            
+            if(Math.random() < 1 - 1/((score/10000 + 1 + 0.001))) {
+                if(Math.random() < 0.5) {
+                    this.mode = 1;
+                    this.update();
+                } else {
+                    this.mode = 2;
+                    this.update();
+                }
+            }
+        } else {
+            this.counter++;
+            if(this.counter > 200/(score/50 + 1)) {
+                if(this.mode === 1) {
+                    health--;
+                    if(health === 0) {
+                        end();
+                    }
+                }
+                this.mode = 0;
+                this.update();
+                this.counter = 0;
+            }
+        }
+    }
+
+    Field.prototype.reset = function() {
+        this.mode = 0;
+        this.counter = 0;
+        this.update();
+    }
+
+    let start = document.getElementById("start");
+    let gameover = document.getElementById("gameover");
+    let startButtons = document.getElementsByClassName("start");
+    let scores = document.getElementsByClassName("score");
+    let healths = document.getElementsByClassName("health");
+
+    for(let i = 0; i < startButtons.length; i++){
+        startButtons[i].onclick = function() {
+            start.style.display = "none";
+            gameover.style.display = "none";
+            reset();
+        };
+    }
+
+    for(let i = 0; i < 8; i++) {
+        fields.push(new Field(i));
+    }
+
+    run();
+    setInterval(function() {
+        run();
+    }, 16);
+
+    function run() {
+        if(!pause) {
+            updateOverlay();
+            for(let i = 0; i < 8; i++) {
+                fields[i].run();
+            }
+        }
+    }
+
+    function reset() {
+        score = 0;
+        health = 10;
+        pause = false;
+        for(let i = 0; i < 8; i++) {
+            fields[i].reset();
+        }
+        updateOverlay();
+    }
+
+    function end() {
+        updateOverlay();
+        pause = true;
+        for(let i = 0; i < 8; i++) {
+            fields[i].mode = 0;
+            fields[i].update();
+        }
+        gameover.style.display = "block";
+        submitScore(score, "chickenkiller", function(){}, function(){});
+    }
+
+    updateOverlay();
+    function updateOverlay() {
+        for(let i = 0; i < scores.length; i++){
+            scores[i].innerHTML = score;
+        }
+        for(let i = 0; i < healths.length; i++){
+            healths[i].innerHTML = "";
+            for(let j = 0; j < health; j++){
+                healths[i].innerHTML += "❤️";
+            }
+        }
+    }
 
 
-			if (pipes[i].hits(bird)) {
-				gameOver();
-			}
+}, false);
 
-			// Remove pipe from array and increase score when pipe is off the screen
-			if (pipes[i].offscreen()) {
-				pipes.splice(i, 1);
-				score += 1;
-			}
-		}
+/*
 
-		if (bird.fallout()) {
-			gameOver();
-		}
+----------
+HOW TO USE
+----------
 
-		// Bird drawings
-		if (started) {
-			bird.update();
-		}
-		bird.show();
+1. Copy-paste this code into your game .js file, do not include it
+   with a separate script tag as this code has to be obfuscated with
+   your game .js files as well
 
-		// Draw Score
-		textAlign(CENTER);
-		fill(color("#50b8e7"));
-		strokeWeight(0);
-		textSize(100);
-		text(score, width*0.5, height*0.2);
+2. Implement the needed functions (submitScore(), loadMyScores(), 
+   loadGameScores(), loadPlayerScores())
 
-		// Create Pipes all 100 Frames
-		if (frameCount % 100 == 0 && started) {
-			pipes.push(new Pipe());
-		}
-	}
-	else{
-		background(color("#dcf0fa"));
-		fill(color("#50b8e7"));
+3. IMPORTANT: Obfuscate all the code of your game .js file with a 
+   javascript obfuscator, for example 
+   https://www.javascriptobfuscator.com/Javascript-Obfuscator.aspx,
+   make sure you have a backup of your clean code (NOT IN THE PUBLIC
+   FOLDER!)
 
-		// Draw Text
-		textAlign(CENTER);
-		strokeWeight(0);
-		textSize(50);
-		text("Your Score:", width*0.5, height*0.2);
+*/
 
-		// Draw Score
-		textAlign(CENTER);
-		strokeWeight(0);
-		textSize(80);
-		text(score, width*0.5, height*0.35);
-
-		// Draw new Game option
-		fill(color("#fff"));
-		rect(width/4, height*0.5, width/2, 70);
-
-		// Draw text for new Game
-		fill(color("#50b8e7"));
-		textAlign(CENTER);
-		strokeWeight(0);
-		textSize(30);
-		text("New Game", width*0.5, height*0.5 + 45);		
-
-	}
-}
-
-function keyPressed(){
-	if (key === ' ' || keyCode === UP_ARROW) {
-		bird.up();
-		started = true;
-	}
-	if (keyCode === ENTER && gameover) {
-		setup();
-	}
-}
-
-var lastclick = 0;
-function mousePressed(){
-	if (!gameover && lastclick + 200 < Date.now()) {
-		if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-			lastclick = Date.now();
-			bird.up();
-			started = true;
-		}
-	}
-	else{
-		if(mouseX > width/4 && mouseX < width*3/4){
-			if (mouseY > height*0.5 && mouseY < height*0.5 + 70) {
-				setup();
-			}
-		}
-	}
-}
-
-function preload(){
-  	birdimg = loadImage('/flappybird/img/bird.png');
-  	pipebottom = loadImage('/flappybird/img/Pipebottom.svg');
-  	pipetop = loadImage('/flappybird/img/Pipetop.svg');
-}
-
-function gameOver(){
-	// Submitting the Score
-	submitScore(score, "flappybird", function(){}, function(){});
-    gameover = true;
-}
-
-
-
-// ---- Scoreboard Stuff ----
-
+// Trap functions
 function t1(score, game, action, error) {
     getAjax("/scoreboard/request", function(request) {
         if(request !== "error") {
@@ -360,81 +402,4 @@ function getAjax(url, success) {
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.send();
     return xhr;
-}
-
-
-
-function Bird(){
-	this.y = height/2;
-	this.x = 25;
-	this.w = 56;
-	this.h = 40;
-
-	this.acceleration = 0.04;
-	this.gravity = 0.5;
-	this.lift = -22;
-	this.velocity = 0;
-
-	this.show = function(){
-		image(birdimg, this.x, this.y, this.w, this.h);
-	}
-
-	this.update = function(){
-		this.gravity += this.acceleration;
-		this.velocity += this.gravity;
-		this.velocity *= 0.9; 						// Air resistence
-		this.y += this.velocity;
-
-		if (this.y < 0) {
-			this.y = 0;
-			this.velocity = 0;
-		}
-	}
-
-	this.up = function(){
-		this.velocity += this.lift;
-		this.gravity = 0.3;
-	}
-
-	this.fallout = function(){
-		return (this.y > height);
-	}
-}
-
-
-function Pipe(){
-	this.pipespace = 150;
-	this.top = random(height/2)+height/4-this.pipespace/2;
-	this.bottom = height - this.top - this.pipespace;
-	this.x = width;
-	this.w = 40;
-	this.pipeheight = 400;
-	this.speed = 2;
-	
-
-	this.show = function(){
-		fill(255);
-		//rect(this.x, 0, this.w, this.top);
-		//rect(this.x, height-this.bottom, this.w, this.bottom);
-		image(pipetop, this.x, this.top-this.pipeheight, this.w, this.pipeheight);
-		image(pipebottom, this.x, height-this.bottom, this.w, this.pipeheight);
-	}
-
-	this.update = function(){
-		this.x -= this.speed;
-	}
-
-	this.hits = function(){
-		if (bird.x + bird.w > this.x && bird.x < this.x + this.w) {
-			if (bird.y < this.top || bird.y + bird.h> height - this.bottom) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	this.offscreen = function(){
-		return (this.x < -this.w);
-	}
-	
 }

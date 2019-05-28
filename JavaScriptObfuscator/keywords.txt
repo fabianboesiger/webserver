@@ -65,6 +65,10 @@ yield
 # ADDITIONAL JAVASCRIPT KEYWORDS
 onreadystatechange
 round
+onclick
+style
+display
+innerHTML
 # P5 METHODS
 setup
 draw
