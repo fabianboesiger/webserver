@@ -370,7 +370,7 @@ public class UserManager {
 		mailer.send(user.getMail(), "{{print translate \"" + RECOVER_ACCOUNT_KEY + "\"}}", RECOVER_MAIL, user.getLanguages(), variables);
 	}
 
-	private void addMessagesFlashToVariables(Request request, String name, HashMap <String, Object> variables) {
+	private static void addMessagesFlashToVariables(Request request, String name, HashMap <String, Object> variables) {
 		Validator validator = (Validator) request.session.getFlash(name);
 		if(validator != null) {
 			validator.addToVariables(variables);
