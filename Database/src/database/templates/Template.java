@@ -59,9 +59,6 @@ public abstract class Template {
 		String key = name + "-" + value;
 
 		if(initialized != null && initialized.containsKey(key)) {
-			if(name.equals("players")) {
-				System.out.println("!!!!!!!!"+value+" "+initialized.get(key).toString());
-			}
 			return initialized.get(key);
 		} else {
 			if(!value.equals("null")) {
